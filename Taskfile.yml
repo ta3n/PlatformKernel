@@ -1,0 +1,27 @@
+# https://taskfile.dev
+
+version: "3"
+
+dotenv: [ ".env" ]
+
+tasks:
+  build:
+    desc: Restore, build, and show size
+    cmds:
+      - dotnet restore
+      - dotnet build --no-restore --tl --no-incremental -warnaserror -maxcpucount
+      - dotnet list package --vulnerable
+      - du -sh
+      - du -sh *
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - dotnet clean
+      - find . -iname "bin" -print0 | xargs -0 rm -rf
+      - find . -iname "obj" -print0 | xargs -0 rm -rf
+      - find . -iname "node_modules" -print0 | xargs -0 rm -rf
+      - find . -iname "TestResults" -print0 | xargs -0 rm -rf
+      - find . -iname ".sonarqube" -print0 | xargs -0 rm -rf
+      - du -sh
+      - du -sh *

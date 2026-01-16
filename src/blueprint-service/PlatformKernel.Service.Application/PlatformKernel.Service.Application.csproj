@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Contexts\Configurations\**" />
+    <EmbeddedResource Remove="Contexts\Configurations\**" />
+    <None Remove="Contexts\Configurations\**" />
+    <Compile Remove="Domains\Services\Interfaces\IBookingCheckAvailableService.cs" />
+    <Compile Remove="Domains\Services\Interfaces\IBookingCheckModifyInPriceService.cs" />
+    <Compile Remove="Domains\Services\Interfaces\IBookingCreateService.cs" />
+    <Compile Remove="Domains\Services\Interfaces\IBookingDataAvailableService.cs" />
+    <Compile Remove="Domains\Services\Interfaces\IBookingPriceDataService.cs" />
+    <Compile Remove="Domains\Services\Interfaces\IBookingReservationOptionItemDataService.cs" />
+    <Compile Remove="Domains\Services\Interfaces\IBookingReservationPriceDataService.cs" />
+    <Compile Remove="Domains\Services\Interfaces\IBookingRoomAppDateService.cs" />
+    <Compile Remove="Domains\Services\BookingCheckAvailableService.cs" />
+    <Compile Remove="Domains\Services\BookingCheckModifyInPriceService.cs" />
+    <Compile Remove="Domains\Services\BookingCreateService.cs" />
+    <Compile Remove="Domains\Services\BookingDataAvailableService.cs" />
+    <Compile Remove="Domains\Services\BookingPriceDataService.cs" />
+    <Compile Remove="Domains\Services\BookingReservationOptionItemDataService.cs" />
+    <Compile Remove="Domains\Services\BookingReservationPriceDataService.cs" />
+    <Compile Remove="Domains\Services\BookingRoomAppDateService.cs" />
+    <Compile Remove="Domains\Services\Interfaces\IReservationService.cs" />
+    <Compile Remove="Domains\Services\ReservationService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared-kernel\PlatformKernel.Cache\PlatformKernel.Cache.csproj" />
+    <ProjectReference Include="..\..\shared-kernel\PlatformKernel.UnitOfWork\PlatformKernel.UnitOfWork.csproj" />
+    <ProjectReference Include="..\PlatformKernel.Service.Base.Application\PlatformKernel.Service.Base.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Contexts\SeedData\" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+</Project>
