@@ -39,11 +39,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared-kernel\PlatformKernel.IntegrationEvent\PlatformKernel.IntegrationEvent.csproj" />
-    <ProjectReference Include="..\..\shared-kernel\PlatformKernel.MassTransit\PlatformKernel.MassTransit.csproj" />
-    <ProjectReference Include="..\..\shared-kernel\PlatformKernel.Serilog\PlatformKernel.Serilog.csproj" />
-    <ProjectReference Include="..\..\shared-kernel\PlatformKernel.ServiceDefaults\PlatformKernel.ServiceDefaults.csproj" />
-    <ProjectReference Include="..\PlatformKernel.Service.WebApi.Application\PlatformKernel.Service.WebApi.Application.csproj" />
+    <ProjectReference Include="..\..\shared-kernel\SharedKernel.IntegrationEvent\SharedKernel.IntegrationEvent.csproj" />
+    <ProjectReference Include="..\..\shared-kernel\SharedKernel.MassTransit\SharedKernel.MassTransit.csproj" />
+    <ProjectReference Include="..\..\shared-kernel\SharedKernel.Serilog\SharedKernel.Serilog.csproj" />
+    <ProjectReference Include="..\..\shared-kernel\SharedKernel.ServiceDefaults\SharedKernel.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Blueprint.Service.WebApi.Application\Blueprint.Service.WebApi.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

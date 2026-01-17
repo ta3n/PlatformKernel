@@ -1,9 +1,9 @@
-using PlatformKernel.Service.Application.Auth;
-using PlatformKernel.Service.WebApi.Application.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using PlatformKernel.ApplicationShared.Extensions;
+using Blueprint.Service.Application.Auth;
+using Blueprint.Service.WebApi.Application.Settings;
+using SharedKernel.ApplicationShared.Extensions;
 
 namespace PlatformKernel.Service.WebApi.Configurations;
 

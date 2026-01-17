@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Diagnostics;
-using PlatformKernel.ApplicationShared.Extensions;
-using PlatformKernel.ApplicationShared.Settings;
-using PlatformKernel.SysException.Exceptions;
+using SharedKernel.ApplicationShared.Extensions;
+using SharedKernel.ApplicationShared.Settings;
+using SharedKernel.SysException.Exceptions;
 
 namespace PlatformKernel.Service.WebApi.Configurations;
 

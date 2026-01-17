@@ -1,10 +1,10 @@
 using PlatformKernel.Service.WebApi.Startup;
-using PlatformKernel.ApplicationShared.Constants;
-using PlatformKernel.ApplicationShared.Extensions;
-using PlatformKernel.ApplicationShared.Settings;
-using PlatformKernel.Serilog;
-using PlatformKernel.ServiceDefaults;
 using Serilog;
+using SharedKernel.ApplicationShared.Constants;
+using SharedKernel.ApplicationShared.Extensions;
+using SharedKernel.ApplicationShared.Settings;
+using SharedKernel.Serilog;
+using SharedKernel.ServiceDefaults;
 using Spectre.Console;
 
 try

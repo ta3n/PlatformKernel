@@ -1,9 +1,9 @@
 using Asp.Versioning;
-using PlatformKernel.Service.WebApi.Application;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Text.Json.Serialization;
-using PlatformKernel.Pagination.Binders;
+using Blueprint.Service.WebApi.Application;
+using SharedKernel.Pagination.Binders;
 
 namespace PlatformKernel.Service.WebApi.Configurations;
 

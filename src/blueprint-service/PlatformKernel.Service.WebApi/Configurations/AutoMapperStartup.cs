@@ -1,4 +1,4 @@
-using PlatformKernel.Service.WebApi.Application;
+using Blueprint.Service.WebApi.Application;
 
 namespace PlatformKernel.Service.WebApi.Configurations;
 

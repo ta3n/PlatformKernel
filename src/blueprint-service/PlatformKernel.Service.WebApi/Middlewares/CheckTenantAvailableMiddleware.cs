@@ -1,4 +1,4 @@
-using PlatformKernel.ServiceDefaults.Middlewares;
+using SharedKernel.ServiceDefaults.Middlewares;
 
 namespace PlatformKernel.Service.WebApi.Middlewares;
 

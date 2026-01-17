@@ -19,43 +19,43 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared Kernel", "Shared Ker
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blueprint Service", "Blueprint Service", "{02C2C0AE-9138-45C6-BBAC-051BAE422F6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Entity", "src\shared-kernel\PlatformKernel.Entity\PlatformKernel.Entity.csproj", "{0BC4064A-EE16-4841-A22B-4ACC77E482E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Entity", "src\shared-kernel\SharedKernel.Entity\SharedKernel.Entity.csproj", "{0BC4064A-EE16-4841-A22B-4ACC77E482E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.ServiceDefaults", "src\shared-kernel\PlatformKernel.ServiceDefaults\PlatformKernel.ServiceDefaults.csproj", "{006A0E8A-C508-4D28-967F-9D7FE6E3167F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.ServiceDefaults", "src\shared-kernel\SharedKernel.ServiceDefaults\SharedKernel.ServiceDefaults.csproj", "{006A0E8A-C508-4D28-967F-9D7FE6E3167F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Hangfire", "src\shared-kernel\PlatformKernel.Hangfire\PlatformKernel.Hangfire.csproj", "{FCA716EA-608A-4EF5-BE07-A334E064DF72}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Hangfire", "src\shared-kernel\SharedKernel.Hangfire\SharedKernel.Hangfire.csproj", "{FCA716EA-608A-4EF5-BE07-A334E064DF72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.MassTransit", "src\shared-kernel\PlatformKernel.MassTransit\PlatformKernel.MassTransit.csproj", "{EA9CCC3F-8D8B-4378-8A2F-8DAF6AAA8C82}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.MassTransit", "src\shared-kernel\SharedKernel.MassTransit\SharedKernel.MassTransit.csproj", "{EA9CCC3F-8D8B-4378-8A2F-8DAF6AAA8C82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Pagination", "src\shared-kernel\PlatformKernel.Pagination\PlatformKernel.Pagination.csproj", "{E03FD2DE-ECE2-4ED1-966F-473ACAFE0D02}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Pagination", "src\shared-kernel\SharedKernel.Pagination\SharedKernel.Pagination.csproj", "{E03FD2DE-ECE2-4ED1-966F-473ACAFE0D02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Serilog", "src\shared-kernel\PlatformKernel.Serilog\PlatformKernel.Serilog.csproj", "{EE662357-A6E9-465B-AEF5-2DFFDE492AAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Serilog", "src\shared-kernel\SharedKernel.Serilog\SharedKernel.Serilog.csproj", "{EE662357-A6E9-465B-AEF5-2DFFDE492AAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Grpc", "src\shared-kernel\PlatformKernel.Grpc\PlatformKernel.Grpc.csproj", "{095C478C-5C86-4423-8E13-F516D37C1EA3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Grpc", "src\shared-kernel\SharedKernel.Grpc\SharedKernel.Grpc.csproj", "{095C478C-5C86-4423-8E13-F516D37C1EA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.SysException", "src\shared-kernel\PlatformKernel.SysException\PlatformKernel.SysException.csproj", "{000F5F39-7245-48E5-B06D-73440DD769FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.SysException", "src\shared-kernel\SharedKernel.SysException\SharedKernel.SysException.csproj", "{000F5F39-7245-48E5-B06D-73440DD769FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.ApplicationShared", "src\shared-kernel\PlatformKernel.ApplicationShared\PlatformKernel.ApplicationShared.csproj", "{9123AF70-A6F7-428E-8506-0AA1CE4CC2AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.ApplicationShared", "src\shared-kernel\SharedKernel.ApplicationShared\SharedKernel.ApplicationShared.csproj", "{9123AF70-A6F7-428E-8506-0AA1CE4CC2AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Sentry", "src\shared-kernel\PlatformKernel.Sentry\PlatformKernel.Sentry.csproj", "{711E311B-66F3-4CF3-B33F-393D9EDDAE12}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Sentry", "src\shared-kernel\SharedKernel.Sentry\SharedKernel.Sentry.csproj", "{711E311B-66F3-4CF3-B33F-393D9EDDAE12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Specification", "src\shared-kernel\PlatformKernel.Specification\PlatformKernel.Specification.csproj", "{DC057012-F802-46B1-92E7-17F8B2937A90}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Specification", "src\shared-kernel\SharedKernel.Specification\SharedKernel.Specification.csproj", "{DC057012-F802-46B1-92E7-17F8B2937A90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.UnitOfWork", "src\shared-kernel\PlatformKernel.UnitOfWork\PlatformKernel.UnitOfWork.csproj", "{0E324CD4-0052-4B0B-95ED-54BBED0CECC7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.UnitOfWork", "src\shared-kernel\SharedKernel.UnitOfWork\SharedKernel.UnitOfWork.csproj", "{0E324CD4-0052-4B0B-95ED-54BBED0CECC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Cache", "src\shared-kernel\PlatformKernel.Cache\PlatformKernel.Cache.csproj", "{32C99D40-0D20-47C2-80C0-6DDC2EEECB4C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Cache", "src\shared-kernel\SharedKernel.Cache\SharedKernel.Cache.csproj", "{32C99D40-0D20-47C2-80C0-6DDC2EEECB4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.IntegrationEvent", "src\shared-kernel\PlatformKernel.IntegrationEvent\PlatformKernel.IntegrationEvent.csproj", "{E62C1A7A-44EF-4B74-B6FC-7A1237072965}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.IntegrationEvent", "src\shared-kernel\SharedKernel.IntegrationEvent\SharedKernel.IntegrationEvent.csproj", "{E62C1A7A-44EF-4B74-B6FC-7A1237072965}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Service.DbMigration", "src\blueprint-service\PlatformKernel.Service.DbMigration\PlatformKernel.Service.DbMigration.csproj", "{56439202-BA1F-46CB-B3AF-ACAC2489DF31}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint.Service.DbMigration", "src\blueprint-service\Blueprint.Service.DbMigration\Blueprint.Service.DbMigration.csproj", "{56439202-BA1F-46CB-B3AF-ACAC2489DF31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Service.Base.Application", "src\blueprint-service\PlatformKernel.Service.Base.Application\PlatformKernel.Service.Base.Application.csproj", "{2139D496-ABD2-44D9-B336-C63CF6C3BDF4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint.Service.Base.Application", "src\blueprint-service\Blueprint.Service.Base.Application\Blueprint.Service.Base.Application.csproj", "{2139D496-ABD2-44D9-B336-C63CF6C3BDF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Service.Application", "src\blueprint-service\PlatformKernel.Service.Application\PlatformKernel.Service.Application.csproj", "{D713752A-2962-42B9-AA22-B5B7DBE2B08F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint.Service.Application", "src\blueprint-service\Blueprint.Service.Application\Blueprint.Service.Application.csproj", "{D713752A-2962-42B9-AA22-B5B7DBE2B08F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Service.WebApi", "src\blueprint-service\PlatformKernel.Service.WebApi\PlatformKernel.Service.WebApi.csproj", "{99131F73-E8BC-485D-B5B1-97E6F822CC33}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint.Service.WebApi.Application", "src\blueprint-service\Blueprint.Service.WebApi.Application\Blueprint.Service.WebApi.Application.csproj", "{7B300A20-4547-4CD8-94FC-A0BE978C011F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Service.WebApi.Application", "src\blueprint-service\PlatformKernel.Service.WebApi.Application\PlatformKernel.Service.WebApi.Application.csproj", "{B1CC497A-6149-4229-A522-751A1F129A55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Service.WebApi", "src\blueprint-service\PlatformKernel.Service.WebApi\PlatformKernel.Service.WebApi.csproj", "{112E646C-5FA9-4C6F-8253-54E231B8B7A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,8 +85,8 @@ Global
 		{56439202-BA1F-46CB-B3AF-ACAC2489DF31} = {02C2C0AE-9138-45C6-BBAC-051BAE422F6D}
 		{2139D496-ABD2-44D9-B336-C63CF6C3BDF4} = {02C2C0AE-9138-45C6-BBAC-051BAE422F6D}
 		{D713752A-2962-42B9-AA22-B5B7DBE2B08F} = {02C2C0AE-9138-45C6-BBAC-051BAE422F6D}
-		{99131F73-E8BC-485D-B5B1-97E6F822CC33} = {02C2C0AE-9138-45C6-BBAC-051BAE422F6D}
-		{B1CC497A-6149-4229-A522-751A1F129A55} = {02C2C0AE-9138-45C6-BBAC-051BAE422F6D}
+		{7B300A20-4547-4CD8-94FC-A0BE978C011F} = {02C2C0AE-9138-45C6-BBAC-051BAE422F6D}
+		{112E646C-5FA9-4C6F-8253-54E231B8B7A5} = {02C2C0AE-9138-45C6-BBAC-051BAE422F6D}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0BC4064A-EE16-4841-A22B-4ACC77E482E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -157,13 +157,13 @@ Global
 		{D713752A-2962-42B9-AA22-B5B7DBE2B08F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D713752A-2962-42B9-AA22-B5B7DBE2B08F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D713752A-2962-42B9-AA22-B5B7DBE2B08F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99131F73-E8BC-485D-B5B1-97E6F822CC33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99131F73-E8BC-485D-B5B1-97E6F822CC33}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99131F73-E8BC-485D-B5B1-97E6F822CC33}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99131F73-E8BC-485D-B5B1-97E6F822CC33}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B1CC497A-6149-4229-A522-751A1F129A55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1CC497A-6149-4229-A522-751A1F129A55}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1CC497A-6149-4229-A522-751A1F129A55}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1CC497A-6149-4229-A522-751A1F129A55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B300A20-4547-4CD8-94FC-A0BE978C011F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B300A20-4547-4CD8-94FC-A0BE978C011F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B300A20-4547-4CD8-94FC-A0BE978C011F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B300A20-4547-4CD8-94FC-A0BE978C011F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{112E646C-5FA9-4C6F-8253-54E231B8B7A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{112E646C-5FA9-4C6F-8253-54E231B8B7A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{112E646C-5FA9-4C6F-8253-54E231B8B7A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{112E646C-5FA9-4C6F-8253-54E231B8B7A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

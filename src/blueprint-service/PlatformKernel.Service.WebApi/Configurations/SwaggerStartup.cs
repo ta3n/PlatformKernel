@@ -3,10 +3,10 @@ using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using PlatformKernel.ApplicationShared.Extensions;
-using PlatformKernel.ApplicationShared.Settings;
-using PlatformKernel.Entity.Utils;
-using PlatformKernel.Pagination.Swaggers;
+using SharedKernel.ApplicationShared.Extensions;
+using SharedKernel.ApplicationShared.Settings;
+using SharedKernel.Entity.Utils;
+using SharedKernel.Pagination.Swaggers;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 

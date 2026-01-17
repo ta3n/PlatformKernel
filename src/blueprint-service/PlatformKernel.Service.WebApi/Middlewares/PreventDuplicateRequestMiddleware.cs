@@ -1,9 +1,9 @@
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
-using PlatformKernel.ApplicationShared.Extensions;
-using PlatformKernel.ApplicationShared.Settings;
-using PlatformKernel.Cache.Services;
-using PlatformKernel.ServiceDefaults.Middlewares;
+using SharedKernel.ApplicationShared.Extensions;
+using SharedKernel.ApplicationShared.Settings;
+using SharedKernel.Cache.Services;
+using SharedKernel.ServiceDefaults.Middlewares;
 using StackExchange.Redis;
 
 namespace PlatformKernel.Service.WebApi.Middlewares;

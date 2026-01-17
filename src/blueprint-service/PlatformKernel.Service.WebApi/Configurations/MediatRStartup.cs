@@ -1,9 +1,9 @@
+using Blueprint.Service.Base.Application.Behaviors;
+using Blueprint.Service.WebApi.Application;
 using FluentValidation.AspNetCore;
-using PlatformKernel.Service.WebApi.Application;
 using MediatR;
-using PlatformKernel.ApplicationShared.Logging;
-using PlatformKernel.Service.Base.Application.Behaviors;
-using PlatformKernel.UnitOfWork.Behaviors;
+using SharedKernel.ApplicationShared.Logging;
+using SharedKernel.UnitOfWork.Behaviors;
 
 namespace PlatformKernel.Service.WebApi.Configurations;
 

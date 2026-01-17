@@ -1,4 +1,4 @@
-using PlatformKernel.SysException.Exceptions;
+using SharedKernel.SysException.Exceptions;
 
 namespace PlatformKernel.Service.WebApi.Middlewares;
 

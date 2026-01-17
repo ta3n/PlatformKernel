@@ -1,8 +1,8 @@
 using MassTransit;
-using PlatformKernel.IntegrationEvent;
-using PlatformKernel.IntegrationEvent.Events;
-using PlatformKernel.MassTransit.Constants;
-using PlatformKernel.MassTransit.Options;
+using SharedKernel.IntegrationEvent;
+using SharedKernel.IntegrationEvent.Events;
+using SharedKernel.MassTransit.Constants;
+using SharedKernel.MassTransit.Options;
 
 namespace PlatformKernel.Service.WebApi.Configurations;
 

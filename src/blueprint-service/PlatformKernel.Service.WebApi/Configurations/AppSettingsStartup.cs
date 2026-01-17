@@ -1,7 +1,7 @@
-using PlatformKernel.Service.Application.Options;
-using PlatformKernel.Service.WebApi.Application.Settings;
-using PlatformKernel.ApplicationShared.Settings;
-using PlatformKernel.Service.Base.Application.Settings;
+using Blueprint.Service.Application.Options;
+using Blueprint.Service.Base.Application.Settings;
+using Blueprint.Service.WebApi.Application.Settings;
+using SharedKernel.ApplicationShared.Settings;
 
 namespace PlatformKernel.Service.WebApi.Configurations;
 

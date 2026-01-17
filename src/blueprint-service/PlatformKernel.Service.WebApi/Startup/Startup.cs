@@ -1,12 +1,11 @@
-using PlatformKernel.Service.Application.Auth;
-using PlatformKernel.Service.WebApi.Application.HostedServices;
+using Blueprint.Service.WebApi.Application.HostedServices;
 using PlatformKernel.Service.WebApi.Configurations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.IdentityModel.Logging;
-using PlatformKernel.Cache;
-using PlatformKernel.MassTransit;
 using PlatformKernel.Service.WebApi.Initializations;
+using SharedKernel.Cache;
+using SharedKernel.MassTransit;
 
 [assembly: ApiController]
 
