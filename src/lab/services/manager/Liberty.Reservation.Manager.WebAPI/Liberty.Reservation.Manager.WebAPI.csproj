@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <EmployeeSecretsId>034430d5-791e-4385-bc2e-0ebd93fc7531</EmployeeSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <DockerfileContext>.</DockerfileContext>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.3"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\liberty-asp\Liberty.Application\Liberty.Application.csproj"/>
+        <ProjectReference Include="..\Liberty.Reservation.Application.Test\Liberty.Reservation.Application.Test.csproj"/>
+        <ProjectReference Include="..\Liberty.Reservation.Application\Liberty.Reservation.Application.csproj"/>
+        <ProjectReference Include="..\Liberty.Reservation.Employee.WebAPI.Application\Liberty.Reservation.Employee.WebAPI.Application.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Localizes\Resources\Errors\I18n.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>I18n.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Localizes\Resources\I18n.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>I18n.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Localizes\Resources\Errors\I18n.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>I18n.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Localizes\Resources\I18n.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>I18n.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+</Project>

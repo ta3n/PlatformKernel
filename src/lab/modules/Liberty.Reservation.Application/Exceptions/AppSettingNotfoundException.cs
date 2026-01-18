@@ -1,0 +1,10 @@
+using Liberty.Reservation.Application.Constants;
+
+namespace Liberty.Reservation.Application.Exceptions;
+
+public class AppSettingNotfoundException : AppNotfoundException
+{
+    public override ErrorCode ErrorCode => ErrorCode.E0000x;
+
+    public override string Title => "No application setting";
+}

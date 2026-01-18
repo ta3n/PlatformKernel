@@ -1,0 +1,28 @@
+﻿using Liberty.Entity;
+using Liberty.Reservation.Application.Contexts.DataContexts.Entities.Data;
+
+namespace Liberty.Reservation.Application.Contexts.DataContexts.Entities.Relations;
+
+public class FacilityCancellation : EntityRelation
+{
+    public long FacilityId { get; set; }
+    public Facility? Facility { get; set; }
+
+    public long CancellationId { get; set; }
+    public Cancellation? Cancellation { get; set; }
+
+    public bool IsDefault { get; set; }
+
+    public FacilityCancellation()
+    {
+    }
+
+    public FacilityCancellation(
+        Facility facility,
+        Cancellation cancellation
+    )
+    {
+        Facility = facility;
+        Cancellation = cancellation;
+    }
+}
