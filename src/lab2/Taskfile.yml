@@ -1,0 +1,182 @@
+# https://taskfile.dev
+
+version: "3"
+
+dotenv: [ ".env" ]
+
+tasks:
+  build:
+    desc: Restore, build, and show size
+    cmds:
+      - dotnet restore
+      - dotnet build --no-restore --tl --no-incremental -warnaserror -maxcpucount
+      - dotnet list package --vulnerable
+      - du -sh
+      - du -sh *
+
+  build-and-create-test-data-booking-flow:
+    desc: Restore, build, create test data for the booking flow and show size
+    deps: [ build ]
+    cmds:
+      - dotnet test src/services/manager/Liberty.Reservation.Manager.WebAPI.Test/Liberty.Reservation.Manager.WebAPI.Test.csproj --filter "FullyQualifiedName=Liberty.Reservation.Manager.WebAPI.Test.IntegrationTests.BookingFlowIntTest.CreateTestDataForBookingFlow"
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - dotnet clean
+      - find . -iname "bin" -print0 | xargs -0 rm -rf
+      - find . -iname "obj" -print0 | xargs -0 rm -rf
+      - find . -iname "node_modules" -print0 | xargs -0 rm -rf
+      - find . -iname "TestResults" -print0 | xargs -0 rm -rf
+      - find . -iname ".sonarqube" -print0 | xargs -0 rm -rf
+      - du -sh
+      - du -sh *
+
+  run-app-host:
+    desc: Restore, build, and run app host
+    cmds:
+      - dotnet restore src/modules/Liberty.Reservation.AppHost/Liberty.Reservation.AppHost.csproj
+      - dotnet build src/modules/Liberty.Reservation.AppHost/Liberty.Reservation.AppHost.csproj --tl
+      - dotnet run --project src/modules/Liberty.Reservation.AppHost/Liberty.Reservation.AppHost.csproj --launch-profile "http"
+
+  test:
+    desc: Run all tests
+    cmds:
+      - dotnet test src/services/manager/Liberty.Reservation.Manager.WebAPI.Test/Liberty.Reservation.Manager.WebAPI.Test.csproj --filter "FullyQualifiedName=Liberty.Reservation.Manager.WebAPI.Test.IntegrationTests.BookingFlowIntTest.CreateTestDataForBookingFlow"
+      - dotnet test --logger:"console;verbosity=detailed"
+
+  test-sequence:
+    desc: Run all tests
+    cmds:
+      - dotnet test src/services/employee/Liberty.Reservation.Employee.WebAPI.Test/Liberty.Reservation.Employee.WebAPI.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect:"XPlat Code Coverage" --no-build --verbosity minimal
+      - dotnet test src/services/manager/Liberty.Reservation.Manager.WebAPI.Test/Liberty.Reservation.Manager.WebAPI.Test.csproj --filter "FullyQualifiedName=Liberty.Reservation.Manager.WebAPI.Test.IntegrationTests.BookingFlowIntTest.CreateTestDataForBookingFlow"
+      - dotnet test src/services/manager/Liberty.Reservation.Manager.WebAPI.Test/Liberty.Reservation.Manager.WebAPI.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect:"XPlat Code Coverage" --no-build --verbosity minimal
+      - dotnet test src/services/manager/Liberty.Reservation.Manager.File.WebAPI.Test/Liberty.Reservation.Manager.File.WebAPI.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect:"XPlat Code Coverage" --no-build --verbosity minimal
+      - dotnet test src/services/site/Liberty.Reservation.Site.WebAPI.Test/Liberty.Reservation.Site.WebAPI.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect:"XPlat Code Coverage" --no-build --verbosity minimal
+      - dotnet test src/services/site/Liberty.Reservation.Site.File.WebAPI.Test/Liberty.Reservation.Site.File.WebAPI.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect:"XPlat Code Coverage" --no-build --verbosity minimal
+      - dotnet test src/services/user/Liberty.Reservation.User.WebAPI.Test/Liberty.Reservation.User.WebAPI.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect:"XPlat Code Coverage" --no-build --verbosity minimal
+      - dotnet test src/services/user/Liberty.Reservation.User.File.WebAPI.Test/Liberty.Reservation.User.File.WebAPI.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect:"XPlat Code Coverage" --no-build --verbosity minimal
+      - dotnet test src/services/mail/Liberty.Reservation.Mail.Worker.Test/Liberty.Reservation.Mail.Worker.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect:"XPlat Code Coverage" --no-build --verbosity minimal
+
+  sonar-scanner:
+    desc: Run sonar-scanner analysis
+    deps: [ clean ]
+    cmds:
+      - ${CONTAINER} compose -f docker/sonar.yml up -d
+      - sh ./sonar-analysis.sh
+
+  sonar-scanner-without-test:
+    desc: Run sonar-scanner analysis without tests
+    deps: [ clean ]
+    cmds:
+      - ${CONTAINER} compose -f docker/sonar.yml up -d
+      - sh ./sonar-analysis-without-test.sh
+
+  devskim-scanner:
+    desc: Run DevSkim scan
+    cmds:
+      - dotnet tool install --global Microsoft.CST.DevSkim.CLI
+      - devskim analyze --source-code src --output-format saif --output-file devskim_result.sarif
+
+  devskim-fix:
+    desc: Run DevSkim fix
+    cmds:
+      - devskim fix --source-code src --sarif-result devskim_result.sarif --all
+
+  container-prune-cache:
+    desc: Prune Docker cache
+    cmds:
+      - docker buildx prune -f
+      - docker system df
+
+  container-down:
+    desc: Stop and remove Docker containers
+    cmds:
+      - ${CONTAINER} compose down
+
+  container-build:
+    desc: Build Docker containers --parallel
+    cmds:
+      # - ${CONTAINER} compose build
+      - ${CONTAINER} compose build liberty-reservation-db-migration
+      - ${CONTAINER} compose build liberty-reservation-employee-webapi
+      - ${CONTAINER} compose build liberty-reservation-manager-webapi
+      - ${CONTAINER} compose build liberty-reservation-manager-distribution-webapi
+      - ${CONTAINER} compose build liberty-reservation-manager-file-webapi
+      - ${CONTAINER} compose build liberty-reservation-site-webapi
+      - ${CONTAINER} compose build liberty-reservation-site-public-webapi
+      - ${CONTAINER} compose build liberty-reservation-site-file-webapi
+      - ${CONTAINER} compose build liberty-reservation-user-webapi
+      - ${CONTAINER} compose build liberty-reservation-user-file-webapi
+      - ${CONTAINER} compose build liberty-reservation-mail-worker
+      - ${CONTAINER} compose build liberty-reservation-booking-worker
+
+  container-build-no-cache:
+    desc: Build Docker containers without cache
+    cmds:
+      # - ${CONTAINER} compose build --no-cache --parallel
+      - ${CONTAINER} compose build liberty-reservation-db-migration --no-cache
+      - ${CONTAINER} compose build liberty-reservation-employee-webapi --no-cache
+      - ${CONTAINER} compose build liberty-reservation-manager-webapi --no-cache
+      - ${CONTAINER} compose build liberty-reservation-manager-distribution-webapi --no-cache
+      - ${CONTAINER} compose build liberty-reservation-manager-file-webapi --no-cache
+      - ${CONTAINER} compose build liberty-reservation-site-webapi --no-cache
+      - ${CONTAINER} compose build liberty-reservation-site-public-webapi --no-cache
+      - ${CONTAINER} compose build liberty-reservation-site-file-webapi --no-cache
+      - ${CONTAINER} compose build liberty-reservation-user-webapi --no-cache
+      - ${CONTAINER} compose build liberty-reservation-user-file-webapi --no-cache
+      - ${CONTAINER} compose build liberty-reservation-mail-worker --no-cache
+      - ${CONTAINER} compose build liberty-reservation-booking-worker --no-cache
+
+  container-up-dev:
+    desc: Start development containers
+    deps: [ container-up-dev-db, container-up-dev-services ]
+
+  container-compose-up-dev:
+    desc: Start development containers
+    cmds:
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d
+
+  container-up-dev-db:
+    desc: Start development DB containers
+    cmds:
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-db
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-pgadmin4
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-redis
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-redis-commander
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-seq
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-db-migration
+
+  container-up-dev-services:
+    desc: Start development service containers
+    cmds:
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-employee-webapi
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-manager-webapi
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-manager-file-webapi
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-user-webapi
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-user-public-webapi
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-user-file-webapi
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-site-webapi
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-site-file-webapi
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-mail-worker
+      - ${CONTAINER} compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build liberty-reservation-booking-worker
+
+  dotnet-counters-employee-service:
+    desc: Run dotnet-counters for employee service
+    cmds:
+      - dotnet-counters monitor -p $(dotnet-counters ps | pgrep -af Liberty.Reservation.Employee.WebAPI) --counters System.Runtime,Microsoft.AspNetCore.Hosting,Microsoft.AspNetCore.Server.Kestrel,Microsoft.AspNetCore.Routing,Microsoft.EntityFrameworkCore,Microsoft.EntityFrameworkCore.Database.Command,Microsoft.EntityFrameworkCore.Database.Transaction
+
+  dotnet-counters-manager-service:
+    desc: Run dotnet-counters for manager service
+    cmds:
+      - dotnet-counters monitor -p $(dotnet-counters ps | pgrep -af Liberty.Reservation.Manager.WebAPI) --counters System.Runtime,Microsoft.AspNetCore.Hosting,Microsoft.AspNetCore.Server.Kestrel,Microsoft.AspNetCore.Routing,Microsoft.EntityFrameworkCore,Microsoft.EntityFrameworkCore.Database.Command,Microsoft.EntityFrameworkCore.Database.Transaction
+
+  dotnet-counters-site-service:
+    desc: Run dotnet-counters for site service
+    cmds:
+      - dotnet-counters monitor -p $(dotnet-counters ps | pgrep -af Liberty.Reservation.Site.WebAPI) --counters System.Runtime,Microsoft.AspNetCore.Hosting,Microsoft.AspNetCore.Server.Kestrel,Microsoft.AspNetCore.Routing,Microsoft.EntityFrameworkCore,Microsoft.EntityFrameworkCore.Database.Command,Microsoft.EntityFrameworkCore.Database.Transaction
+
+  dotnet-counters-user-service:
+    desc: Run dotnet-counters for user service
+    cmds:
+      - dotnet-counters monitor -p $(dotnet-counters ps | pgrep -af Liberty.Reservation.User.WebAPI) --counters System.Runtime,Microsoft.AspNetCore.Hosting,Microsoft.AspNetCore.Server.Kestrel,Microsoft.AspNetCore.Routing,Microsoft.EntityFrameworkCore,Microsoft.EntityFrameworkCore.Database.Command,Microsoft.EntityFrameworkCore.Database.Transaction

@@ -1,0 +1,13 @@
+using Liberty.Reservation.Application.Models.Requests;
+using Liberty.Reservation.Manager.Application.Models;
+
+namespace Liberty.Reservation.Manager.Application.Domains.Services.Interfaces;
+
+public interface IBookingReservationOptionItemDataService
+{
+    IEnumerable<BookingReservationOptionItemData> GetAllReservationOptionItemData(
+        BookingCreateRequest bookingCreateRequest,
+        BookingDataAvailableModel bookingDataAvailable,
+        IEnumerable<BookingRoomAppDateModel> bookingRoomAppDates
+    );
+}

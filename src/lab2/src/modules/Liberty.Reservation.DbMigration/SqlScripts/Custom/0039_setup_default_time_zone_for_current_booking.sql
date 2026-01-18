@@ -1,0 +1,9 @@
+CREATE OR REPLACE FUNCTION add_hour_offset(
+    ts TIMESTAMP,
+    facility_offset INTERVAL
+)
+RETURNS TIMESTAMP AS $$
+BEGIN
+  RETURN ts + (INTERVAL '09:00:00' - COALESCE(facility_offset, INTERVAL '09:00:00'));
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;

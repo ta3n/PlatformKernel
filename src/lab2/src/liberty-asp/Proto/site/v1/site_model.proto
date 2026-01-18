@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package liberty.site.v1;
+
+option csharp_namespace = "Liberty.Protobuf.Site.V1";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/duration.proto";
+
+message HeaderValueProtoModel {
+  string key = 1;
+  google.protobuf.StringValue value = 2;
+}
+
+message PageableProtoModel {
+  int32 page_number = 1;
+  int32 page_size = 2;
+  google.protobuf.BoolValue is_enabled = 3;
+}
+
+message FileOfBookingProtoModel
+{
+  string code = 1;
+  string ContentType = 2;
+}
+
+// Nested message for site information.
+message SiteOfBookingFacilityProtoModel
+{
+  optional string code = 1;
+  optional string name = 2;
+  int32 maxPeople = 3;
+}
+
+// Nested message for person age type.
+message PersonAgeTypeOfBookingFacilityProtoModel
+{
+  int64 id = 1;
+  bool isMain = 2;
+  optional int32 ageMin = 3;
+  optional int32 ageMax = 4;
+  optional string name = 5;
+  optional int64 lastUpdatedAt = 6;
+}
+
+message BookingSearchProtoModel {
+  string facility_code = 1;
+  string site_code = 2;
+  google.protobuf.Int64Value check_in_date = 3;
+  google.protobuf.Int64Value check_out_date = 4;
+  google.protobuf.Int64Value display_check_in_date = 5;
+  google.protobuf.Int64Value display_check_out_date = 6;
+  google.protobuf.Int32Value rest_number = 7;
+  google.protobuf.Int32Value room_number = 8;
+  google.protobuf.Int32Value min_price = 9;
+  google.protobuf.Int32Value max_price = 10;
+  google.protobuf.StringValue secret = 11;
+  google.protobuf.BoolValue day_use = 12;
+  repeated liberty.site.v1.PersonOfBookingSearchProtoModel guests_per_room = 13;
+  repeated liberty.site.v1.OptionOfBookingSearchProtoModel option_items = 14;
+}
+
+message PersonOfBookingSearchProtoModel {
+  int64 app_date_id = 1;
+  int32 rest_index = 2;
+  int32 room_group_index = 3;
+  int64 person_age_type_id = 4;
+  google.protobuf.Int32Value persons = 5;
+  google.protobuf.Int32Value male_persons = 6;
+  google.protobuf.Int32Value female_persons = 7;
+}
+
+message OptionOfBookingSearchProtoModel {
+  int64 app_date_id = 1;
+  int32 room_group_index = 2;
+  int64 option_item_id = 3;
+  int32 number = 4;
+}
+
+message BookingSearchByPlanProtoModel {
+  google.protobuf.StringValue code = 1;
+  google.protobuf.StringValue name = 2;
+  google.protobuf.StringValue tag = 3;
+  bool is_on_line_payment = 4;
+  bool is_on_side_payment = 5;
+  google.protobuf.StringValue summary = 6;
+  bool use_display_date = 7;
+  google.protobuf.Int64Value display_date_start = 8;
+  google.protobuf.Int64Value display_date_end = 9;
+  bool use_accept_date = 10;
+  google.protobuf.Int64Value accept_date_start = 11;
+  google.protobuf.Int64Value accept_date_end = 12;
+  google.protobuf.StringValue plan_type = 13;
+  int64 display_order = 14;
+  google.protobuf.StringValue description = 15;
+  bool day_use = 16;
+
+  google.protobuf.Int64Value facility_id = 17;
+  google.protobuf.DoubleValue min_total_price = 18;
+  google.protobuf.DoubleValue base_price = 19;
+  google.protobuf.Duration check_in_start = 20;
+  google.protobuf.Duration check_in_end = 21;
+  google.protobuf.Duration check_out = 22;
+
+  repeated CategoryOfPlanProtoModel categories = 23;
+  repeated FileOfPlanProtoModel files = 24;
+  repeated MealOfPlanProtoModel meals = 25;
+  repeated RoomOfPlanProtoModel rooms = 26;
+}
+
+message AppDatePriceOfPlanProtoModel {
+  int64 app_date_id = 1;
+  google.protobuf.Int32Value remain_number = 2;
+
+  google.protobuf.DoubleValue base_price = 3;
+  google.protobuf.DoubleValue price = 4;
+  google.protobuf.DoubleValue total_spa_tax = 5;
+  google.protobuf.DoubleValue total_price = 6;
+
+  AppDatePriceStatusSearchProtoModel status = 7;
+}
+
+message CategoryOfPlanProtoModel {
+  google.protobuf.StringValue code = 1;
+  google.protobuf.StringValue name = 2;
+}
+
+message FileOfPlanProtoModel {
+  google.protobuf.StringValue code = 1;
+  google.protobuf.StringValue content_type = 2;
+  int32 index = 3;
+  bool is_enabled = 4;
+}
+
+message MealOfPlanProtoModel {
+  google.protobuf.StringValue code = 1;
+  google.protobuf.StringValue meal_type_eat_type = 2;
+  google.protobuf.StringValue name = 3;
+}
+
+message RoomOfPlanProtoModel {
+  google.protobuf.StringValue code = 1;
+  google.protobuf.StringValue name = 2;
+  google.protobuf.StringValue tag = 3;
+  bool is_enabled_smoking = 4;
+  google.protobuf.StringValue overview = 5;
+  int64 display_order = 6;
+
+  repeated FileOfPlanProtoModel files = 7;
+  repeated AppDatePriceOfPlanProtoModel app_date_prices = 8;
+}
+
+message PriceCalendarOfRoomProtoModel {
+  google.protobuf.Duration check_in_end = 1;
+  google.protobuf.StringValue price = 2;
+  google.protobuf.StringValue total_spa_tax = 3;
+  google.protobuf.StringValue total_price = 4;
+  google.protobuf.StringValue min_total_price = 5;
+  repeated AppDatePriceOfPlanProtoModel app_date_prices = 6;
+}
+
+message AppDatePriceStatusSearchProtoModel {
+  google.protobuf.BoolValue is_room_available = 1;
+  google.protobuf.BoolValue is_room_under_requested = 2;
+  google.protobuf.BoolValue is_accept_date = 3;
+  google.protobuf.BoolValue is_day_bookable = 4;
+  google.protobuf.BoolValue is_night = 5;
+  google.protobuf.BoolValue is_available = 6;
+}

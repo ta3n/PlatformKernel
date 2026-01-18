@@ -1,0 +1,89 @@
+using System.Security.Cryptography;
+using Liberty.ApplicationShared.Extensions;
+using Liberty.ApplicationShared.Settings;
+using Liberty.Cache.Services;
+using Liberty.ServiceDefaults.Middlewares;
+using Microsoft.AspNetCore.Mvc;
+using StackExchange.Redis;
+
+namespace Liberty.Reservation.User.WebAPI.Middlewares;
+
+public class PreventDuplicateRequestMiddleware(
+    ICacheService cacheService
+) : BaseMiddleware
+{
+    private readonly IDatabase _redis = cacheService.GetDatabase();
+    private const int LockSeconds = 3;
+
+    private static readonly string[] AllowedMethods =
+    [
+        HttpMethods.Post,
+        HttpMethods.Put,
+        HttpMethods.Patch,
+        HttpMethods.Delete
+    ];
+
+    protected override async Task HandleAsync(
+        HttpContext context,
+        RequestDelegate next
+    )
+    {
+        if (!AllowedMethods.Contains(context.Request.Method))
+        {
+            await next(context);
+            return;
+        }
+
+        context.Request.EnableBuffering();
+        using var hasher = SHA256.Create();
+        var hashBytes = await hasher.ComputeHashAsync(context.Request.Body);
+        context.Request.Body.Position = 0;
+        var hash = Convert.ToHexString(hashBytes);
+        var cacheKey = $"dedup:req:{context.Request.Path}{context.Request.QueryString}:{hash}";
+
+        var locked = await _redis.StringSetAsync(
+            cacheKey,
+            "1",
+            TimeSpan.FromSeconds(LockSeconds),
+            When.NotExists
+        );
+
+        if (!locked)
+        {
+            var configuration = context.RequestServices.GetRequiredService<IConfiguration>();
+            var appInfo = configuration.GetOptionsExt<AppInfo>("App");
+
+            var problemDetails = new ProblemDetails
+            {
+                Title = "Duplicate request is being processed",
+                Status = StatusCodes.Status429TooManyRequests,
+                Detail = "The same request payload is already being processed. Please wait a moment before retrying.",
+                Extensions =
+                {
+                    ["code"] = "DUPLICATE_REQUEST",
+                    ["app"] = CreateAppInfo(appInfo)
+                }
+            };
+
+            context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+            context.Response.ContentType = "application/problem+json";
+            await context.Response.WriteAsJsonAsync(problemDetails);
+
+            return;
+        }
+
+        await next(context);
+    }
+
+    private static object CreateAppInfo(
+        AppInfo appInfo
+    )
+    {
+        return new
+        {
+            name = appInfo.AppName ?? string.Empty,
+            version = appInfo.AppVersion ?? string.Empty,
+            dateUtc = DateTime.UtcNow.ToString("o")
+        };
+    }
+}

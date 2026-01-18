@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package liberty.common.v1;
+
+option csharp_namespace = "Liberty.Protobuf.Common.V1";
+
+import "google/protobuf/wrappers.proto";
+
+message HeaderValueProtoModel {
+  string key = 1;
+  google.protobuf.StringValue value = 2;
+}

@@ -1,0 +1,3 @@
+namespace Liberty.Reservation.Site.Application.Domains.Services.Interfaces;
+
+public interface IReservationRoomGroupAppDateOptionItemService : IBaseServiceRelation<ReservationRoomGroupAppDateOptionItem>;

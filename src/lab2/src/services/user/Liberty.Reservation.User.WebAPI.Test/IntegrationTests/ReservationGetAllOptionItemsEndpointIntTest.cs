@@ -1,0 +1,95 @@
+using Liberty.ApplicationShared.Utils;
+using Liberty.Reservation.Application.Contexts.DataContexts.Entities.Data;
+using Liberty.Reservation.Application.Contexts.DataContexts.Entities.Relations;
+using Liberty.Reservation.User.Application.Domains.Repositories.Interfaces;
+using System.Net;
+using Liberty.Entity.ValueObjects;
+using Liberty.Reservation.User.WebAPI.Test.InfrastructureOfTest.Utilities;
+
+namespace Liberty.Reservation.User.WebAPI.Test.IntegrationTests;
+
+public class ReservationGetAllOptionItemsEndpointIntTest : BaseReservationEndpointIntTest
+{
+    [Fact]
+    public async Task Reservation_GetAllOptionItems_ReturnOK_WithOptionItemResponse()
+    {
+        var plan = await CreatePlanAsync();
+        var roomGroup = await CreateRoomGroupAsync();
+        var site = await CreateSiteAsync();
+
+        var planRoomGroupRepo = Factory.GetRequiredService<IPlanRoomGroupRepository>();
+        var mockPlanRoom = new PlanRoomGroup
+        {
+            PlanId = plan.Id,
+            RoomGroupId = roomGroup.Id
+        };
+        _ = await planRoomGroupRepo!.AddAsync(mockPlanRoom, true);
+
+        var facilityRepo = Factory.GetRequiredService<IFacilityRepository>();
+        var mockFacility = new Facility
+        {
+            Code = EntityUtil.CreateCode(),
+            IsEnabled = true
+        };
+        var facility = await facilityRepo!.AddAsync(mockFacility, true);
+
+        var reservationRepo = Factory.GetRequiredService<IReservationRepository>();
+        var mockReservation = new Reservation.Application.Contexts.DataContexts.Entities.Data.Reservation
+        {
+            Code = EntityUtil.CreateCode(),
+            FacilityId = facility.Id,
+            SiteId = site.Id,
+            PlanId = plan.Id,
+            RoomGroupId = roomGroup.Id,
+            UserCode = MockUserCode,
+            MainUser = new CustomerInfo { Code = EntityUtil.CreateCode() },
+            Reserver = new CustomerInfo { Code = EntityUtil.CreateCode() },
+            ReservationDateTime = DateTime.UtcNow,
+            CheckInDate = AppDate.GetId(DateTime.UtcNow),
+            RestNumber = 1,
+            RoomNumber = 1
+        };
+        var reservation = await reservationRepo!.AddAsync(mockReservation, true);
+
+        var optionItemRepo = Factory.GetRequiredService<IOptionItemRepository>();
+        var mockOptionItem = new OptionItem
+        {
+            Name = new MultilingualText { { TestUtil.DefaultLanguageCode, "Test" } },
+            Description = "Test",
+            Code = EntityUtil.CreateCode()
+        };
+        var optionItem = await optionItemRepo!.AddAsync(mockOptionItem, true);
+
+        var planOptionItemRepo = Factory.GetRequiredService<IPlanOptionItemRepository>();
+        var mockPlanOptionItem = new PlanOptionItem
+        {
+            PlanId = plan.Id,
+            OptionItemId = optionItem.Id
+        };
+        _ = await planOptionItemRepo!.AddAsync(mockPlanOptionItem, true);
+
+        var appDateRepo = Factory.GetRequiredService<IAppDateRepository>();
+        var mockDate = new AppDate
+        {
+            DateTime = DateTime.UtcNow,
+            Code = EntityUtil.CreateCode()
+        };
+        var appDate = await appDateRepo!.AddAsync(mockDate, true);
+
+        var optionItemAppDateRepo = Factory.GetRequiredService<IOptionItemAppDateRepository>();
+        var mockOptionAppDate = new OptionItemAppDate
+        {
+            OptionItemId = optionItem.Id,
+            AppDateId = appDate.Id
+        };
+        _ = await optionItemAppDateRepo!.AddAsync(mockOptionAppDate, true);
+
+        var response = await Client.GetAsync($"{BaseUrl}/{reservation.Id}/option-items");
+
+        response.EnsureSuccessStatusCode();
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var responseString = await response.Content.ReadAsStringAsync();
+        Assert.NotNull(responseString);
+    }
+}

@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="33.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
+    <PackageReference Include="SqlKata.Execution" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\liberty-asp\Liberty.Fax\Liberty.Fax.csproj" />
+    <ProjectReference Include="..\..\..\liberty-asp\Liberty.Pagination\Liberty.Pagination.csproj" />
+    <ProjectReference Include="..\..\..\modules\Liberty.Reservation.Application\Liberty.Reservation.Application.csproj" />
+    <ProjectReference Include="..\Liberty.Reservation.Employee.Application\Liberty.Reservation.Employee.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Localizes\Resources\Errors\I18n.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>I18n.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Localizes\Resources\I18n.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>I18n.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Remove="Localizes\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Localizes\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Localizes\**" />
+  </ItemGroup>
+
+
+</Project>

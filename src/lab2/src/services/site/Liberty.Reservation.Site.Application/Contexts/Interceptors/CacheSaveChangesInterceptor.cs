@@ -1,0 +1,102 @@
+using Liberty.Cache.Services;
+using Liberty.Entity;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Liberty.Reservation.Site.Application.Contexts.Interceptors;
+
+public class CacheSaveChangesInterceptor(
+    IServiceProvider serviceProvider
+) : SaveChangesInterceptor
+{
+    private readonly ICacheService _cacheService = serviceProvider.GetRequiredService<ICacheService>();
+
+    private readonly ILogger<CacheSaveChangesInterceptor> _logger =
+        serviceProvider.GetRequiredService<ILogger<CacheSaveChangesInterceptor>>();
+
+    private readonly ICacheManagementService _cacheManagementService =
+        serviceProvider.GetRequiredService<ICacheManagementService>();
+
+    public override int SavedChanges(
+        SaveChangesCompletedEventData eventData,
+        int result
+    )
+    {
+        var context = eventData.Context;
+
+        if (context == null)
+        {
+            return base.SavedChanges(eventData, result);
+        }
+
+        var entries = context.ChangeTracker.Entries();
+
+        foreach (var entry in entries)
+        {
+            ClearCacheEntry(entry);
+        }
+
+        _cacheManagementService.RemoveFacilityRelatedCache();
+
+        return base.SavedChanges(eventData, result);
+    }
+
+    public override ValueTask<int> SavedChangesAsync(
+        SaveChangesCompletedEventData eventData,
+        int result,
+        CancellationToken cancellationToken = new()
+    )
+    {
+        var context = eventData.Context;
+
+        if (context == null)
+        {
+            return base.SavedChangesAsync(eventData, result, cancellationToken);
+        }
+
+        var entries = context.ChangeTracker.Entries();
+
+        foreach (var entry in entries)
+        {
+            ClearCacheEntry(entry);
+        }
+
+        _cacheManagementService.RemoveFacilityRelatedCache();
+
+        return base.SavedChangesAsync(eventData, result, cancellationToken);
+    }
+
+    private void ClearCacheEntry(
+        EntityEntry entry
+    )
+    {
+        try
+        {
+            if (entry.Entity is not EntityData entity)
+            {
+                return;
+            }
+
+            var entityName = entity.GetType().Name;
+            var cacheKeyEntityPattern = $"{entityName}*";
+
+            _cacheService.Reset(cacheKeyEntityPattern);
+
+            if (entity is Reservation.Application.Contexts.DataContexts.Entities.Data.Reservation reservation)
+            {
+                _cacheManagementService.RemoveAllFacilityBookingCache(
+                    reservation.Id
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "An error occurred while clearing cache for entity {EntityName}.",
+                entry.Entity.GetType().Name
+            );
+        }
+    }
+}

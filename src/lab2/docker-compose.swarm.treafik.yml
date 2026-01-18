@@ -1,0 +1,204 @@
+services:
+  swarm-liberty-db:
+    image: postgres:16.4
+    environment:
+      POSTGRES_DB: liberty_reservation
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    command: [ "postgres", "-c", "config_file=/etc/postgresql/postgresql.conf" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    volumes:
+      - ./db/dumps:/docker-entrypoint-initdb.d
+      - ./db/postgresql/postgresql.conf:/etc/postgresql/postgresql.conf
+      - swarm-liberty-db-data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    networks:
+      - swarm-liberty-system
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'   # Use up to 0.5 CPU core on M4 Pro (equivalent to 1 ACU)
+          memory: 2048M # Limit memory usage to 2 GiB (equivalent to 1 ACU)
+        reservations:
+          cpus: '0.25'  # Reserve at least 0.25 CPU core on M4 Pro
+          memory: 256M # Reserve at least 1 GiB RAM (~0.5 ACU)
+
+  swarm-liberty-redis:
+    image: redis:7.4.0
+    command: /bin/sh -c "redis-server --requirepass 01j6efde8q4"
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - swarm-liberty-system
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'   # Use up to 0.5 CPU core on M4 Pro (equivalent to 1 ACU)
+          memory: 2048M # Limit memory usage to 2 GiB (equivalent to 1 ACU)
+        reservations:
+          cpus: '0.25'  # Reserve at least 0.25 CPU core on M4 Pro
+          memory: 256M # Reserve at least 1 GiB RAM (~0.5 ACU)
+
+  swarm-liberty-seq:
+    image: datalust/seq
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_API_KEY: "01jErQ4kB7D11e78TyX92WqBN8"
+      SEQ_FIRSTRUN_NOAUTHENTICATION: "true"
+    ports:
+      - "5341:5341"
+      - "5340:80"
+    networks:
+      - swarm-liberty-system
+    volumes:
+      - swarm-liberty-seq-data:/data
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1024M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  swarm-liberty-traefik:
+    image: traefik:v2.10
+    command:
+      - "--providers.docker.swarmmode=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.forwardedHeaders.insecure=true"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+    ports:
+      - "81:80"
+      - "8081:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    deploy:
+      mode: replicated
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - swarm-liberty-system
+
+  swarm-liberty-db-migration:
+    platform: linux/amd64
+    image: ${REGISTRY:-liberty}/reservation/db-migration:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/modules/Liberty.Reservation.DbMigration/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ApplicationName: "liberty-reservation-db-migration"
+      App_Name: "Liberty.Reservation.DbMigration"
+      App_Version: "0.0.1"
+      ConnectionStrings__MigrationsAssembly: "Liberty.Reservation.DbMigration"
+      ConnectionStrings__DataContextConnection: "Server=swarm-liberty-db;Port=5432;Database=liberty_reservation;User id=postgres;Pwd=;"
+    stdin_open: true
+    tty: true
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    networks:
+      - swarm-liberty-system
+    depends_on:
+      - swarm-liberty-db
+
+  swarm-liberty-site-webapi:
+    platform: linux/amd64
+    image: ${REGISTRY:-liberty}/reservation/site-webapi:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/services/site/Liberty.Reservation.Site.WebAPI/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ASPNETCORE_URLS: http://+:3004
+      ApplicationName: "liberty-reservation-site-webapi"
+      App_Name: "Liberty.Reservation.Site.WebApi"
+      ConnectionStrings__DataContextConnection: "Server=swarm-liberty-db;Port=5432;Database=liberty_reservation;User id=postgres;Pwd=;Pooling=true;Minimum Pool Size=5;Maximum Pool Size=15;Connection Idle Lifetime=300;"
+      Services__MembershipFacilityService__DataContextConnection: "Server=swarm-liberty-db;Port=5432;Database=liberty_facility;User id=postgres;Pwd=;Pooling=true;Minimum Pool Size=5;Maximum Pool Size=15;Connection Idle Lifetime=300;"
+      ConnectionPool__MaximumNumberOfConcurrentEntries: 50
+      SerilogLogging__WriteToSeq__Enabled: "true"
+      SerilogLogging__WriteToSeq__Url: "http://swarm-liberty-seq:80"
+      SerilogLogging__WriteToSeq__ApiKey: "01jErQ4kB7D11e78TyX92WqBN8"
+      Redis__Enabled: "true"
+      Redis__UrlConfiguration: "swarm-liberty-redis:6379,password=01j6efde8q4"
+      Redis__InstanceName: "L:Res:Site:"
+      Redis__SlidingExpirationInSecond: "6000"
+      Identity__Jwt__Authority: ""
+      Identity__AccessCode__Code: "01j531d4hct3k03h9c4zgptkq8"
+      SecretKey__HmacSecretKey: "LibertyHmacSecretKey12345"
+      Services__BatchSchedulerService__Url: "http://swarm-liberty-batch-scheduler:3144"
+      Services__BatchSchedulerService__AccessCode: "01JAPEP5KQ5E7B0TDSD47YR7ZS"
+      MailTemplate__ApplicationName: "Plan Reservation System. Liberty co,.ltd"
+      MailTemplate__ManagerURL: "http://fe.manager.local.com/reservation/detail/{id}?facilityCode={facilityCode}"
+      MailTemplate__UserURL: "http://fe.user.local.com/booking-history/{id}"
+      MailTemplate__GuestURL: "http://fe.user.local.com/{siteCode}/{facilityCode}/plan-reservation/email-verified/{guestCode}"
+    # ports:
+    #   - target: 3004
+    #     published: 3004
+    #     protocol: tcp
+    #     mode: ingress
+    deploy:
+      mode: replicated
+      replicas: 2
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.site-webapi.rule=PathPrefix(`/`)"
+        - "traefik.http.services.site-webapi.loadbalancer.server.port=3004"
+        - "traefik.http.services.site-webapi.loadbalancer.sticky=true"
+        - "traefik.http.routers.site-webapi.entrypoints=web"
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1024M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    networks:
+      - swarm-liberty-system
+    depends_on:
+      - swarm-liberty-db
+      - swarm-liberty-db-migration
+      - swarm-liberty-redis
+      - swarm-liberty-seq
+
+volumes:
+  swarm-liberty-db-data:
+  swarm-liberty-seq-data:
+
+networks:
+  swarm-liberty-system:
+    driver: overlay
