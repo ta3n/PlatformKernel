@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>BlueprintCqrs.Domain.Services</RootNamespace>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JHipsterNet.Core" />
+    <PackageReference Include="AutoMapper" />
+    <PackageReference Include="LanguageExt.Core" />
+    <PackageReference Include="MailKit" />
+    <PackageReference Include="MimeKit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlueprintCqrs.Infrastructure\BlueprintCqrs.Infrastructure.csproj" />
+    <ProjectReference Include="..\BlueprintCqrs.Domain\BlueprintCqrs.Domain.csproj" />
+    <ProjectReference Include="..\BlueprintCqrs.Crosscutting\BlueprintCqrs.Crosscutting.csproj" />
+  </ItemGroup>
+
+</Project>

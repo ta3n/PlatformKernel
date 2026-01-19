@@ -1,0 +1,36 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "authenticationType": "jwt",
+    "baseName": "BlueprintCqrs",
+    "blueprints": [
+      {
+        "name": "generator-jhipster-dotnetcore",
+        "version": "4.5.0"
+      }
+    ],
+    "clientFramework": "react",
+    "clientTestFrameworks": [],
+    "clientTheme": "none",
+    "cqrsEnabled": true,
+    "creationTimestamp": 1768755174969,
+    "databaseChoice": "postgresql",
+    "databaseType": "sqllite",
+    "dtoSuffix": "Dto",
+    "enableTranslation": true,
+    "entities": [],
+    "jhipsterVersion": "8.10.0",
+    "jwtSecretKey": "NTFkZWQ3MmNkMWU5OTYzZTM3MzYxNTIzNTZkNzg2ZmE3ZDQ0ZjkxMzE3YjllMjhmMDRhNGQ2ZmM2ZDQ5MzgzOGNhM2ZjZWJlNDU5YmJmMGI3MzI2MWY3NTgzZDUwMzdiNWVjZQ==",
+    "languages": ["en"],
+    "microfrontend": null,
+    "microfrontends": [],
+    "namespace": "BlueprintCqrs",
+    "nativeLanguage": "en",
+    "prodDatabaseType": "sql",
+    "serverPort": "5678",
+    "skipCommitHook": true,
+    "testFrameworks": [],
+    "withAdminUi": false,
+    "withTerraformAzureScripts": null
+  }
+}

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>BlueprintCqrs.Application</RootNamespace>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JHipsterNet.Core" />
+    <PackageReference Include="AutoMapper" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlueprintCqrs.Domain\BlueprintCqrs.Domain.csproj" />
+    <ProjectReference Include="..\BlueprintCqrs.Domain.Services\BlueprintCqrs.Domain.Services.csproj" />
+    <ProjectReference Include="..\BlueprintCqrs.Dto\BlueprintCqrs.Dto.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>BlueprintCqrs.Infrastructure</RootNamespace>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlueprintCqrs.Domain\BlueprintCqrs.Domain.csproj" />
+    <ProjectReference Include="..\BlueprintCqrs.Dto\BlueprintCqrs.Dto.csproj" />
+    <ProjectReference Include="..\BlueprintCqrs.Crosscutting\BlueprintCqrs.Crosscutting.csproj" />
+  </ItemGroup>
+
+</Project>
