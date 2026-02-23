@@ -8,6 +8,7 @@ tasks:
   build:
     desc: Restore, build, and show size
     cmds:
+      - dotnet clean
       - dotnet restore
       - dotnet build --no-restore --tl --no-incremental -warnaserror -maxcpucount
       - dotnet list package --vulnerable

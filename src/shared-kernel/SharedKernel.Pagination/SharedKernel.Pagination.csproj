@@ -12,6 +12,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharedKernel.Entity\SharedKernel.Entity.csproj" />
-    <ProjectReference Include="..\PlatformKernel.Entity\PlatformKernel.Entity.csproj" />
   </ItemGroup>
 </Project>

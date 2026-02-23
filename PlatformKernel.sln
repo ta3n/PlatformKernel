@@ -17,8 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared Kernel", "Shared Kernel", "{368DC489-458A-4B26-A2B0-DAAD0D30CC8E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blueprint Service", "Blueprint Service", "{02C2C0AE-9138-45C6-BBAC-051BAE422F6D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Entity", "src\shared-kernel\SharedKernel.Entity\SharedKernel.Entity.csproj", "{0BC4064A-EE16-4841-A22B-4ACC77E482E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.ServiceDefaults", "src\shared-kernel\SharedKernel.ServiceDefaults\SharedKernel.ServiceDefaults.csproj", "{006A0E8A-C508-4D28-967F-9D7FE6E3167F}"
@@ -47,16 +45,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Cache", "src\s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.IntegrationEvent", "src\shared-kernel\SharedKernel.IntegrationEvent\SharedKernel.IntegrationEvent.csproj", "{E62C1A7A-44EF-4B74-B6FC-7A1237072965}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint.Service.DbMigration", "src\blueprint-service\Blueprint.Service.DbMigration\Blueprint.Service.DbMigration.csproj", "{56439202-BA1F-46CB-B3AF-ACAC2489DF31}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint.Service.Base.Application", "src\blueprint-service\Blueprint.Service.Base.Application\Blueprint.Service.Base.Application.csproj", "{2139D496-ABD2-44D9-B336-C63CF6C3BDF4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint.Service.Application", "src\blueprint-service\Blueprint.Service.Application\Blueprint.Service.Application.csproj", "{D713752A-2962-42B9-AA22-B5B7DBE2B08F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint.Service.WebApi.Application", "src\blueprint-service\Blueprint.Service.WebApi.Application\Blueprint.Service.WebApi.Application.csproj", "{7B300A20-4547-4CD8-94FC-A0BE978C011F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformKernel.Service.WebApi", "src\blueprint-service\PlatformKernel.Service.WebApi\PlatformKernel.Service.WebApi.csproj", "{112E646C-5FA9-4C6F-8253-54E231B8B7A5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,7 +55,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{368DC489-458A-4B26-A2B0-DAAD0D30CC8E} = {6967A61C-9635-4066-82F0-596DD8ABDF1D}
-		{02C2C0AE-9138-45C6-BBAC-051BAE422F6D} = {6967A61C-9635-4066-82F0-596DD8ABDF1D}
 		{0BC4064A-EE16-4841-A22B-4ACC77E482E8} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
 		{006A0E8A-C508-4D28-967F-9D7FE6E3167F} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
 		{FCA716EA-608A-4EF5-BE07-A334E064DF72} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
@@ -82,11 +69,6 @@ Global
 		{0E324CD4-0052-4B0B-95ED-54BBED0CECC7} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
 		{32C99D40-0D20-47C2-80C0-6DDC2EEECB4C} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
 		{E62C1A7A-44EF-4B74-B6FC-7A1237072965} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
-		{56439202-BA1F-46CB-B3AF-ACAC2489DF31} = {02C2C0AE-9138-45C6-BBAC-051BAE422F6D}
-		{2139D496-ABD2-44D9-B336-C63CF6C3BDF4} = {02C2C0AE-9138-45C6-BBAC-051BAE422F6D}
-		{D713752A-2962-42B9-AA22-B5B7DBE2B08F} = {02C2C0AE-9138-45C6-BBAC-051BAE422F6D}
-		{7B300A20-4547-4CD8-94FC-A0BE978C011F} = {02C2C0AE-9138-45C6-BBAC-051BAE422F6D}
-		{112E646C-5FA9-4C6F-8253-54E231B8B7A5} = {02C2C0AE-9138-45C6-BBAC-051BAE422F6D}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0BC4064A-EE16-4841-A22B-4ACC77E482E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -145,25 +127,5 @@ Global
 		{E62C1A7A-44EF-4B74-B6FC-7A1237072965}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E62C1A7A-44EF-4B74-B6FC-7A1237072965}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E62C1A7A-44EF-4B74-B6FC-7A1237072965}.Release|Any CPU.Build.0 = Release|Any CPU
-		{56439202-BA1F-46CB-B3AF-ACAC2489DF31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{56439202-BA1F-46CB-B3AF-ACAC2489DF31}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{56439202-BA1F-46CB-B3AF-ACAC2489DF31}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{56439202-BA1F-46CB-B3AF-ACAC2489DF31}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2139D496-ABD2-44D9-B336-C63CF6C3BDF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2139D496-ABD2-44D9-B336-C63CF6C3BDF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2139D496-ABD2-44D9-B336-C63CF6C3BDF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2139D496-ABD2-44D9-B336-C63CF6C3BDF4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D713752A-2962-42B9-AA22-B5B7DBE2B08F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D713752A-2962-42B9-AA22-B5B7DBE2B08F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D713752A-2962-42B9-AA22-B5B7DBE2B08F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D713752A-2962-42B9-AA22-B5B7DBE2B08F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7B300A20-4547-4CD8-94FC-A0BE978C011F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7B300A20-4547-4CD8-94FC-A0BE978C011F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7B300A20-4547-4CD8-94FC-A0BE978C011F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7B300A20-4547-4CD8-94FC-A0BE978C011F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{112E646C-5FA9-4C6F-8253-54E231B8B7A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{112E646C-5FA9-4C6F-8253-54E231B8B7A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{112E646C-5FA9-4C6F-8253-54E231B8B7A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{112E646C-5FA9-4C6F-8253-54E231B8B7A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

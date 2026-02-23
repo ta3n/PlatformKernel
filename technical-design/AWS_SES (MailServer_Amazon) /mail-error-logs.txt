@@ -1,0 +1,55 @@
+at Mail.Worker.Consumers.BookingSendMailConsumer.SendEmailAsync(MessageDto message) in C:\Users\TaNguyen\source\repos\src\services\mail\Mail.Worker\Consumers\BookingSendMailConsumer.cs:line 128
+   at MailKit.Net.Smtp.SmtpClient.ParseMessageDataResponse(MimeMessage message, SmtpResponse response)
+   at MailKit.Net.Smtp.SmtpClient.MessageDataAsync(FormatOptions options, MimeMessage message, Int64 size, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at ApplicationShared.Domains.Services.Mails.SmtpMailService.SendAsync(String[] tos, String subject, String body, String fromDisplayName) in C:\Users\TaNguyen\source\repos\src\ApplicationShared\Domains\Services\Mails\SMTPMailService.cs:line 60
+   at Mail.Worker.Consumers.BookingSendMailConsumer.SendEmailAsync(MessageDto message) in C:\Users\TaNguyen\source\repos\src\services\mail\Mail.Worker\Consumers\BookingSendMailConsumer.cs:line 128
+Error when sending email:
+Transaction failed: Address length is more than 320 characters long: '=?utf-8?q?=E3=80=90SAAADDDDDDDDDDDDDDDDDDDDDDDSsdssdsadasdasdasdasdasdasda?= =?utf-8?q?sdasdasqwrgsdgasdasdqweqasfadsasdqweqeSAAADDDDDDDDDDDDDDDDDDD?= =?utf-8?q?DDDDSsdssdsadasdasdasdasdasdasdasdasdasqwrgsdgasdasdqweqasfad?= =?utf-8?b?c2FzZHFkc2FzZHHjgJEtIOadseS6rOS6iOe0hOOCt+OCueODhuODoOmAmuefpQ==?= <noreply@admin.com>'.
+   at MailKit.Net.Smtp.SmtpClient.ParseMessageDataResponse(MimeMessage message, SmtpResponse response)
+   at MailKit.Net.Smtp.SmtpClient.MessageDataAsync(FormatOptions options, MimeMessage message, Int64 size, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at ApplicationShared.Domains.Services.Mails.SmtpMailService.SendAsync(String[] tos, String subject, String body, String fromDisplayName) in C:\Users\TaNguyen\source\repos\src\ApplicationShared\Domains\Services\Mails\SMTPMailService.cs:line 60
+   at Mail.Worker.Consumers.BookingSendMailConsumer.SendEmailAsync(MessageDto message) in C:\Users\TaNguyen\source\repos\src\services\mail\Mail.Worker\Consumers\BookingSendMailConsumer.cs:line 128
+Error when sending email:
+Transaction failed: Address length is more than 320 characters long: '=?utf-8?q?=E3=80=90SAAADDDDDDDDDDDDDDDDDDDDDDDSsdssdsadasdasdasdasdasdasda?= =?utf-8?q?sdasdasqwrgsdgasdasdqweqasfadsasdqweqeSAAADDDDDDDDDDDDDDDDDDD?= =?utf-8?q?DDDDSsdssdsadasdasdasdasdasdasdasdasdasqwrgsdgasdasdqweqasfad?= =?utf-8?b?c2FzZHFkc2FzZHHjgJEtIOadseS6rOS6iOe0hOOCt+OCueODhuODoOmAmuefpQ==?= <noreply@admin.com>'.
+Error when sending email:
+Transaction failed: Address length is more than 320 characters long: '=?utf-8?q?=E3=80=90SAAADDDDDDDDDDDDDDDDDDDDDDDSsdssdsadasdasdasdasdasdasda?= =?utf-8?q?sdasdasqwrgsdgasdasdqweqasfadsasdqweqeSAAADDDDDDDDDDDDDDDDDDD?= =?utf-8?q?DDDDSsdssdsadasdasdasdasdasdasdasdasdasqwrgsdgasdasdqweqasfad?= =?utf-8?b?c2FzZHFkc2FzZHHjgJEtIOadseS6rOS6iOe0hOOCt+OCueODhuODoOmAmuefpQ==?= <noreply@admin.com>'.
+   at MailKit.Net.Smtp.SmtpClient.ParseMessageDataResponse(MimeMessage message, SmtpResponse response)
+   at MailKit.Net.Smtp.SmtpClient.MessageDataAsync(FormatOptions options, MimeMessage message, Int64 size, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at ApplicationShared.Domains.Services.Mails.SmtpMailService.SendAsync(String[] tos, String subject, String body, String fromDisplayName) in C:\Users\TaNguyen\source\repos\src\ApplicationShared\Domains\Services\Mails\SMTPMailService.cs:line 60
+   at Mail.Worker.Consumers.BookingSendMailConsumer.SendEmailAsync(MessageDto message) in C:\Users\TaNguyen\source\repos\src\services\mail\Mail.Worker\Consumers\BookingSendMailConsumer.cs:line 128
+   at MailKit.Net.Smtp.SmtpClient.ParseMessageDataResponse(MimeMessage message, SmtpResponse response)
+   at MailKit.Net.Smtp.SmtpClient.MessageDataAsync(FormatOptions options, MimeMessage message, Int64 size, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at ApplicationShared.Domains.Services.Mails.SmtpMailService.SendAsync(String[] tos, String subject, String body, String fromDisplayName) in C:\Users\TaNguyen\source\repos\src\ApplicationShared\Domains\Services\Mails\SMTPMailService.cs:line 60
+   at Mail.Worker.Consumers.BookingSendMailConsumer.SendEmailAsync(MessageDto message) in C:\Users\TaNguyen\source\repos\src\services\mail\Mail.Worker\Consumers\BookingSendMailConsumer.cs:line 128
+Error when sending email:
+Transaction failed: Address length is more than 320 characters long: '=?utf-8?q?=E3=80=90SAAADDDDDDDDDDDDDDDDDDDDDDDSsdssdsadasdasdasdasdasdasda?= =?utf-8?q?sdasdasqwrgsdgasdasdqweqasfadsasdqweqeSAAADDDDDDDDDDDDDDDDDDD?= =?utf-8?q?DDDDSsdssdsadasdasdasdasdasdasdasdasdasqwrgsdgasdasdqweqasfad?= =?utf-8?b?c2FzZHFkc2FzZHHjgJEtIOadseS6rOS6iOe0hOOCt+OCueODhuODoOmAmuefpQ==?= <noreply@admin.com>'.
+   at MailKit.Net.Smtp.SmtpClient.ParseMessageDataResponse(MimeMessage message, SmtpResponse response)
+   at MailKit.Net.Smtp.SmtpClient.MessageDataAsync(FormatOptions options, MimeMessage message, Int64 size, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at ApplicationShared.Domains.Services.Mails.SmtpMailService.SendAsync(String[] tos, String subject, String body, String fromDisplayName) in C:\Users\TaNguyen\source\repos\src\ApplicationShared\Domains\Services\Mails\SMTPMailService.cs:line 60
+   at Mail.Worker.Consumers.BookingSendMailConsumer.SendEmailAsync(MessageDto message) in C:\Users\TaNguyen\source\repos\src\services\mail\Mail.Worker\Consumers\BookingSendMailConsumer.cs:line 128
+Error when sending email:
+Transaction failed: Address length is more than 320 characters long: '=?utf-8?q?=E3=80=90SAAADDDDDDDDDDDDDDDDDDDDDDDSsdssdsadasdasdasdasdasdasda?= =?utf-8?q?sdasdasqwrgsdgasdasdqweqasfadsasdqweqeSAAADDDDDDDDDDDDDDDDDDD?= =?utf-8?q?DDDDSsdssdsadasdasdasdasdasdasdasdasdasqwrgsdgasdasdqweqasfad?= =?utf-8?b?c2FzZHFkc2FzZHHjgJEtIOadseS6rOS6iOe0hOOCt+OCueODhuODoOmAmuefpQ==?= <noreply@admin.com>'.
+   at MailKit.Net.Smtp.SmtpClient.ParseMessageDataResponse(MimeMessage message, SmtpResponse response)
+   at MailKit.Net.Smtp.SmtpClient.MessageDataAsync(FormatOptions options, MimeMessage message, Int64 size, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at ApplicationShared.Domains.Services.Mails.SmtpMailService.SendAsync(String[] tos, String subject, String body, String fromDisplayName) in C:\Users\TaNguyen\source\repos\src\ApplicationShared\Domains\Services\Mails\SMTPMailService.cs:line 60
+   at Mail.Worker.Consumers.BookingSendMailConsumer.SendEmailAsync(MessageDto message) in C:\Users\TaNguyen\source\repos\src\services\mail\Mail.Worker\Consumers\BookingSendMailConsumer.cs:line 128
+Error when sending email:
+Transaction failed: Address length is more than 320 characters long: '=?utf-8?q?=E3=80=90SAAADDDDDDDDDDDDDDDDDDDDDDDSsdssdsadasdasdasdasdasdasda?= =?utf-8?q?sdasdasqwrgsdgasdasdqweqasfadsasdqweqeSAAADDDDDDDDDDDDDDDDDDD?= =?utf-8?q?DDDDSsdssdsadasdasdasdasdasdasdasdasdasqwrgsdgasdasdqweqasfad?= =?utf-8?b?c2FzZHFkc2FzZHHjgJEtIOadseS6rOS6iOe0hOOCt+OCueODhuODoOmAmuefpQ==?= <noreply@admin.com>'.
+   at MailKit.Net.Smtp.SmtpClient.ParseMessageDataResponse(MimeMessage message, SmtpResponse response)
+   at MailKit.Net.Smtp.SmtpClient.MessageDataAsync(FormatOptions options, MimeMessage message, Int64 size, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at MailKit.Net.Smtp.SmtpClient.SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IList`1 recipients, CancellationToken cancellationToken, ITransferProgress progress)
+   at ApplicationShared.Domains.Services.Mails.SmtpMailService.SendAsync(String[] tos, String subject, String body, String fromDisplayName) in C:\Users\TaNguyen\source\repos\src\ApplicationShared\Domains\Services\Mails\SMTPMailService.cs:line 60
+   at Mail.Worker.Consumers.BookingSendMailConsumer.SendEmailAsync(MessageDto message) in C:\Users\TaNguyen\source\repos\src\services\mail\Mail.Worker\Consumers\BookingSendMailConsumer.cs:line 128
