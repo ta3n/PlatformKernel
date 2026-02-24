@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Grpc", "src\sh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.SysException", "src\shared-kernel\SharedKernel.SysException\SharedKernel.SysException.csproj", "{000F5F39-7245-48E5-B06D-73440DD769FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.ApplicationShared", "src\shared-kernel\SharedKernel.ApplicationShared\SharedKernel.ApplicationShared.csproj", "{9123AF70-A6F7-428E-8506-0AA1CE4CC2AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.AppShared", "src\shared-kernel\SharedKernel.AppShared\SharedKernel.AppShared.csproj", "{9123AF70-A6F7-428E-8506-0AA1CE4CC2AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Sentry", "src\shared-kernel\SharedKernel.Sentry\SharedKernel.Sentry.csproj", "{711E311B-66F3-4CF3-B33F-393D9EDDAE12}"
 EndProject
@@ -44,6 +44,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Cache", "src\shared-kernel\SharedKernel.Cache\SharedKernel.Cache.csproj", "{32C99D40-0D20-47C2-80C0-6DDC2EEECB4C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.IntegrationEvent", "src\shared-kernel\SharedKernel.IntegrationEvent\SharedKernel.IntegrationEvent.csproj", "{E62C1A7A-44EF-4B74-B6FC-7A1237072965}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.CQRS", "src\shared-kernel\SharedKernel.CQRS\SharedKernel.CQRS.csproj", "{E9364554-7664-48FE-B2A2-9239F98CE7B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.RepositoryBase", "src\shared-kernel\SharedKernel.RepositoryBase\SharedKernel.RepositoryBase.csproj", "{ED53A157-F363-408F-89C1-A0B8308100E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.ServiceBase", "src\shared-kernel\SharedKernel.ServiceBase\SharedKernel.ServiceBase.csproj", "{899B627B-BC25-4FD8-98B2-DF181EA30FD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +75,9 @@ Global
 		{0E324CD4-0052-4B0B-95ED-54BBED0CECC7} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
 		{32C99D40-0D20-47C2-80C0-6DDC2EEECB4C} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
 		{E62C1A7A-44EF-4B74-B6FC-7A1237072965} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
+		{E9364554-7664-48FE-B2A2-9239F98CE7B5} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
+		{ED53A157-F363-408F-89C1-A0B8308100E8} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
+		{899B627B-BC25-4FD8-98B2-DF181EA30FD4} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0BC4064A-EE16-4841-A22B-4ACC77E482E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -127,5 +136,17 @@ Global
 		{E62C1A7A-44EF-4B74-B6FC-7A1237072965}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E62C1A7A-44EF-4B74-B6FC-7A1237072965}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E62C1A7A-44EF-4B74-B6FC-7A1237072965}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9364554-7664-48FE-B2A2-9239F98CE7B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9364554-7664-48FE-B2A2-9239F98CE7B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9364554-7664-48FE-B2A2-9239F98CE7B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9364554-7664-48FE-B2A2-9239F98CE7B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED53A157-F363-408F-89C1-A0B8308100E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED53A157-F363-408F-89C1-A0B8308100E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED53A157-F363-408F-89C1-A0B8308100E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED53A157-F363-408F-89C1-A0B8308100E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{899B627B-BC25-4FD8-98B2-DF181EA30FD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{899B627B-BC25-4FD8-98B2-DF181EA30FD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{899B627B-BC25-4FD8-98B2-DF181EA30FD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{899B627B-BC25-4FD8-98B2-DF181EA30FD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

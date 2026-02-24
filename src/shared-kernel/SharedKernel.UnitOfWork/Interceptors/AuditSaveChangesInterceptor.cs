@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using SharedKernel.ApplicationShared.Utils;
+using SharedKernel.AppShared.Utils;
 using SharedKernel.Entity;
 
 namespace SharedKernel.UnitOfWork.Interceptors;

@@ -1,5 +1,5 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using Newtonsoft.Json;
 
 namespace SharedKernel.Pagination;
 

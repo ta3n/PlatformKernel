@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace SharedKernel.Pagination;
 
@@ -14,14 +14,14 @@ public class PageResponse
     /// This property represents the total count of items regardless of the current page being viewed.
     /// It is typically used for pagination purposes to inform about the overall size of the dataset.
     /// </remarks>
-    [JsonProperty("totalCount")]
+    [JsonPropertyName("totalCount")]
     public int TotalCount { get; set; }
 
     /// <summary>
     /// Gets or sets the size of the page for pagination, representing the number of items
     /// included in a single page.
     /// </summary>
-    [JsonProperty("size")]
+    [JsonPropertyName("size")]
     public int Size { get; set; }
 
     /// <summary>
@@ -32,7 +32,7 @@ public class PageResponse
     /// Typically used in conjunction with other pagination details such as total elements,
     /// total pages, and page size to generate or interpret pagination headers or responses.
     /// </remarks>
-    [JsonProperty("page")]
+    [JsonPropertyName("page")]
     public int Page { get; set; }
 
     /// <summary>
@@ -40,29 +40,29 @@ public class PageResponse
     /// This value represents the total number of discrete pages for the given collection
     /// when divided according to the page size.
     /// </summary>
-    [JsonProperty("totalPages")]
+    [JsonPropertyName("totalPages")]
     public int TotalPages { get; set; }
 
     /// <summary>
     /// Indicates whether the current page is the first page in a paginated response.
     /// </summary>
-    [JsonProperty("isFirst")]
+    [JsonPropertyName("isFirst")]
     public bool IsFirst { get; set; }
 
     /// <summary>
     /// Indicates whether the current page is the last page in a paginated response.
     /// </summary>
-    [JsonProperty("isLast")]
+    [JsonPropertyName("isLast")]
     public bool IsLast { get; set; }
 
     /// <summary>
     /// Indicates whether there is a subsequent page available in the paginated response.
     /// </summary>
-    [JsonProperty("hasNext")]
+    [JsonPropertyName("hasNext")]
     public bool HasNext { get; set; }
 
     /// Indicates whether there is a preceding page available in the paginated result set.
     /// This property is typically used to determine if navigation to a previous page is possible.
-    [JsonProperty("hasPrevious")]
+    [JsonPropertyName("hasPrevious")]
     public bool HasPrevious { get; set; }
 }

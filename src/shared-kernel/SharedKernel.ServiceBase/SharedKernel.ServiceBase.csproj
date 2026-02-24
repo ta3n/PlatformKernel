@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SharedKernel.Cache\SharedKernel.Cache.csproj" />
+    <ProjectReference Include="..\SharedKernel.Entity\SharedKernel.Entity.csproj" />
+    <ProjectReference Include="..\SharedKernel.Pagination\SharedKernel.Pagination.csproj" />
+    <ProjectReference Include="..\SharedKernel.RepositoryBase\SharedKernel.RepositoryBase.csproj" />
+  </ItemGroup>
+
+</Project>

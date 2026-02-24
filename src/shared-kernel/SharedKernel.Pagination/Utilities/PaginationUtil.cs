@@ -1,5 +1,5 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 
 namespace SharedKernel.Pagination.Utilities;
 
@@ -26,7 +26,7 @@ public static class PaginationUtil
             IsLast = page.IsLast
         };
         headers.Append(TotalCountHeaderName, page.TotalElements.ToString());
-        headers.Append(PaginationHeaderName, JsonConvert.SerializeObject(pageDto));
+        headers.Append(PaginationHeaderName, JsonSerializer.Serialize(pageDto));
         return headers;
     }
 }

@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+using SharedKernel.AppShared.Utils;
 using StackExchange.Redis.Extensions.Core.Configuration;
 
 namespace SharedKernel.Cache.Utils;
@@ -12,12 +12,6 @@ namespace SharedKernel.Cache.Utils;
 /// </summary>
 public static class CacheHelper
 {
-    private static readonly JsonSerializerSettings JsonOptions = new()
-    {
-        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-        ContractResolver = new CamelCasePropertyNamesContractResolver()
-    };
-
     /// <summary>
     /// Serializes an object to its JSON representation using camel case property naming and ensures that reference loops are ignored.
     /// </summary>
@@ -29,7 +23,7 @@ public static class CacheHelper
     {
         return obj is null
             ? null
-            : JsonConvert.SerializeObject(obj, JsonOptions);
+            : JsonSerializer.Serialize(obj, JsonSettings.OptimizedSystemTextJson);
     }
 
     /// <summary>
@@ -44,7 +38,7 @@ public static class CacheHelper
     {
         return string.IsNullOrWhiteSpace(json)
             ? default
-            : JsonConvert.DeserializeObject<T>(json, JsonOptions);
+            : JsonSerializer.Deserialize<T>(json, JsonSettings.OptimizedSystemTextJson);
     }
 
     /// <summary>

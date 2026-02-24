@@ -12,10 +12,10 @@
     <PackageReference Include="Serilog" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharedKernel.ApplicationShared\SharedKernel.ApplicationShared.csproj" />
+    <ProjectReference Include="..\SharedKernel.AppShared\SharedKernel.AppShared.csproj" />
     <ProjectReference Include="..\SharedKernel.Entity\SharedKernel.Entity.csproj" />
     <ProjectReference Include="..\SharedKernel.Specification\SharedKernel.Specification.csproj" />
-    <ProjectReference Include="..\SharedKernel.ApplicationShared\SharedKernel.ApplicationShared.csproj" />
+    <ProjectReference Include="..\SharedKernel.AppShared\SharedKernel.AppShared.csproj" />
     <ProjectReference Include="..\SharedKernel.Entity\SharedKernel.Entity.csproj" />
     <ProjectReference Include="..\SharedKernel.Specification\SharedKernel.Specification.csproj" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-using SharedKernel.ApplicationShared.Extensions;
+using SharedKernel.AppShared.Extensions;
 
 namespace SharedKernel.SysException.Exceptions;
 
