@@ -52,8 +52,8 @@ This document outlines tools and configurations to protect source code in GitHub
   - ✅ Require approvals: `1`
   - ✅ Dismiss stale pull request approvals when new commits are pushed
   - ✅ Require approval of the most recent reviewable push
-  - ✅ Allow specified actors to bypass required pull requests: `liberty-ishihara` (Optional)
-  - ✅ Restrict who can dismiss pull request reviews: `liberty-ishihara`
+  - ✅ Allow specified actors to bypass required pull requests: (Optional)
+  - ✅ Restrict who can dismiss pull request reviews
 
 - ✅ Require status checks to pass before merging
 - ✅ Require conversation resolution before merging
@@ -62,9 +62,10 @@ This document outlines tools and configurations to protect source code in GitHub
 - ✅ Restrict who can push to matching branches:
 
   ```text
-  yopaz-liberty
-  liberty-system
-  liberty-ishihara
+  main
+  prod
+  staging
+  develop
   ```
 
 ---

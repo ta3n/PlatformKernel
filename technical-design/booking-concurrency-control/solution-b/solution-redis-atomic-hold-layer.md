@@ -42,7 +42,7 @@
 
 ## 1. Activity Diagram
 
-![img.png](../../../docs/images/Liberty%20SystemArchitect-Booking%20flow%20-%20Overview.drawio.png)
+![img.png](../../../docs/images/Booking%20flow%20-%20Overview.drawio.png)
 
 ## 2. A room holding system is designed to
 
@@ -388,9 +388,7 @@ Before running the test, ensure the following:
       "access_code": "",
       "content-type": "application/json-patch+json",
       "dnt": "1",
-      "origin": "https://stage.site.reservation.liberty-service.com",
       "priority": "u=1, i",
-      "referer": "https://stage.site.reservation.liberty-service.com/",
       "sec-ch-ua": "\"Not:A-Brand\";v=\"24\", \"Chromium\";v=\"134\"",
       "sec-ch-ua-mobile": "?0",
       "sec-ch-ua-platform": "\"macOS\"",

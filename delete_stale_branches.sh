@@ -6,9 +6,6 @@ PROTECTED_BRANCHES=(
     "prod"
     "stage"
     "develop"
-    "develop-yopaz"
-    "develop-liberty"
-    "deploy"
 )
 
 # Convert array into regex pattern for grep

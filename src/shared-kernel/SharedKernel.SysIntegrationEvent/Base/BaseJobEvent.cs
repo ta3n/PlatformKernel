@@ -1,7 +1,7 @@
 using System.Text.Json;
 using MassTransit;
 
-namespace Liberty.SysIntegrationEvent.Base;
+namespace SharedKernel.SysIntegrationEvent.Base;
 
 /// <summary>
 /// Represents the base class for job-related events in the system.

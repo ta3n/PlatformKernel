@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.ServiceBase", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyAudit", "dependency-audit\DependencyAudit.csproj", "{94FAAD46-029B-4B06-B934-70F69F82367B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.SysIntegrationEvent", "src\shared-kernel\SharedKernel.SysIntegrationEvent\SharedKernel.SysIntegrationEvent.csproj", "{875B7217-F1DF-4E78-9944-36B4C13A5389}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +82,7 @@ Global
 		{E9364554-7664-48FE-B2A2-9239F98CE7B5} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
 		{ED53A157-F363-408F-89C1-A0B8308100E8} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
 		{899B627B-BC25-4FD8-98B2-DF181EA30FD4} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
+		{875B7217-F1DF-4E78-9944-36B4C13A5389} = {368DC489-458A-4B26-A2B0-DAAD0D30CC8E}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0BC4064A-EE16-4841-A22B-4ACC77E482E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -154,5 +157,9 @@ Global
 		{94FAAD46-029B-4B06-B934-70F69F82367B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94FAAD46-029B-4B06-B934-70F69F82367B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94FAAD46-029B-4B06-B934-70F69F82367B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{875B7217-F1DF-4E78-9944-36B4C13A5389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{875B7217-F1DF-4E78-9944-36B4C13A5389}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{875B7217-F1DF-4E78-9944-36B4C13A5389}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{875B7217-F1DF-4E78-9944-36B4C13A5389}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

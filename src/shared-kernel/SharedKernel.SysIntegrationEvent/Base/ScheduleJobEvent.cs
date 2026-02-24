@@ -1,4 +1,4 @@
-namespace Liberty.SysIntegrationEvent.Base;
+namespace SharedKernel.SysIntegrationEvent.Base;
 
 /// <summary>
 /// Represents an event for scheduling jobs within the system.

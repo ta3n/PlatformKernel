@@ -1,4 +1,4 @@
-namespace Liberty.SysIntegrationEvent;
+namespace SharedKernel.SysIntegrationEvent;
 
 public class AssemblyDefinition
 {

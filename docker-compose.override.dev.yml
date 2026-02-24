@@ -1,0 +1,30 @@
+services:
+  platform-kernel-db:
+    environment:
+      POSTGRES_PASSWORD:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5435:5432"
+
+  platform-kernel-pgadmin4:
+    ports:
+      - "8988:80"
+
+  platform-kernel-redis:
+    ports:
+      - "6379:6379"
+
+  platform-kernel-redis-commander:
+    ports:
+      - "8881:8081"
+
+  platform-kernel-seq:
+    ports:
+      - "5341:5341"
+      - "5340:80"
+
+  platform-kernel-minio:
+    ports:
+      - "9010:9000"                       # MinIO Console
+      - "9011:9001"                       # MinIO Management Console
+    command: server /data --console-address ":9011"

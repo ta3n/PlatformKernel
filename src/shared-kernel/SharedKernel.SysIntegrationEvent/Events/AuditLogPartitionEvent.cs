@@ -11,7 +11,7 @@ namespace SharedKernel.SysIntegrationEvent.Events;
 /// initiate or reference tasks related to creating partitions for booking audit logs.
 /// Upon instantiation, the EventName property is automatically set to the name of the class.
 /// </remarks>
-public class BookingAuditLogPartitionEvent : ScheduleJobEvent
+public class AuditLogPartitionEvent : ScheduleJobEvent
 {
     /// <summary>
     /// Represents an event for creating audit log partitions related to bookings in the system.
@@ -21,8 +21,8 @@ public class BookingAuditLogPartitionEvent : ScheduleJobEvent
     /// used to define job scheduling events for partitioning booking audit logs.
     /// The <c>EventName</c> property is automatically set to the name of the class.
     /// </remarks>
-    public BookingAuditLogPartitionEvent()
+    public AuditLogPartitionEvent()
     {
-        EventName = nameof(BookingAuditLogPartitionEvent);
+        EventName = nameof(AuditLogPartitionEvent);
     }
 }

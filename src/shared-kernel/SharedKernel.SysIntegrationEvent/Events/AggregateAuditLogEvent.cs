@@ -11,7 +11,7 @@ namespace SharedKernel.SysIntegrationEvent.Events;
 /// Booking Aggregate. It provides a concrete implementation of an event type
 /// with the EventName property automatically set to the class name.
 /// </remarks>
-public class BookingAggregateAuditLogEvent : ScheduleJobEvent
+public class AggregateAuditLogEvent : ScheduleJobEvent
 {
     /// <summary>
     /// Represents an audit log event specific to a booking aggregate.
@@ -22,8 +22,8 @@ public class BookingAggregateAuditLogEvent : ScheduleJobEvent
     /// It initializes the EventName property to the name of the class, providing a clear
     /// identification for event handling in the system.
     /// </remarks>
-    public BookingAggregateAuditLogEvent()
+    public AggregateAuditLogEvent()
     {
-        EventName = nameof(BookingAggregateAuditLogEvent);
+        EventName = nameof(AggregateAuditLogEvent);
     }
 }

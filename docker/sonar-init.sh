@@ -14,14 +14,14 @@ echo "Changing default admin password..."
 curl -u admin:admin -X POST \
   "$SONAR_URL/api/users/change_password?login=admin&previousPassword=admin&password=$SONAR_PASSWORD"
 
-echo "Creating new Quality Gate: Liberty-Quality-Gate..."
+echo "Creating new Quality Gate: My-Quality-Gate..."
 curl -u admin:$SONAR_PASSWORD -X POST \
-  "$SONAR_URL/api/qualitygates/create?name=Liberty-Quality-Gate"
+  "$SONAR_URL/api/qualitygates/create?name=My-Quality-Gate"
 
 echo "Adding condition: Code Coverage >= 55%"
 curl -u admin:$SONAR_PASSWORD -X POST \
   "$SONAR_URL/api/qualitygates/create_condition" \
-  --data-urlencode "gateName=Liberty-Quality-Gate" \
+  --data-urlencode "gateName=My-Quality-Gate" \
   --data-urlencode "metric=coverage" \
   --data-urlencode "op=LT" \
   --data-urlencode "error=55"
@@ -29,14 +29,14 @@ curl -u admin:$SONAR_PASSWORD -X POST \
 echo "Adding condition: Duplicated Lines <= 20%"
 curl -u admin:$SONAR_PASSWORD -X POST \
   "$SONAR_URL/api/qualitygates/create_condition" \
-  --data-urlencode "gateName=Liberty-Quality-Gate" \
+  --data-urlencode "gateName=My-Quality-Gate" \
   --data-urlencode "metric=duplicated_lines_density" \
   --data-urlencode "op=GT" \
   --data-urlencode "error=20"
 
-echo "Setting Liberty-Quality-Gate as default..."
+echo "Setting My-Quality-Gate as default..."
 curl -u admin:$SONAR_PASSWORD -X POST \
   "$SONAR_URL/api/qualitygates/set_as_default" \
-  --data-urlencode "name=Liberty-Quality-Gate"
+  --data-urlencode "name=My-Quality-Gate"
 
 echo "Initialization complete."

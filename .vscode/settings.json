@@ -1,0 +1,26 @@
+{
+  "[al]": {
+    "editor.formatOnSave": true
+  },
+  "al.enableCodeAnalysis": true,
+  "al.backgroundCodeAnalysis": true,
+  "al.enableCodeActions": true,
+  "al.incrementalBuild": true,
+  "editor.codeLens": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/bin": true,
+    "**/obj": true
+  },
+  "explorerExclude.backup": {},
+  "cSpell.words": [
+    "Serilog",
+    "sonarqube",
+    "v'VVV"
+  ]
+}
