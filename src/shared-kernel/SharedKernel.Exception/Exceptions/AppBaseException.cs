@@ -1,4 +1,4 @@
-namespace SharedKernel.SysException.Exceptions;
+namespace SharedKernel.Exception.Exceptions;
 
 public class AppBaseException : AppException
 {
@@ -24,7 +24,7 @@ public class AppBaseException : AppException
 
     public AppBaseException(
         string message,
-        Exception innerException
+        System.Exception innerException
     ) : base(message, innerException)
     {
         ErrorCode = ErrorCode.E0100;
@@ -34,7 +34,7 @@ public class AppBaseException : AppException
     public AppBaseException(
         ErrorCode errorCode,
         string message,
-        Exception innerException
+        System.Exception innerException
     ) : base(message, innerException)
     {
         ErrorCode = errorCode;

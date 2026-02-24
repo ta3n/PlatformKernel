@@ -1,8 +1,8 @@
 ﻿using System.Data.Common;
 
-namespace SharedKernel.SysException.Exceptions;
+namespace SharedKernel.Exception.Exceptions;
 
-public abstract class AppException : Exception
+public abstract class AppException : System.Exception
 {
     public abstract ErrorCode ErrorCode { get; }
 
@@ -26,13 +26,13 @@ public abstract class AppException : Exception
 
     protected AppException(
         string? message,
-        Exception? innerException
+        System.Exception? innerException
     ) : base(message, innerException)
     {
     }
 
     public static AppException GetAppException(
-        Exception ex
+        System.Exception ex
     )
     {
         if (ex is DbException dbException)

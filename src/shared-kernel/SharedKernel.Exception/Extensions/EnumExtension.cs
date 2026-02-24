@@ -1,10 +1,10 @@
-﻿using SharedKernel.SysException.Attributes;
+﻿using SharedKernel.Exception.Attributes;
 
-namespace SharedKernel.SysException.Extensions;
+namespace SharedKernel.Exception.Extensions;
 
 public static class EnumExtension
 {
-    public static Exception GetException(
+    public static System.Exception GetException(
         this ErrorCode errorCode
     )
     {

@@ -1,6 +1,6 @@
 using SharedKernel.AppShared.Extensions;
 
-namespace SharedKernel.SysException.Exceptions;
+namespace SharedKernel.Exception.Exceptions;
 
 public class TooManyConcurrentUploadException : AppInvalidException
 {

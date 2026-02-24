@@ -1,4 +1,4 @@
-namespace SharedKernel.SysException.Exceptions;
+namespace SharedKernel.Exception.Exceptions;
 
 public abstract class AppNotfoundException : AppException
 {

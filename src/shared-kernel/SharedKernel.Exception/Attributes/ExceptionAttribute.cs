@@ -1,4 +1,4 @@
-﻿namespace SharedKernel.SysException.Attributes;
+﻿namespace SharedKernel.Exception.Attributes;
 
 [AttributeUsage(
     AttributeTargets.Class

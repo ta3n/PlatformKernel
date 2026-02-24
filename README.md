@@ -134,7 +134,7 @@
   + SharedKernel.ServiceBase
   + SharedKernel.ServiceDefaults
   + SharedKernel.Specification
-  + SharedKernel.SysException
+  + SharedKernel.Exception
   + SharedKernel.UnitOfWork
   + and so more ...
 ```
@@ -196,13 +196,12 @@ application. **Plugin mechanism for adding shared parts**.
   - **Extensions and Helpers**: Additional methods and utilities to work with specifications, such as converting them
     to expressions that can be used with LINQ queries.
 
-- **SharedKernel.SysException**: Contains classes and files related to exception handling within the
+- **SharedKernel.Exception**: Contains classes and files related to exception handling within the
   application. This could include custom exception classes, exception handling utilities, and possibly configurations
   for how exceptions are managed and logged within the application. Custom Exception Classes: These are classes that
-  extend the base exception class to provide more specific error information. For example, AppNotFoundException,
-  AppInvalidException, and AppAuthException.
+  extend the base exception class to provide more specific error information.
 
-- **SharedKernel.SysIntegrationEvent**: A shared library for defining and handling integration events in the system.
+- **SharedKernel.IntegrationEvent**: A shared library for defining and handling integration events in the system.
   It provides base event contracts and utilities for event-driven communication between microservices, leveraging
   MassTransit for message transport and supporting reliable, decoupled integration patterns.
 

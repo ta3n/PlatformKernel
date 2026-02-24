@@ -1,6 +1,6 @@
 using System.Data.Common;
 
-namespace SharedKernel.SysException.Exceptions;
+namespace SharedKernel.Exception.Exceptions;
 
 public class AppDbException(
     DbException? dbException

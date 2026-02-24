@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace SharedKernel.SysException;
+namespace SharedKernel.Exception;
 
 public enum ErrorCode
 {

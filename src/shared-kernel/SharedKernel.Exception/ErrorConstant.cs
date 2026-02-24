@@ -1,4 +1,4 @@
-namespace SharedKernel.SysException;
+namespace SharedKernel.Exception;
 
 public static class ErrorConstant
 {

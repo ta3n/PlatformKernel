@@ -1,14 +1,14 @@
 using SharedKernel.AppShared.Extensions;
 
-namespace SharedKernel.SysException.Exceptions;
+namespace SharedKernel.Exception.Exceptions;
 
 public class AppUnknownErrorException(
-    Exception exception
+    System.Exception exception
 ) : AppUnknownException
 {
     public override ErrorCode ErrorCode => ErrorCode.E0100;
 
     public override string Title => ErrorCode.GetEnumDescriptions();
 
-    public Exception Exception { get; } = exception;
+    public System.Exception Exception { get; } = exception;
 }
