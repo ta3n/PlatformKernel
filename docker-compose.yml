@@ -63,7 +63,7 @@ services:
 
   platform-kernel-redis-commander:
     container_name: platform-kernel-redis-commander
-    image: ghcr.io/joeferner/redis-commander:latest
+    image: ghcr.io/joeferner/redis-commander:redis-commander-210
     restart: unless-stopped
     environment:
       HTTP_USER: admin@localhost.com
