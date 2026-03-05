@@ -1,0 +1,15 @@
+[
+  {
+    "Rate": 8,
+    "EnabledStart": 20100930,
+    "EnabledEnd": 20190930,
+    "IsEnabled": false
+  },
+  {
+    "Rate": 10,
+    "EnabledStart": 20191001,
+    "EnabledEnd": 20501231,
+    "IsEnabled": true
+  }
+]
+

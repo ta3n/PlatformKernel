@@ -1,0 +1,4 @@
+namespace Liberty.Reservation.Manager.WebAPI.Application.UserCases.Commands.RoomGroup;
+
+public record RoomGroupUpdateDisplaySettingCommand
+    : UpdateCommandBase<RoomGroupUpdateDisplaySettingRequest, long>;

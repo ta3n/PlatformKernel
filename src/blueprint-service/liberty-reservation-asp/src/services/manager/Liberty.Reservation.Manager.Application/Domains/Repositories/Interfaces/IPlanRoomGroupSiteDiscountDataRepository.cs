@@ -1,0 +1,3 @@
+namespace Liberty.Reservation.Manager.Application.Domains.Repositories.Interfaces;
+
+public interface IPlanRoomGroupSiteDiscountDataRepository : IRepositoryBase<PlanRoomGroupSiteDiscountData>;

@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.3.1" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <IsPackable>false</IsPackable>
+    <UserSecretsId>2230ccfc-9d20-4fd6-be07-af86ba430314</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.1" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.3.1" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="9.3.1" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.3.1" />
+    <PackageReference Include="Aspire.Hosting.Seq" Version="9.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Liberty.Reservation.DbMigration\Liberty.Reservation.DbMigration.csproj" />
+    <ProjectReference Include="..\..\services\booking\Liberty.Reservation.Booking.Worker\Liberty.Reservation.Booking.Worker.csproj" />
+    <ProjectReference Include="..\..\services\employee\Liberty.Reservation.Employee.WebAPI\Liberty.Reservation.Employee.WebAPI.csproj" />
+    <ProjectReference Include="..\..\services\mail\Liberty.Reservation.Mail.Worker\Liberty.Reservation.Mail.Worker.csproj" />
+    <ProjectReference Include="..\..\services\manager\Liberty.Reservation.Manager.Distribution.WebAPI\Liberty.Reservation.Manager.Distribution.WebAPI.csproj" />
+    <ProjectReference Include="..\..\services\manager\Liberty.Reservation.Manager.File.WebAPI\Liberty.Reservation.Manager.File.WebAPI.csproj" />
+    <ProjectReference Include="..\..\services\manager\Liberty.Reservation.Manager.WebAPI\Liberty.Reservation.Manager.WebAPI.csproj" />
+    <ProjectReference Include="..\..\services\site\Liberty.Reservation.Site.File.WebAPI\Liberty.Reservation.Site.File.WebAPI.csproj" />
+    <ProjectReference Include="..\..\services\site\Liberty.Reservation.Site.WebAPI\Liberty.Reservation.Site.WebAPI.csproj" />
+    <ProjectReference Include="..\..\services\user\Liberty.Reservation.User.File.WebAPI\Liberty.Reservation.User.File.WebAPI.csproj" />
+    <ProjectReference Include="..\..\services\user\Liberty.Reservation.User.WebAPI\Liberty.Reservation.User.WebAPI.csproj" />
+  </ItemGroup>
+
+</Project>

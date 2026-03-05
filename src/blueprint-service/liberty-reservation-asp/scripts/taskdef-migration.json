@@ -1,0 +1,49 @@
+{
+  "family": "__TASK_DEFINITION_FAMILY__",
+  "containerDefinitions": [
+    {
+      "name": "__CONTAINER_NAME__",
+      "image": "__ECR_IMAGE__",
+      "portMappings": [
+        {
+          "containerPort": "__CONTAINER_PORT__",
+          "hostPort": "__CONTAINER_PORT__",
+          "protocol": "tcp"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "__LOG_GROUP__",
+          "awslogs-region": "__AWS_REGION__",
+          "awslogs-datetime-format": "%Y-%m-%d %H:%M:%S",
+          "awslogs-stream-prefix": "__CONTAINER_NAME__"
+        }
+      },
+      "essential": true,
+      "secrets": [
+        {
+          "name": "ASPNETCORE_ENVIRONMENT",
+          "valueFrom": "__RUNTIME_SECRETS_MANAGER_ARN__:ASPNETCORE_ENVIRONMENT::"
+        },
+        {
+          "name": "ASPNETCORE_URLS",
+          "valueFrom": "__RUNTIME_SECRETS_MANAGER_ARN__:ASPNETCORE_URLS::"
+        },
+        {
+          "name": "ConnectionStrings__DataContextConnection",
+          "valueFrom": "__RUNTIME_SECRETS_MANAGER_ARN__:ReservationDbConnectionString::"
+        }
+      ]
+    }
+  ],
+  "taskRoleArn": "__TASK_ROLE__",
+  "executionRoleArn": "__EXECUTION_ROLE__",
+  "cpu": "__TASK_EXECUTION_CPU__",
+  "memory": "__TASK_EXECUTION_MEMORY__",
+  "networkMode": "awsvpc",
+  "runtimePlatform": {
+    "operatingSystemFamily": "LINUX"
+  },
+  "requiresCompatibilities": ["FARGATE"]
+}

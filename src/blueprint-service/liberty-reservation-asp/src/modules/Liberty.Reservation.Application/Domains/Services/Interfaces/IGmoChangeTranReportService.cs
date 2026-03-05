@@ -1,0 +1,11 @@
+﻿using Liberty.Reservation.Application.Contexts.DataContexts.Entities.Data;
+
+namespace Liberty.Reservation.Application.Domains.Services.Interfaces;
+
+public interface IGmoChangeTranReportService : IBaseService<GmoChangeTranReport>
+{
+    Task<(bool isExisting, string? orderId)> IsExistAsync(
+        long reservationId,
+        CancellationToken cancellationToken = default
+    );
+}

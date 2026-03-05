@@ -1,0 +1,239 @@
+version: 0.2
+
+env:
+  git-credential-helper: yes
+  secrets-manager:
+    MIGRATIONS_SECRETS: ${BUILDTIME_SECRETS_MANAGER_ARN}:res-db-migrations
+    EMPLOYEE_SECRETS: ${BUILDTIME_SECRETS_MANAGER_ARN}:res-emp-api
+    MANAGER_SECRETS: ${BUILDTIME_SECRETS_MANAGER_ARN}:res-mng-api
+    BOOKING_WORKER_SECRETS: ${BUILDTIME_SECRETS_MANAGER_ARN}:res-booking-worker
+    MANAGER_FILE_SECRETS: ${BUILDTIME_SECRETS_MANAGER_ARN}:res-mng-file
+    MANAGER_DISTRIBUTION_SECRETS: ${BUILDTIME_SECRETS_MANAGER_ARN}:res-mng-dist
+    SITE_SECRETS: ${BUILDTIME_SECRETS_MANAGER_ARN}:res-site-api
+    SITE_FILE_SECRETS: ${BUILDTIME_SECRETS_MANAGER_ARN}:res-site-file
+    USER_SECRETS: ${BUILDTIME_SECRETS_MANAGER_ARN}:res-user-api
+    USER_FILE_SECRETS: ${BUILDTIME_SECRETS_MANAGER_ARN}:res-user-file
+    MAIL_WORKER_SECRETS: ${BUILDTIME_SECRETS_MANAGER_ARN}:res-mail-worker
+
+phases:
+  install:
+    commands:
+      - aws --version
+      - echo $DOCKER_TOKEN | docker login -u $DOCKER_USER --password-stdin
+      - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7) CONTAINER_PORT AWS_REGION TASK_EXECUTION_ROLE RUNTIME_SECRETS_MANAGER_ARN
+      - docker buildx create --name container --driver=docker-container --driver-opt default-load=true
+
+  pre_build:
+    commands:
+      - echo 'Start pre_build phase'
+      - git remote set-url origin https://github.com/${REPOSITORY_URL}
+      - git submodule update --init --recursive
+
+  build:
+    commands:
+      # liberty-reservation-migrations
+      - export BUILD_SECRETS=$MIGRATIONS_SECRETS
+      - TASK_DEFINITION_FILE_NAME=$(echo $BUILD_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - cp scripts/taskdef-migration.json $TASK_DEFINITION_FILE_NAME
+      - export DOCKERFILE_PATH=src/modules/Liberty.Reservation.DbMigration/Dockerfile
+      - bash ./scripts/build-service
+
+      # update task definition for Migrations
+      - TASK_DEFINITION_FAMILY=$(echo $MIGRATIONS_SECRETS | jq -r '.TASK_DEFINITION_FAMILY')
+      - MIGRATIONS_TASK_DEFINITION=$(echo $MIGRATIONS_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - cat $(echo $MIGRATIONS_TASK_DEFINITION)
+      - TASK_DEFINITION_JSON=$(jq '.' $MIGRATIONS_TASK_DEFINITION)
+      - NEW_TASK_INFO=$(aws ecs register-task-definition --region "$AWS_REGION" --cli-input-json "$TASK_DEFINITION_JSON")
+      - NEW_REVISION=$(echo "$NEW_TASK_INFO" | jq '.taskDefinition.revision')
+      - echo $ECS_CLUSTER_ARN
+      - echo $TASK_DEFINITION_FAMILY:$NEW_REVISION
+      - echo $SUBNET_ARNS
+      - echo $SECURITY_GROUP_ID
+
+      # Run migrations and check for success
+      - RUN_TASK_OUTPUT=$(aws ecs run-task --launch-type FARGATE --cluster $ECS_CLUSTER_ARN --task-definition $TASK_DEFINITION_FAMILY:$NEW_REVISION --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_ARNS],securityGroups=[$SECURITY_GROUP_ID],assignPublicIp=$ASSIGN_PUBLIC_IP}")
+      - TASK_ARN=$(echo "$RUN_TASK_OUTPUT" | jq -r '.tasks[0].taskArn')
+      - echo "Migration task started. ARN $TASK_ARN"
+      - echo "Waiting for migration task $TASK_ARN to complete..."
+      - aws ecs wait tasks-stopped --cluster "$ECS_CLUSTER_ARN" --tasks "$TASK_ARN"
+      - echo "Migration task $TASK_ARN has stopped."
+      - DESCRIBE_TASK_OUTPUT=$(aws ecs describe-tasks --cluster "$ECS_CLUSTER_ARN" --tasks "$TASK_ARN")
+
+      # Check for overall task failures (e.g., provisioning issues, cannot pull image)
+      - TASK_FAILURE_COUNT=$(echo "$DESCRIBE_TASK_OUTPUT" | jq -r '.failures | length')
+      - if [ "$TASK_FAILURE_COUNT" -gt 0 ]; then echo "Migration process failed" && exit 1; fi
+      - TASK_STOP_CODE=$(echo "$DESCRIBE_TASK_OUTPUT" | jq -r '.tasks[0].stopCode') # e.g., EssentialContainerExited, TaskFailedToStart
+      - TASK_STOP_REASON=$(echo "$DESCRIBE_TASK_OUTPUT" | jq -r '.tasks[0].stoppedReason')
+      - echo "Task stop code $TASK_STOP_CODE"
+      - echo "Task stoppedReason $TASK_STOP_REASON"
+      - CONTAINER_EXIT_CODE=$(echo "$DESCRIBE_TASK_OUTPUT" | jq -r '.tasks[0].containers[0].exitCode')
+      - CONTAINER_NAME=$(echo "$DESCRIBE_TASK_OUTPUT" | jq -r '.tasks[0].containers[0].name')
+      - echo "Inspecting primary container $CONTAINER_NAME"
+      - echo "Container exit code $CONTAINER_EXIT_CODE"
+      - if [ "$CONTAINER_EXIT_CODE" -ne 0 ]; then echo "Migration process failed" && exit 1; fi
+
+      # Migration Success
+      - echo "Migration process finished successfully."
+
+      # liberty-reservation-employee-webapi
+      - export BUILD_SECRETS=$EMPLOYEE_SECRETS
+      - TASK_DEFINITION_FILE_NAME=$(echo $BUILD_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - cp scripts/taskdef-employee-api.json $TASK_DEFINITION_FILE_NAME
+      - export DOCKERFILE_PATH=src/services/employee/Liberty.Reservation.Employee.WebAPI/Dockerfile
+      - bash ./scripts/build-service
+
+      # liberty-reservation-manager-webapi
+      - export BUILD_SECRETS=$MANAGER_SECRETS
+      - TASK_DEFINITION_FILE_NAME=$(echo $BUILD_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - cp scripts/taskdef-manager-api.json $TASK_DEFINITION_FILE_NAME
+      - export DOCKERFILE_PATH=src/services/manager/Liberty.Reservation.Manager.WebAPI/Dockerfile
+      - bash ./scripts/build-service
+
+      # liberty-reservation-booking-worker
+      - export BUILD_SECRETS=$BOOKING_WORKER_SECRETS
+      - TASK_DEFINITION_FILE_NAME=$(echo $BUILD_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - cp scripts/taskdef-booking-worker.json $TASK_DEFINITION_FILE_NAME
+      - export DOCKERFILE_PATH=src/services/booking/Liberty.Reservation.Booking.Worker/Dockerfile
+      - bash ./scripts/build-service
+
+      # liberty-reservation-manager-file
+      - export BUILD_SECRETS=$MANAGER_FILE_SECRETS
+      - TASK_DEFINITION_FILE_NAME=$(echo $BUILD_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - cp scripts/taskdef-manager-file-api.json $TASK_DEFINITION_FILE_NAME
+      - export DOCKERFILE_PATH=src/services/manager/Liberty.Reservation.Manager.File.WebAPI/Dockerfile
+      - bash ./scripts/build-service
+
+      # liberty-reservation-distribution-file
+      - export BUILD_SECRETS=$MANAGER_DISTRIBUTION_SECRETS
+      - TASK_DEFINITION_FILE_NAME=$(echo $BUILD_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - cp scripts/taskdef-manager-distribution-api.json $TASK_DEFINITION_FILE_NAME
+      - export DOCKERFILE_PATH=src/services/manager/Liberty.Reservation.Manager.Distribution.WebAPI/Dockerfile
+      - bash ./scripts/build-service
+
+      # liberty-reservation-site-webapi
+      - export BUILD_SECRETS=$SITE_SECRETS
+      - TASK_DEFINITION_FILE_NAME=$(echo $BUILD_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - cp scripts/taskdef-site-api.json $TASK_DEFINITION_FILE_NAME
+      - export DOCKERFILE_PATH=src/services/site/Liberty.Reservation.Site.WebAPI/Dockerfile
+      - bash ./scripts/build-service
+
+      # liberty-reservation-site-file
+      - export BUILD_SECRETS=$SITE_FILE_SECRETS
+      - TASK_DEFINITION_FILE_NAME=$(echo $BUILD_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - cp scripts/taskdef-site-file-api.json $TASK_DEFINITION_FILE_NAME
+      - export DOCKERFILE_PATH=src/services/site/Liberty.Reservation.Site.File.WebAPI/Dockerfile
+      - bash ./scripts/build-service
+
+      # liberty-reservation-user-webapi
+      - export BUILD_SECRETS=$USER_SECRETS
+      - TASK_DEFINITION_FILE_NAME=$(echo $BUILD_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - cp scripts/taskdef-user-api.json $TASK_DEFINITION_FILE_NAME
+      - export DOCKERFILE_PATH=src/services/user/Liberty.Reservation.User.WebAPI/Dockerfile
+      - bash ./scripts/build-service
+
+      # liberty-reservation-user-file
+      - export BUILD_SECRETS=$USER_FILE_SECRETS
+      - TASK_DEFINITION_FILE_NAME=$(echo $BUILD_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - cp scripts/taskdef-user-file-api.json $TASK_DEFINITION_FILE_NAME
+      - export DOCKERFILE_PATH=src/services/user/Liberty.Reservation.User.File.WebAPI/Dockerfile
+      - bash ./scripts/build-service
+
+      # liberty-reservation-mail-worker
+      - export BUILD_SECRETS=$MAIL_WORKER_SECRETS
+      - TASK_DEFINITION_FILE_NAME=$(echo $BUILD_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - cp scripts/taskdef-mail-worker.json $TASK_DEFINITION_FILE_NAME
+      - export DOCKERFILE_PATH=src/services/mail/Liberty.Reservation.Mail.Worker/Dockerfile
+      - bash ./scripts/build-service
+
+  post_build:
+    commands:
+      - if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 0 ]; then echo "Build process failed" && exit 1; fi
+
+      - EMPLOYEE_TASK_DEFINITION=$(echo $EMPLOYEE_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - MANAGER_TASK_DEFINITION=$(echo $MANAGER_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - BOOKING_WORKER_TASK_DEFINITION=$(echo $BOOKING_WORKER_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - MANAGER_FILE_TASK_DEFINITION=$(echo $MANAGER_FILE_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - MANAGER_DISTRIBUTION_TASK_DEFINITION=$(echo $MANAGER_DISTRIBUTION_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - SITE_TASK_DEFINITION=$(echo $SITE_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - SITE_FILE_TASK_DEFINITION=$(echo $SITE_FILE_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - USER_TASK_DEFINITION=$(echo $USER_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - USER_FILE_TASK_DEFINITION=$(echo $USER_FILE_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - MAIL_WORKER_TASK_DEFINITION=$(echo $MAIL_WORKER_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+      - cat $(echo $EMPLOYEE_TASK_DEFINITION)
+      - cat $(echo $MANAGER_TASK_DEFINITION)
+      - cat $(echo $BOOKING_WORKER_TASK_DEFINITION)
+      - cat $(echo $MANAGER_FILE_TASK_DEFINITION)
+      - cat $(echo $MANAGER_DISTRIBUTION_TASK_DEFINITION)
+      - cat $(echo $SITE_TASK_DEFINITION)
+      - cat $(echo $SITE_FILE_TASK_DEFINITION)
+      - cat $(echo $USER_TASK_DEFINITION)
+      - cat $(echo $USER_FILE_TASK_DEFINITION)
+      - cat $(echo $MAIL_WORKER_TASK_DEFINITION)
+
+      - EMPLOYEE_APP_SPEC=$(echo $EMPLOYEE_SECRETS | jq -r '.APP_SPEC_FILE_NAME')
+      - MANAGER_APP_SPEC=$(echo $MANAGER_SECRETS | jq -r '.APP_SPEC_FILE_NAME')
+      - BOOKING_WORKER_APP_SPEC=$(echo $BOOKING_WORKER_SECRETS | jq -r '.APP_SPEC_FILE_NAME')
+      - MANAGER_FILE_APP_SPEC=$(echo $MANAGER_FILE_SECRETS | jq -r '.APP_SPEC_FILE_NAME')
+      - MANAGER_DISTRIBUTION_APP_SPEC=$(echo $MANAGER_DISTRIBUTION_SECRETS | jq -r '.APP_SPEC_FILE_NAME')
+      - SITE_APP_SPEC=$(echo $SITE_SECRETS | jq -r '.APP_SPEC_FILE_NAME')
+      - SITE_FILE_APP_SPEC=$(echo $SITE_FILE_SECRETS | jq -r '.APP_SPEC_FILE_NAME')
+      - USER_APP_SPEC=$(echo $USER_SECRETS | jq -r '.APP_SPEC_FILE_NAME')
+      - USER_FILE_APP_SPEC=$(echo $USER_FILE_SECRETS | jq -r '.APP_SPEC_FILE_NAME')
+      - MAIL_WORKER_APP_SPEC=$(echo $MAIL_WORKER_SECRETS | jq -r '.APP_SPEC_FILE_NAME')
+      - cat $(echo $EMPLOYEE_APP_SPEC)
+      - cat $(echo $MANAGER_APP_SPEC)
+      - cat $(echo $BOOKING_WORKER_APP_SPEC)
+      - cat $(echo $MANAGER_FILE_APP_SPEC)
+      - cat $(echo $MANAGER_DISTRIBUTION_APP_SPEC)
+      - cat $(echo $SITE_APP_SPEC)
+      - cat $(echo $SITE_FILE_APP_SPEC)
+      - cat $(echo $USER_APP_SPEC)
+      - cat $(echo $USER_FILE_APP_SPEC)
+      - cat $(echo $MAIL_WORKER_APP_SPEC)
+
+      # update task definition for Manager Workers
+      - TASK_DEFINITION_JSON=$(jq '.' $BOOKING_WORKER_TASK_DEFINITION)
+      - NEW_TASK_INFO=$(aws ecs register-task-definition --region "$AWS_REGION" --cli-input-json "$TASK_DEFINITION_JSON")
+      - NEW_REVISION=$(echo "$NEW_TASK_INFO" | jq '.taskDefinition.revision')
+
+      - TASK_DEFINITION_FAMILY=$(echo $BOOKING_WORKER_SECRETS | jq -r '.TASK_DEFINITION_FAMILY')
+      - CONTAINER_NAME=$(echo $BOOKING_WORKER_SECRETS | jq -r '.CONTAINER_NAME')
+      - ECR_URI=$(echo $BOOKING_WORKER_SECRETS | jq -r '.ECR_URI')
+      - ECS_SERVICE_NAME=$(echo $BOOKING_WORKER_SECRETS | jq -r '.ECS_SERVICE_NAME')
+      - printf '[{"name":"'$CONTAINER_NAME'","imageUri":"'$ECR_URI:latest'"}]' > $BOOKING_WORKER_TASK_DEFINITION
+      - aws ecs update-service --cluster $ECS_CLUSTER_ARN --service $ECS_SERVICE_NAME --task-definition $TASK_DEFINITION_FAMILY:$NEW_REVISION --no-force-new-deployment
+
+      # update task definition for Mail Workers
+      - TASK_DEFINITION_JSON=$(jq '.' $MAIL_WORKER_TASK_DEFINITION)
+      - NEW_TASK_INFO=$(aws ecs register-task-definition --region "$AWS_REGION" --cli-input-json "$TASK_DEFINITION_JSON")
+      - NEW_REVISION=$(echo "$NEW_TASK_INFO" | jq '.taskDefinition.revision')
+
+      - TASK_DEFINITION_FAMILY=$(echo $MAIL_WORKER_SECRETS | jq -r '.TASK_DEFINITION_FAMILY')
+      - CONTAINER_NAME=$(echo $MAIL_WORKER_SECRETS | jq -r '.CONTAINER_NAME')
+      - ECR_URI=$(echo $MAIL_WORKER_SECRETS | jq -r '.ECR_URI')
+      - ECS_SERVICE_NAME=$(echo $MAIL_WORKER_SECRETS | jq -r '.ECS_SERVICE_NAME')
+      - printf '[{"name":"'$CONTAINER_NAME'","imageUri":"'$ECR_URI:latest'"}]' > $MAIL_WORKER_TASK_DEFINITION
+      - aws ecs update-service --cluster $ECS_CLUSTER_ARN --service $ECS_SERVICE_NAME --task-definition $TASK_DEFINITION_FAMILY:$NEW_REVISION --no-force-new-deployment
+
+artifacts:
+  files:
+    - $EMPLOYEE_APP_SPEC
+    - $MANAGER_APP_SPEC
+    - $BOOKING_WORKER_APP_SPEC
+    - $MANAGER_FILE_APP_SPEC
+    - $MANAGER_DISTRIBUTION_APP_SPEC
+    - $SITE_APP_SPEC
+    - $SITE_FILE_APP_SPEC
+    - $USER_APP_SPEC
+    - $USER_FILE_APP_SPEC
+    - $MAIL_WORKER_APP_SPEC
+    - $EMPLOYEE_TASK_DEFINITION
+    - $MANAGER_TASK_DEFINITION
+    - $BOOKING_WORKER_TASK_DEFINITION
+    - $MANAGER_FILE_TASK_DEFINITION
+    - $MANAGER_DISTRIBUTION_TASK_DEFINITION
+    - $SITE_TASK_DEFINITION
+    - $SITE_FILE_TASK_DEFINITION
+    - $USER_TASK_DEFINITION
+    - $USER_FILE_TASK_DEFINITION
+    - $MAIL_WORKER_TASK_DEFINITION

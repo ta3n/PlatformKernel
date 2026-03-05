@@ -1,0 +1,11 @@
+using Liberty.ApplicationShared.Domains.Repositories;
+
+namespace Liberty.Reservation.Manager.File.WebAPI.Application.ExternalServices.Membership.Facility.Repositories;
+
+public interface IFacilityExternalRepository : IGenericRepository<Models.Facility>
+{
+    Task<bool> CheckFacilityAvailableAsync(
+        string facilityCode,
+        CancellationToken cancellationToken = default
+    );
+}

@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -e
+
+TASK_DEFINITION_FAMILY=$(echo $BUILD_SECRETS | jq -r '.TASK_DEFINITION_FAMILY')
+ECR_URI=$(echo $BUILD_SECRETS | jq -r '.ECR_URI')
+IMAGE_REPO=$(echo $BUILD_SECRETS | jq -r '.IMAGE_REPO')
+LOG_GROUP=$(echo $BUILD_SECRETS | jq -r '.LOG_GROUP')
+TASK_DEFINITION_FILE_NAME=$(echo $BUILD_SECRETS | jq -r '.TASK_DEFINITION_FILE_NAME')
+CONTAINER_NAME=$(echo $BUILD_SECRETS | jq -r '.CONTAINER_NAME')
+TASK_EXECUTION_CPU=$(echo $BUILD_SECRETS | jq -r '.TASK_EXECUTION_CPU')
+TASK_EXECUTION_MEMORY=$(echo $BUILD_SECRETS | jq -r '.TASK_EXECUTION_MEMORY')
+APP_SPEC_FILE_NAME=$(echo $BUILD_SECRETS | jq -r '.APP_SPEC_FILE_NAME')
+
+echo Logging in to Amazon ECR....
+aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_URI
+
+echo Building the Docker image for $IMAGE_REPO....
+docker build \
+  --cache-to mode=max,image-manifest=true,oci-mediatypes=true,type=registry,ref=$ECR_URI:build-cache \
+  --cache-from type=registry,ref=$ECR_URI:build-cache -t $IMAGE_REPO --builder=container -f $DOCKERFILE_PATH .
+docker tag $IMAGE_REPO:latest $ECR_URI:latest
+docker tag $IMAGE_REPO:latest $ECR_URI:$IMAGE_TAG
+
+echo Pushing the Docker image for $IMAGE_REPO....
+docker push $ECR_URI:latest
+docker push $ECR_URI:$IMAGE_TAG
+
+echo Create the task definition
+sed -i "s@__CONTAINER_NAME__@$CONTAINER_NAME@" $TASK_DEFINITION_FILE_NAME
+sed -i "s@\"__CONTAINER_PORT__\"@$CONTAINER_PORT@" $TASK_DEFINITION_FILE_NAME
+sed -i "s@__AWS_REGION__@$AWS_REGION@" $TASK_DEFINITION_FILE_NAME
+sed -i "s@__TASK_ROLE__@$TASK_EXECUTION_ROLE@" $TASK_DEFINITION_FILE_NAME
+sed -i "s@__EXECUTION_ROLE__@$TASK_EXECUTION_ROLE@" $TASK_DEFINITION_FILE_NAME
+sed -i "s@__TASK_EXECUTION_CPU__@$TASK_EXECUTION_CPU@" $TASK_DEFINITION_FILE_NAME
+sed -i "s@__TASK_EXECUTION_MEMORY__@$TASK_EXECUTION_MEMORY@" $TASK_DEFINITION_FILE_NAME
+sed -i "s@__RUNTIME_SECRETS_MANAGER_ARN__@$RUNTIME_SECRETS_MANAGER_ARN@" $TASK_DEFINITION_FILE_NAME
+sed -i "s@__TASK_DEFINITION_FAMILY__@$TASK_DEFINITION_FAMILY@" $TASK_DEFINITION_FILE_NAME
+sed -i "s@__LOG_GROUP__@$LOG_GROUP@" $TASK_DEFINITION_FILE_NAME
+sed -i "s@__ECR_IMAGE__@$ECR_URI:$IMAGE_TAG@" $TASK_DEFINITION_FILE_NAME
+
+echo Create the appspec.yml
+cp scripts/appspec.yml $APP_SPEC_FILE_NAME
+sed -i "s@__CONTAINER_NAME__@$CONTAINER_NAME@" $APP_SPEC_FILE_NAME
+sed -i "s@__CONTAINER_PORT__@$CONTAINER_PORT@" $APP_SPEC_FILE_NAME
+sed -i "s@__SUBNET_ARNS__@$SUBNET_ARNS@" $APP_SPEC_FILE_NAME
+sed -i "s@__SECURITY_GROUP_ID__@$SECURITY_GROUP_ID@" $APP_SPEC_FILE_NAME
+sed -i "s@__ASSIGN_PUBLIC_IP__@$ASSIGN_PUBLIC_IP@" $APP_SPEC_FILE_NAME

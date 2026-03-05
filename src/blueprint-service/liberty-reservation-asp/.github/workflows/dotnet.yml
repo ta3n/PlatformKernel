@@ -1,0 +1,100 @@
+name: .NET 🧪 Build & Test
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - develop-yopaz
+      - develop
+      - stage
+      - prod
+
+jobs:
+  build:
+    runs-on: codebuild-github-action-runner-liberty-membership-${{ github.run_id }}-${{ github.run_attempt }}
+    env:
+      DOTNET_INSTALL_DIR: $HOME/.dotnet
+
+    steps:
+      - name: 📥 Checkout source with submodules
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          submodules: recursive
+
+      - name: 🧰 Clean
+        uses: tiacsys/clean-after-action@v3
+        with:
+          keep-git: true
+
+      - name: 🧰 Setup .NET SDK 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: 📦 Verify .NET installation
+        run: dotnet --info
+
+      - name: 📦 Verify proto path
+        run: find src/liberty-asp/Proto -print
+
+      - name: 📦 Restore dependencies
+        run: dotnet restore Liberty.Reservation.slnf
+
+      - name: 🛠️ Build solution
+        run: |
+          dotnet build Liberty.Reservation.slnf --no-restore --tl --no-incremental -warnaserror -maxcpucount
+
+      - name: 🐳 Debug Docker status
+        run: |
+          whoami
+          groups
+          docker info
+          ls -l /var/run/docker.sock
+
+      - name: 🧪 Run all tests in parallel (xargs)
+        run: |
+          set -e
+
+          export DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
+          export DOTNET_CLI_TELEMETRY_OPTOUT=1
+          export DOTNET_NOLOGO=1
+          export ASPNETCORE_ENVIRONMENT=CI
+          export DOTNET_USE_POLLING_FILE_WATCHER=1
+
+          ulimit -n 65535 || true
+
+          CPU_COUNT=$(getconf _NPROCESSORS_ONLN)
+          echo "🧠 Detected $CPU_COUNT CPU cores"
+
+          dotnet test src/services/manager/Liberty.Reservation.Manager.WebAPI.Test/Liberty.Reservation.Manager.WebAPI.Test.csproj --no-build --filter "FullyQualifiedName=Liberty.Reservation.Manager.WebAPI.Test.IntegrationTests.BookingFlowIntTest.CreateTestDataForBookingFlow"
+
+          declare -a projects=(
+            "src/services/employee/Liberty.Reservation.Employee.WebAPI.Test/Liberty.Reservation.Employee.WebAPI.Test.csproj"
+            "src/services/manager/Liberty.Reservation.Manager.WebAPI.Test/Liberty.Reservation.Manager.WebAPI.Test.csproj"
+            "src/services/manager/Liberty.Reservation.Manager.File.WebAPI.Test/Liberty.Reservation.Manager.File.WebAPI.Test.csproj"
+            "src/services/manager/Liberty.Reservation.Manager.Distribution.WebAPI.Test/Liberty.Reservation.Manager.Distribution.WebAPI.Test.csproj"
+            "src/services/site/Liberty.Reservation.Site.WebAPI.Test/Liberty.Reservation.Site.WebAPI.Test.csproj"
+            "src/services/site/Liberty.Reservation.Site.File.WebAPI.Test/Liberty.Reservation.Site.File.WebAPI.Test.csproj"
+            "src/services/user/Liberty.Reservation.User.WebAPI.Test/Liberty.Reservation.User.WebAPI.Test.csproj"
+            "src/services/user/Liberty.Reservation.User.File.WebAPI.Test/Liberty.Reservation.User.File.WebAPI.Test.csproj"
+            "src/services/mail/Liberty.Reservation.Mail.Worker.Test/Liberty.Reservation.Mail.Worker.Test.csproj"
+          )
+
+          run_test() {
+            proj="$1"
+            echo "▶️ Running test for: $proj"
+            start=$(date +%s)
+            dotnet test "$proj" --no-restore --no-build --verbosity minimal
+            end=$(date +%s)
+            echo "✅ Finished $proj in $((end - start))s"
+          }
+
+          export -f run_test
+
+          printf "%s\n" "${projects[@]}" | xargs -P "$CPU_COUNT" -I {} bash -c 'run_test "$@"' _ {}
+
+          echo "✅ All tests completed."

@@ -1,0 +1,8 @@
+/.vs
+/Liberty.Application/bin
+/Liberty.Application/obj
+/Liberty.Application.Test/bin
+/Liberty.Application.Test/obj
+/.history
+*/bin/
+*/obj/

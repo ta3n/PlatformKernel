@@ -1,0 +1,30 @@
+services:
+  liberty-reservation-db:
+    environment:
+      POSTGRES_PASSWORD:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5435:5432"
+
+  liberty-reservation-pgadmin4:
+    ports:
+      - "8988:80"
+
+  liberty-reservation-redis:
+    ports:
+      - "6379:6379"
+
+  liberty-reservation-redis-commander:
+    ports:
+      - "8881:8081"
+
+  liberty-reservation-seq:
+    ports:
+      - "5341:5341"
+      - "5340:80"
+
+  liberty-reservation-minio:
+    ports:
+      - "9010:9000"                       # MinIO Console
+      - "9011:9001"                       # MinIO Management Console
+    command: server /data --console-address ":9011"
