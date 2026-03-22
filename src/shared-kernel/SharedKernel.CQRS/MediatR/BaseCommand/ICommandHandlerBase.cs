@@ -1,6 +1,6 @@
-using MediatR;
+using global::MediatR;
 
-namespace SharedKernel.CQRS.BaseCommand;
+namespace SharedKernel.CQRS.MediatR.BaseCommand;
 
 /// <summary>
 /// Represents the base interface for command handlers in the CQRS pattern.

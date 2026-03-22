@@ -1,10 +1,10 @@
-namespace SharedKernel.CQRS.BaseCommand;
+namespace SharedKernel.CQRS.Mediator.BaseCommand;
 
 /// <summary>
 /// Defines the base contract for a command in the CQRS pattern.
 /// </summary>
 /// <typeparam name="TResponse">The type of the response returned by the command.</typeparam>
-public interface ICommandBase<out TResponse> : IRequestBase<TResponse>;
+public interface ICommandBase<out TResponse> : IRequestBase<TResponse>, global::Mediator.ICommand<TResponse>;
 
 /// <summary>
 /// Defines a base interface for create command operations, specifying the data model and response type.

@@ -1,7 +1,8 @@
+using global::Mediator;
 using Microsoft.AspNetCore.Http;
 using SharedKernel.Pagination;
 
-namespace SharedKernel.CQRS.BaseQuery;
+namespace SharedKernel.CQRS.Mediator.BaseQuery;
 
 /// <summary>
 /// Defines the base contract for all query types in the CQRS pattern.
@@ -11,7 +12,8 @@ namespace SharedKernel.CQRS.BaseQuery;
 /// The type of the data returned by the query.
 /// It can represent a single object, a collection, or a combination of response and headers.
 /// </typeparam>
-public interface IQueryBase<TResponse> : IRequestBase<(IHeaderDictionary, TResponse)>;
+public interface IQueryBase<TResponse>
+    : IRequestBase<(IHeaderDictionary, TResponse)>, IQuery<(IHeaderDictionary, TResponse)>;
 
 /// <summary>
 /// Represents a base interface for queries that are intended to retrieve a single response of a specified type.

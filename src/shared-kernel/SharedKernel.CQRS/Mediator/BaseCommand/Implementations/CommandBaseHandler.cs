@@ -1,4 +1,4 @@
-namespace SharedKernel.CQRS.BaseCommand.Implementations;
+namespace SharedKernel.CQRS.Mediator.BaseCommand.Implementations;
 
 /// <summary>
 /// Serves as an abstract base class for handling commands with a specified response type.
@@ -18,14 +18,14 @@ public abstract class CommandBaseHandler<TCommand, TResponse> : ICommandHandlerB
     /// <returns>
     /// A task representing the asynchronous handling process, with the result being the response of the executed command.
     /// </returns>
-    public virtual async Task<TResponse> Handle(
-        TCommand request,
+    public virtual async ValueTask<TResponse> Handle(
+        TCommand command,
         CancellationToken cancellationToken
     )
     {
-        var response = await HandleAsync(request, cancellationToken);
+        var response = await HandleAsync(command, cancellationToken);
 
-        RemoveCaches(request);
+        RemoveCaches(command);
 
         return response;
     }

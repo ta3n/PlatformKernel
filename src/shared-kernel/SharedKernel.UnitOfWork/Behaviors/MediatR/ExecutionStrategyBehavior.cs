@@ -1,9 +1,9 @@
-using MediatR;
+using global::MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
-namespace SharedKernel.UnitOfWork.Behaviors;
+namespace SharedKernel.UnitOfWork.Behaviors.MediatR;
 
 /// <summary>
 /// Represents a MediatR pipeline behavior that ensures the execution of a request
@@ -23,27 +23,11 @@ public class ExecutionStrategyBehavior<TRequest, TResponse>(
 ) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
-    /// <summary>
-    /// Logger instance used to log informational, warning, and error messages
-    /// pertaining to the execution of the <see cref="ExecutionStrategyBehavior{TRequest, TResponse}" />.
-    /// </summary>
     private readonly ILogger<ExecutionStrategyBehavior<TRequest, TResponse>> _logger =
         logger ?? throw new ArgumentNullException(nameof(logger));
 
-    /// <summary>
-    /// Represents the instance of the Entity Framework Core <see cref="DbContext"/> that is used to interact with the database.
-    /// This object's primary purpose is to manage database connections and track changes for data persisted to the database.
-    /// </summary>
     private readonly DbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
-    /// <summary>
-    /// Handles a request using the specified execution strategy
-    /// provided by the associated database context.
-    /// </summary>
-    /// <param name="request">The request object to be handled.</param>
-    /// <param name="next">The delegate to invoke the next behavior or handler in the pipeline.</param>
-    /// <param name="cancellationToken">A token that may be used to cancel the request handling operation.</param>
-    /// <returns>An awaitable task that produces the response of type <typeparamref name="TResponse"/>.</returns>
     public async Task<TResponse> Handle(
         TRequest request,
         RequestHandlerDelegate<TResponse> next,

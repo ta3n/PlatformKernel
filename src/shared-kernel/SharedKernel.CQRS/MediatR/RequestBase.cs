@@ -1,4 +1,4 @@
-namespace SharedKernel.CQRS;
+namespace SharedKernel.CQRS.MediatR;
 
 /// <summary>
 /// Represents a base record type for defining CQRS requests.

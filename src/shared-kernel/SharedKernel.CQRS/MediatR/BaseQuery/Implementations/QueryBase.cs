@@ -1,7 +1,7 @@
 
 using SharedKernel.Pagination;
 
-namespace SharedKernel.CQRS.BaseQuery.Implementations;
+namespace SharedKernel.CQRS.MediatR.BaseQuery.Implementations;
 
 /// <summary>
 /// Represents the base class for all query types in the CQRS pattern.
