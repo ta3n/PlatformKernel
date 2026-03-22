@@ -1,7 +1,7 @@
-using MediatR;
+using global::MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace SharedKernel.CQRS.BaseQuery;
+namespace SharedKernel.CQRS.MediatR.BaseQuery;
 
 /// <summary>
 /// Interface representing a base handler for queries in a CQRS pattern.

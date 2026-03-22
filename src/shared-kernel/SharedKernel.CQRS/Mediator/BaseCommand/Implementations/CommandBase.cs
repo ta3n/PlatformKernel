@@ -1,4 +1,4 @@
-namespace SharedKernel.CQRS.BaseCommand.Implementations;
+namespace SharedKernel.CQRS.Mediator.BaseCommand.Implementations;
 
 /// <summary>
 /// Represents the base class for all commands in the CQRS pattern.

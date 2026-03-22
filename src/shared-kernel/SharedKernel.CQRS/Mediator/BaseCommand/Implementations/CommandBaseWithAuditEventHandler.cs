@@ -1,6 +1,6 @@
-using MediatR;
+using global::Mediator;
 
-namespace SharedKernel.CQRS.BaseCommand.Implementations;
+namespace SharedKernel.CQRS.Mediator.BaseCommand.Implementations;
 
 /// <summary>
 /// Represents an abstract base class for handling commands with a specific response type.
@@ -27,17 +27,17 @@ public abstract class CommandBaseWithAuditEventHandler<TCommand, TResponse>(
     /// <param name="request">The command request containing the details required for processing.</param>
     /// <param name="cancellationToken">A token that can be used to signal the cancellation of the operation.</param>
     /// <returns>A task representing the asynchronous handling process. The task's result is the response produced by the execution of the command logic.</returns>
-    public override async Task<TResponse> Handle(
-        TCommand request,
+    public override async ValueTask<TResponse> Handle(
+        TCommand command,
         CancellationToken cancellationToken
     )
     {
-        var response = await base.Handle(request, cancellationToken);
+        var response = await base.Handle(command, cancellationToken);
 
         if (AuditEventData is not null)
         {
             await SendEvent(
-                request,
+                command,
                 response,
                 AuditEventData,
                 CancellationToken.None

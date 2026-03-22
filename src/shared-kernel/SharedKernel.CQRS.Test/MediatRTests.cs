@@ -1,16 +1,16 @@
-using Mediator;
+using global::MediatR;
 using Microsoft.AspNetCore.Http;
-using SharedKernel.CQRS.Mediator;
-using SharedKernel.CQRS.Mediator.BaseCommand.Implementations;
-using SharedKernel.CQRS.Mediator.BaseQuery.Implementations;
+using SharedKernel.CQRS.MediatR;
+using SharedKernel.CQRS.MediatR.BaseCommand.Implementations;
+using SharedKernel.CQRS.MediatR.BaseQuery.Implementations;
 using SharedKernel.Pagination;
 
 namespace SharedKernel.CQRS.Test;
 
-public class MediatorCqrsTests
+public class MediatRCqrsTests
 {
     [Fact]
-    public async Task CommandBaseHandler_InvokesHandleAsyncAndRemoveCaches()
+    public async Task MediatR_CommandBaseHandler_InvokesHandleAsyncAndRemoveCaches()
     {
         var handler = new TestCommandHandler();
 
@@ -22,7 +22,7 @@ public class MediatorCqrsTests
     }
 
     [Fact]
-    public async Task CommandBaseWithAuditEventHandler_PublishesAuditEventWhenPresent()
+    public async Task MediatR_CommandBaseWithAuditEventHandler_PublishesAuditEventWhenPresent()
     {
         var mediator = new RecordingMediator();
         var handler = new AuditCommandHandler(mediator);
@@ -35,7 +35,7 @@ public class MediatorCqrsTests
     }
 
     [Fact]
-    public async Task QueryBaseHandler_HandlesRequestWithoutCache()
+    public async Task MediatR_QueryBaseHandler_HandlesRequestWithoutCache()
     {
         var handler = new TestQueryHandler();
 
@@ -47,7 +47,7 @@ public class MediatorCqrsTests
     }
 
     [Fact]
-    public void QueryCacheLockManager_ReturnsSameSemaphoreForSameKey()
+    public void MediatR_QueryCacheLockManager_ReturnsSameSemaphoreForSameKey()
     {
         var first = QueryCacheLockManager.GetCacheLockForKey("shared-key");
         var second = QueryCacheLockManager.GetCacheLockForKey("shared-key");
@@ -56,7 +56,7 @@ public class MediatorCqrsTests
     }
 
     [Fact]
-    public void QueryPagedBase_PreservesProvidedPageable()
+    public void MediatR_QueryPagedBase_PreservesProvidedPageable()
     {
         var pageable = Pageable.Of(1, 20);
         var query = new SamplePagedQuery(pageable);
@@ -118,35 +118,25 @@ public class MediatorCqrsTests
     {
         public List<INotification> PublishedNotifications { get; } = [];
 
-        public ValueTask Publish(object notification, CancellationToken cancellationToken = default)
+        public Task Publish(object notification, CancellationToken cancellationToken = default)
         {
             PublishedNotifications.Add((INotification)notification);
-            return ValueTask.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        public ValueTask Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
+        public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
             where TNotification : INotification
         {
             PublishedNotifications.Add(notification);
-            return ValueTask.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        public ValueTask<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
+        public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
         {
             throw new NotSupportedException();
         }
 
-        public ValueTask<TResponse> Send<TResponse>(ICommand<TResponse> command, CancellationToken cancellationToken = default)
-        {
-            throw new NotSupportedException();
-        }
-
-        public ValueTask<TResponse> Send<TResponse>(IQuery<TResponse> query, CancellationToken cancellationToken = default)
-        {
-            throw new NotSupportedException();
-        }
-
-        public ValueTask<object?> Send(object message, CancellationToken cancellationToken = default)
+        public Task<object?> Send(object request, CancellationToken cancellationToken = default)
         {
             throw new NotSupportedException();
         }
@@ -156,17 +146,7 @@ public class MediatorCqrsTests
             throw new NotSupportedException();
         }
 
-        public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamCommand<TResponse> command, CancellationToken cancellationToken = default)
-        {
-            throw new NotSupportedException();
-        }
-
-        public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamQuery<TResponse> query, CancellationToken cancellationToken = default)
-        {
-            throw new NotSupportedException();
-        }
-
-        public IAsyncEnumerable<object?> CreateStream(object message, CancellationToken cancellationToken = default)
+        public IAsyncEnumerable<object?> CreateStream(object request, CancellationToken cancellationToken = default)
         {
             throw new NotSupportedException();
         }

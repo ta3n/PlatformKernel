@@ -6,7 +6,7 @@ using SharedKernel.AppShared.Utils;
 using SharedKernel.Cache.Services;
 using SharedKernel.Entity.Utils;
 
-namespace SharedKernel.CQRS.BaseQuery.Implementations;
+namespace SharedKernel.CQRS.MediatR.BaseQuery.Implementations;
 
 /// Represents a base handler for processing queries in a CQRS (Command Query Responsibility Segregation) pattern.
 /// This is an abstract class that provides foundational functionality for handling queries,
@@ -229,7 +229,6 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
 
         try
         {
-            // Double-check if data is now available in cache
             var cachedResponse = await TryGetFromCacheAsync(
                 cacheKey,
                 cancellationToken
@@ -239,13 +238,11 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
                 return cachedResponse.Value;
             }
 
-            // Execute and cache the result
             var response = await HandleAsync(
                 request,
                 cancellationToken
             );
 
-            // Set cache with expiration (you should implement this in your ICacheService)
             await CacheService!.SetAsync(
                 cacheKey,
                 response,
@@ -280,7 +277,7 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
 
                 await Task.Delay(delay, token);
 
-                delay *= 2; // exponential
+                delay *= 2;
                 delay += Random.Shared.Next(0, 50);
             }
 
@@ -313,7 +310,6 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
 
         if (!acquired)
         {
-            // Fallback: execute without caching
             var fallbackResponse = await HandleAsync(
                 request,
                 cancellationToken
@@ -324,7 +320,6 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
 
         try
         {
-            // Double-check if data is now available in cache
             var cachedResponse = await TryGetFromCacheAsync(
                 cacheKey,
                 cancellationToken
@@ -334,13 +329,11 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
                 return cachedResponse.Value;
             }
 
-            // Execute and cache the result
             var response = await HandleAsync(
                 request,
                 cancellationToken
             );
 
-            // Set cache with expiration (you should implement this in your ICacheService)
             if (CacheService is null)
             {
                 return response;
@@ -360,43 +353,18 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
         }
     }
 
-    /// <summary>
-    /// Represents a thread-safe collection of currently pending query handling tasks for deduplication purposes.
-    /// </summary>
-    /// <remarks>
-    /// This concurrent dictionary is utilized to manage asynchronous tasks that are in progress,
-    /// ensuring that multiple identical query requests with the same cache key are deduplicated and
-    /// resolved via a single task instance. It helps in reducing redundant processing and improving system efficiency.
-    /// </remarks>
     private static readonly ConcurrentDictionary<string, Task<(IHeaderDictionary, TResponse)>> PendingTasks = new();
 
-    /// <summary>
-    /// Represents a static delegate function used to create and manage tasks for handling operations with task deduplication.
-    /// </summary>
-    /// <remarks>
-    /// This delegate is employed to encapsulate the logic for generating asynchronous operations tied to specific handlers
-    /// and requests. It is primarily used in conjunction with caching mechanisms to ensure that duplicate tasks for the same
-    /// key or operation are not redundantly executed, thereby increasing efficiency and performance.
-    /// </remarks>
     private static readonly Func<string, (QueryBaseHandler<TQuery, TResponse> handler, TQuery request, string cacheKey, CancellationToken
             cancellationToken), Task<(IHeaderDictionary, TResponse)>>
         TaskFactoryDelegate = CreateTaskFactory;
 
-    /// <summary>
-    /// Executes the query handling logic with task deduplication to avoid processing duplicate queries simultaneously.
-    /// Ensures that repeated requests with the same cache key share the same ongoing task, improving efficiency and preventing redundant processing.
-    /// </summary>
-    /// <param name="request">The query instance to be handled.</param>
-    /// <param name="cacheKey">The unique cache key associated with the request for deduplication purposes.</param>
-    /// <param name="cancellationToken">A token for propagating cancellation notifications.</param>
-    /// <returns>A task that represents the asynchronous operation. The result contains a tuple with headers and the query response.</returns>
     private async Task<(IHeaderDictionary, TResponse)> HandleWithTaskDeduplicationAsync(
         TQuery request,
         string cacheKey,
         CancellationToken cancellationToken
     )
     {
-        // Get or add task - using static delegate
         var task = PendingTasks.GetOrAdd(
             cacheKey,
             TaskFactoryDelegate,
@@ -414,12 +382,10 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
         }
         catch (TimeoutException)
         {
-            // Fallback execution
             return await HandleAsync(request, cancellationToken);
         }
         finally
         {
-            // Cleanup completed task after a delay to allow other requests to benefit
             _ = Task
                 .Delay(TimeSpan.FromSeconds(5), CancellationToken.None)
                 .ContinueWith(
@@ -433,16 +399,6 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
         }
     }
 
-    // Static factory method để tránh allocation
-    /// <summary>
-    /// Creates and returns a task responsible for handling the query execution and optional caching logic in a CQRS pattern.
-    /// Used as a static factory method to minimize memory allocations during task creation for query handling.
-    /// </summary>
-    /// <param name="key">A unique string identifier used for caching and task correlation.</param>
-    /// <param name="args">A tuple containing the query handler, the query request, the cache key, and a cancellation token.</param>
-    /// <returns>
-    /// A task that contains the tuple of response headers and the query response, wrapped in a caching mechanism where applicable.
-    /// </returns>
     private static Task<(IHeaderDictionary, TResponse)> CreateTaskFactory(
         string key,
         (QueryBaseHandler<TQuery, TResponse> handler, TQuery request, string cacheKey, CancellationToken cancellationToken) args
@@ -453,7 +409,6 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
             {
                 var (handler, request, cacheKey, cancellationToken) = args;
 
-                // Double-check cache before execution
                 var cachedResponse = await handler.TryGetFromCacheAsync(
                     cacheKey,
                     cancellationToken
@@ -468,7 +423,6 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
                     cancellationToken
                 );
 
-                // Cache result
                 await handler.CacheService!.SetAsync(
                     cacheKey,
                     response,
@@ -571,77 +525,18 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
 /// might try to access or modify cached data for the same key concurrently.
 public static class QueryCacheLockManager
 {
-    /// <summary>
-    /// Maintains a thread-safe collection of semaphore locks associated with specific cache keys.
-    /// </summary>
-    /// <remarks>
-    /// This static dictionary is used to ensure serialized access to cache resources by associating a
-    /// SemaphoreSlim instance with a specific cache key. This prevents concurrent operations
-    /// from modifying or accessing the same cache entry at the same time, enabling thread safety
-    /// for cache operations.
-    /// </remarks>
     private static readonly ConcurrentDictionary<string, SemaphoreSlim> CacheLocks = new();
-
-    /// <summary>
-    /// Stores timestamps associated with active cache locks, mapping unique cache keys to their last access or update time.
-    /// </summary>
-    /// <remarks>
-    /// This dictionary is used to monitor and manage the lifecycle of active cache locks in the system.
-    /// It helps facilitate periodic cleanup of expired locks, ensuring optimal memory usage and preventing stale lock retention.
-    /// Entries in this collection are updated whenever a cache key is accessed or its associated lock is acquired.
-    /// </remarks>
     private static readonly ConcurrentDictionary<string, DateTime> LockTimestamps = new();
-
-    /// <summary>
-    /// Serves as a synchronization primitive to ensure thread-safe access during periodic cache cleanup operations.
-    /// </summary>
-    /// <remarks>
-    /// This static lock is utilized within the cache cleanup mechanism to prevent race conditions and ensure
-    /// that only one thread can perform the cleanup process at a time, thus maintaining data consistency and minimizing resource contention.
-    /// </remarks>
     private static readonly object CleanupLock = new();
-
-    /// <summary>
-    /// Tracks the timestamp of the last cleanup operation within the cache lock manager.
-    /// </summary>
-    /// <remarks>
-    /// Used to determine if the periodic cleanup of expired locks needs to be executed,
-    /// based on the elapsed time since the last cleanup. Helps maintain efficient memory
-    /// usage by removing expired locks at regular intervals.
-    /// </remarks>
     private static DateTime _lastCleanup = DateTime.UtcNow;
 
-    /// <summary>
-    /// Specifies the interval, in minutes, for performing cleanup of expired cache locks.
-    /// </summary>
-    /// <remarks>
-    /// This constant determines how often the system checks for and removes expired locks in the cache
-    /// to ensure optimal memory usage and to prevent stale data from persisting in the lock manager.
-    /// </remarks>
     private const int CleanupIntervalMinutes = 5;
-
-    /// <summary>
-    /// Specifies the duration, in minutes, after which an unused lock expires and is eligible for removal during cleanup.
-    /// </summary>
-    /// <remarks>
-    /// This value determines the time threshold for cleaning up expired locks that are no longer associated with ongoing operations.
-    /// Locks older than this duration are considered stale and are cleared to free up resources and maintain optimal performance.
-    /// </remarks>
     private const int LockExpirationMinutes = 10;
 
-    /// <summary>
-    /// Retrieves or creates a <see cref="SemaphoreSlim"/> instance associated with a specific cache key.
-    /// This provides a mechanism to synchronize access to resources or operations tied to the provided key.
-    /// </summary>
-    /// <param name="key">The unique key for which to retrieve or create the lock.</param>
-    /// <returns>A <see cref="SemaphoreSlim"/> instance used to coordinate access for the specified key.</returns>
     public static SemaphoreSlim GetCacheLockForKey(
         string key
     )
     {
-        // return CacheLocks.GetOrAdd(key, _ => new SemaphoreSlim(1, 1));
-
-        // Periodic cleanup to prevent memory leaks
         if (DateTime.UtcNow.Subtract(_lastCleanup).TotalMinutes > CleanupIntervalMinutes)
         {
             lock (CleanupLock)
@@ -656,7 +551,6 @@ public static class QueryCacheLockManager
 
         var semaphore = CacheLocks.GetOrAdd(key, _ => new SemaphoreSlim(1, 100));
 
-        // Track usage timestamp for cleanup
         LockTimestamps.AddOrUpdate(
             key,
             DateTime.UtcNow,
@@ -669,9 +563,6 @@ public static class QueryCacheLockManager
         return semaphore;
     }
 
-    /// <summary>
-    /// Cleans up expired locks to prevent memory leaks
-    /// </summary>
     private static void CleanupExpiredLocks()
     {
         var cutoffTime = DateTime.UtcNow.AddMinutes(-LockExpirationMinutes);
@@ -688,7 +579,7 @@ public static class QueryCacheLockManager
                 }
                 catch
                 {
-                    // Ignore disposal errors
+                    // Ignore disposal errors during best-effort cleanup.
                 }
             }
 
@@ -713,33 +604,10 @@ public abstract class QuerySingleBaseHandler<TQuery, TResponse>
     : QueryBaseHandler<TQuery, TResponse>, IQuerySingBaseHandler<TQuery, TResponse>
     where TQuery : IQuerySingleBase<TResponse>, IQueryBase<TResponse>
 {
-    /// <summary>
-    /// Represents an abstract handler specifically designed to handle single-query operations.
-    /// This class extends the functionality provided by QueryBaseHandler and enforces the
-    /// handling of queries implementing <see cref="IQuerySingleBase{TResponse}"/>.
-    /// </summary>
-    /// <typeparam name="TQuery">
-    /// The type of query being handled. It must implement <see cref="IQuerySingleBase{TResponse}"/>
-    /// and <see cref="IQueryBase{TResponse}"/>.
-    /// </typeparam>
-    /// <typeparam name="TResponse">
-    /// The type of response returned after the query is processed.
-    /// </typeparam>
     protected QuerySingleBaseHandler()
     {
     }
 
-    /// <summary>
-    /// Represents a base handler for processing single query requests within the application's CQRS framework.
-    /// Inherits from <see cref="QueryBaseHandler{TQuery, TResponse}"/> and implements <see cref="IQuerySingBaseHandler{TQuery, TResponse}"/>.
-    /// It is designed to handle single, specific types of queries that produce a single response.
-    /// </summary>
-    /// <typeparam name="TQuery">
-    /// The type of the query being processed. Must implement <see cref="IQuerySingleBase{TResponse}"/> and <see cref="IQueryBase{TResponse}"/>.
-    /// </typeparam>
-    /// <typeparam name="TResponse">
-    /// The type of the response that the handler produces.
-    /// </typeparam>
     protected QuerySingleBaseHandler(
         ICacheService cacheService
     ) : base(cacheService)
@@ -761,26 +629,10 @@ public abstract class QueryListBaseHandler<TQuery, TResponse>
     : QueryBaseHandler<TQuery, IEnumerable<TResponse>>, IQueryListBaseHandler<TQuery, TResponse>
     where TQuery : IQueryListBase<TResponse>
 {
-    /// <summary>
-    /// Represents an abstract base class for handling queries that return a list of responses.
-    /// </summary>
-    /// <typeparam name="TQuery">The type of the query being processed. Must implement <see cref="IQueryListBase{TResponse}"/>.</typeparam>
-    /// <typeparam name="TResponse">The type of the response returned as a list.</typeparam>
-    /// <remarks>
-    /// This handler class is intended to provide a foundation for handling queries that result in a collection of items.
-    /// It builds upon the <see cref="QueryBaseHandler{TQuery, TResponse}"/> class, allowing additional functionality to be added as needed.
-    /// </remarks>
     protected QueryListBaseHandler()
     {
     }
 
-    /// <summary>
-    /// Represents a base handler for managing list-based query operations within the CQRS pattern.
-    /// This abstract class extends the functionality of <see cref="QueryBaseHandler{TQuery, TResponse}"/>
-    /// to handle queries that return a collection of responses.
-    /// </summary>
-    /// <typeparam name="TQuery">The type of the query object that implements <see cref="IQueryListBase{TResponse}"/>.</typeparam>
-    /// <typeparam name="TResponse">The type of the response elements returned by the query.</typeparam>
     protected QueryListBaseHandler(
         ICacheService cacheService
     ) : base(cacheService)
@@ -798,32 +650,10 @@ public abstract class QueryPageBaseHandler<TQuery, TResponse>
     : QueryBaseHandler<TQuery, IEnumerable<TResponse>>, IQueryPagedBaseHandler<TQuery, TResponse>
     where TQuery : IQueryPagedBase<TResponse>
 {
-    /// <summary>
-    /// Represents a base handler for handling paged queries, providing common functionality
-    /// for processing queries that return a paginated collection of response items.
-    /// </summary>
-    /// <typeparam name="TQuery">
-    /// The type of the query being handled. Must implement <see cref="IQueryPagedBase{TResponse}"/>.
-    /// </typeparam>
-    /// <typeparam name="TResponse">
-    /// The type of the response returned by the query handler. Represents individual items in the paginated collection.
-    /// </typeparam>
     protected QueryPageBaseHandler()
     {
     }
 
-    /// <summary>
-    /// Serves as an abstract base class for handling paginated query operations in a CQRS design pattern.
-    /// Extends the functionality of <see cref="QueryBaseHandler{TQuery, IEnumerable}"/>
-    /// while additionally implementing support for paginated query handling through <see cref="IQueryPagedBaseHandler{TQuery, TResponse}"/>.
-    /// Provides common functionality for managing queries, mapping, and caching in scenarios requiring pagination.
-    /// </summary>
-    /// <typeparam name="TQuery">
-    /// The type of the paginated query to be handled, which must implement <see cref="IQueryPagedBase{TResponse}"/>.
-    /// </typeparam>
-    /// <typeparam name="TResponse">
-    /// The type of the individual response item returned by the query handler.
-    /// </typeparam>
     protected QueryPageBaseHandler(
         ICacheService cacheService
     ) : base(cacheService)
