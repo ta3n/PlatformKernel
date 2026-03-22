@@ -1,0 +1,92 @@
+name: shared-kernel-mass-transit-test
+
+services:
+  mass-transit-test-postgres:
+    image: postgres:16-alpine
+    container_name: mass-transit-test-postgres
+    environment:
+      POSTGRES_DB: shared_kernel_mass_transit_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "54329:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d shared_kernel_mass_transit_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - mass-transit-test-network
+
+  mass-transit-test-rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: mass-transit-test-rabbitmq
+    ports:
+      - "56729:5672"
+      - "15679:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - mass-transit-test-network
+
+  mass-transit-test-api:
+    build:
+      context: ../../..
+      dockerfile: src/shared-kernel/SharedKernel.MassTransit.Test/Dockerfile
+    container_name: mass-transit-test-api
+    environment: &mass-transit-test-env
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=mass-transit-test-postgres;Port=5432;Database=shared_kernel_mass_transit_test;Username=postgres;Password=postgres
+      MessageQueueSettings__QueueType: RabbitMq
+      MessageQueueSettings__RabbitMqOptions__Url: amqp://mass-transit-test-rabbitmq:5672
+      MessageQueueSettings__RabbitMqOptions__Username: guest
+      MessageQueueSettings__RabbitMqOptions__Password: guest
+      App__Role: Api
+    ports:
+      - "8088:8080"
+    depends_on:
+      mass-transit-test-postgres:
+        condition: service_healthy
+      mass-transit-test-rabbitmq:
+        condition: service_healthy
+    networks:
+      - mass-transit-test-network
+
+  mass-transit-test-saga:
+    build:
+      context: ../../..
+      dockerfile: src/shared-kernel/SharedKernel.MassTransit.Test/Dockerfile
+    container_name: mass-transit-test-saga
+    environment:
+      <<: *mass-transit-test-env
+      App__Role: Saga
+    depends_on:
+      mass-transit-test-postgres:
+        condition: service_healthy
+      mass-transit-test-rabbitmq:
+        condition: service_healthy
+    networks:
+      - mass-transit-test-network
+
+  mass-transit-test-processor:
+    build:
+      context: ../../..
+      dockerfile: src/shared-kernel/SharedKernel.MassTransit.Test/Dockerfile
+    container_name: mass-transit-test-processor
+    environment:
+      <<: *mass-transit-test-env
+      App__Role: Processor
+    depends_on:
+      mass-transit-test-postgres:
+        condition: service_healthy
+      mass-transit-test-rabbitmq:
+        condition: service_healthy
+    networks:
+      - mass-transit-test-network
+
+networks:
+  mass-transit-test-network:
+    name: shared-kernel-mass-transit-test-network
