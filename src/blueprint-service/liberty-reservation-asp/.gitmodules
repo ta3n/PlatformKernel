@@ -1,4 +1,0 @@
-[submodule "src/liberty-asp"]
-	path = src/liberty-asp
-	url = ../liberty-asp.git
-	branch = develop-yopaz-refactor
