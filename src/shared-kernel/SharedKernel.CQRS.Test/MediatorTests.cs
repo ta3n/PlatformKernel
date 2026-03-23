@@ -10,7 +10,7 @@ namespace SharedKernel.CQRS.Test;
 public class MediatorCqrsTests
 {
     [Fact]
-    public async Task CommandBaseHandler_InvokesHandleAsyncAndRemoveCaches()
+    public async Task Mediator_CommandBaseHandler_InvokesHandleAsyncAndRemoveCaches()
     {
         var handler = new TestCommandHandler();
 
@@ -22,7 +22,7 @@ public class MediatorCqrsTests
     }
 
     [Fact]
-    public async Task CommandBaseWithAuditEventHandler_PublishesAuditEventWhenPresent()
+    public async Task Mediator_CommandBaseWithAuditEventHandler_PublishesAuditEventWhenPresent()
     {
         var mediator = new RecordingMediator();
         var handler = new AuditCommandHandler(mediator);
@@ -35,7 +35,19 @@ public class MediatorCqrsTests
     }
 
     [Fact]
-    public async Task QueryBaseHandler_HandlesRequestWithoutCache()
+    public async Task Mediator_CommandBaseWithAuditEventHandler_DoesNotPublishWhenAuditEventMissing()
+    {
+        var mediator = new RecordingMediator();
+        var handler = new NoAuditCommandHandler(mediator);
+
+        var result = await handler.Handle(new SampleCommand(), CancellationToken.None);
+
+        Assert.Equal("no-audit", result);
+        Assert.Empty(mediator.PublishedNotifications);
+    }
+
+    [Fact]
+    public async Task Mediator_QueryBaseHandler_HandlesRequestWithoutCache()
     {
         var handler = new TestQueryHandler();
 
@@ -47,7 +59,7 @@ public class MediatorCqrsTests
     }
 
     [Fact]
-    public void QueryCacheLockManager_ReturnsSameSemaphoreForSameKey()
+    public void Mediator_QueryCacheLockManager_ReturnsSameSemaphoreForSameKey()
     {
         var first = QueryCacheLockManager.GetCacheLockForKey("shared-key");
         var second = QueryCacheLockManager.GetCacheLockForKey("shared-key");
@@ -56,12 +68,20 @@ public class MediatorCqrsTests
     }
 
     [Fact]
-    public void QueryPagedBase_PreservesProvidedPageable()
+    public void Mediator_QueryPagedBase_PreservesProvidedPageable()
     {
         var pageable = Pageable.Of(1, 20);
         var query = new SamplePagedQuery(pageable);
 
         Assert.Same(pageable, query.Pageable);
+    }
+
+    [Fact]
+    public void Mediator_RequestBase_ExposesResponseType()
+    {
+        IRequestBase<string> request = new SampleCommand();
+
+        Assert.Equal(typeof(string), request.ResponseType);
     }
 
     private sealed record SampleCommand : CommandBase<string>;
@@ -90,6 +110,14 @@ public class MediatorCqrsTests
         {
             AuditEventData = new SampleAuditEvent();
             return Task.FromResult("audit");
+        }
+    }
+
+    private sealed class NoAuditCommandHandler(IMediator mediator) : CommandBaseWithAuditEventHandler<SampleCommand, string>(mediator)
+    {
+        protected override Task<string> HandleAsync(SampleCommand request, CancellationToken cancellationToken)
+        {
+            return Task.FromResult("no-audit");
         }
     }
 
