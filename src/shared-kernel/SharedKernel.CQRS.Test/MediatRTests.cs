@@ -1,13 +1,25 @@
+<<<<<<<< HEAD:src/shared-kernel/SharedKernel.CQRS.Test/MediatRTests.cs
 using global::MediatR;
 using Microsoft.AspNetCore.Http;
 using SharedKernel.CQRS.MediatR;
 using SharedKernel.CQRS.MediatR.BaseCommand.Implementations;
 using SharedKernel.CQRS.MediatR.BaseQuery.Implementations;
+========
+using Mediator;
+using Microsoft.AspNetCore.Http;
+using SharedKernel.CQRS.Mediator;
+using SharedKernel.CQRS.Mediator.BaseCommand.Implementations;
+using SharedKernel.CQRS.Mediator.BaseQuery.Implementations;
+>>>>>>>> origin/develop:src/shared-kernel/SharedKernel.CQRS.Test/UnitTest1.cs
 using SharedKernel.Pagination;
 
 namespace SharedKernel.CQRS.Test;
 
+<<<<<<<< HEAD:src/shared-kernel/SharedKernel.CQRS.Test/MediatRTests.cs
 public class MediatRCqrsTests
+========
+public class MediatorCqrsTests
+>>>>>>>> origin/develop:src/shared-kernel/SharedKernel.CQRS.Test/UnitTest1.cs
 {
     [Fact]
     public async Task MediatR_CommandBaseHandler_InvokesHandleAsyncAndRemoveCaches()
@@ -118,25 +130,35 @@ public class MediatRCqrsTests
     {
         public List<INotification> PublishedNotifications { get; } = [];
 
-        public Task Publish(object notification, CancellationToken cancellationToken = default)
+        public ValueTask Publish(object notification, CancellationToken cancellationToken = default)
         {
             PublishedNotifications.Add((INotification)notification);
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
-        public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
+        public ValueTask Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
             where TNotification : INotification
         {
             PublishedNotifications.Add(notification);
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
-        public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
+        public ValueTask<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
         {
             throw new NotSupportedException();
         }
 
-        public Task<object?> Send(object request, CancellationToken cancellationToken = default)
+        public ValueTask<TResponse> Send<TResponse>(ICommand<TResponse> command, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public ValueTask<TResponse> Send<TResponse>(IQuery<TResponse> query, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public ValueTask<object?> Send(object message, CancellationToken cancellationToken = default)
         {
             throw new NotSupportedException();
         }
@@ -146,7 +168,17 @@ public class MediatRCqrsTests
             throw new NotSupportedException();
         }
 
-        public IAsyncEnumerable<object?> CreateStream(object request, CancellationToken cancellationToken = default)
+        public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamCommand<TResponse> command, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamQuery<TResponse> query, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public IAsyncEnumerable<object?> CreateStream(object message, CancellationToken cancellationToken = default)
         {
             throw new NotSupportedException();
         }
