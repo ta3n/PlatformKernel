@@ -118,7 +118,7 @@ public sealed class ElasticSearchService(
             id,
             request => request
                 .Doc(partialDocument)
-                .DocAsUpsert(true),
+                .DocAsUpsert(),
             cancellationToken
         );
     }

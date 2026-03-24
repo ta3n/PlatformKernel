@@ -138,12 +138,12 @@ public static class Extensions
 
         if (options.PrettyJson)
         {
-            settings = settings.PrettyJson(true);
+            settings = settings.PrettyJson();
         }
 
         if (options.DisableDirectStreaming)
         {
-            settings = settings.DisableDirectStreaming(true);
+            settings = settings.DisableDirectStreaming();
         }
 
         var authorizationHeader = CreateAuthorizationHeader(options);
