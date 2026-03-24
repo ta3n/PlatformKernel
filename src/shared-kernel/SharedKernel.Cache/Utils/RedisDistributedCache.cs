@@ -27,7 +27,7 @@ public class RedisDistributedCache(
     /// </returns>
     private IDatabase GetDatabase()
     {
-        return redisConnectionPool.GetConnection().GetDatabase();
+        return redisConnectionPool.GetDatabase();
     }
 
     /// <summary>

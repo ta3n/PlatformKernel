@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.Cache;
+using SharedKernel.Cache.Inventory;
 using SharedKernel.Cache.Options;
 using SharedKernel.Cache.Services;
 using SharedKernel.Cache.Utils;
@@ -55,7 +56,22 @@ public class UnitTest1
         Assert.True(configuration.Ssl);
         Assert.Equal("secret", configuration.Password);
         Assert.Equal("redis-a", configuration.Hosts.Single().Host);
+        Assert.Equal(0, configuration.Database);
         Assert.Equal("redis-a:6379,password=secret,ssl=true", configuration.ConnectionString);
+    }
+
+    [Fact]
+    public void ToExtensionRedisConfiguration_UsesConfiguredDefaultDatabase()
+    {
+        var options = new CacheOptions
+        {
+            UrlConfiguration = "redis-a:6379",
+            DefaultDatabase = 6
+        };
+
+        var configuration = options.ToExtensionRedisConfiguration();
+
+        Assert.Equal(6, configuration.Database);
     }
 
     [Fact]
@@ -76,6 +92,8 @@ public class UnitTest1
         services.AddDistributedCache(configuration);
 
         Assert.Contains(services, descriptor => descriptor.ServiceType == typeof(ICacheService));
+        Assert.Contains(services, descriptor => descriptor.ServiceType == typeof(IRedisCacheService));
+        Assert.Contains(services, descriptor => descriptor.ServiceType == typeof(IRedisInventoryService));
         Assert.Contains(services, descriptor => descriptor.ServiceType.FullName == "Microsoft.Extensions.Caching.Distributed.IDistributedCache");
     }
 
@@ -88,6 +106,38 @@ public class UnitTest1
         Assert.Equal(first, second);
         Assert.Equal(16, first.Length);
         Assert.Equal(first, first.ToLowerInvariant());
+    }
+
+    [Fact]
+    public void ResolveDatabaseIndex_UsesRequestedOrDefault()
+    {
+        Assert.Equal(3, CacheHelper.ResolveDatabaseIndex(3, 0));
+        Assert.Equal(5, CacheHelper.ResolveDatabaseIndex(null, 5));
+        Assert.Throws<ArgumentOutOfRangeException>(() => CacheHelper.ResolveDatabaseIndex(-1, 0));
+    }
+
+    [Fact]
+    public void RedisInventoryHelper_ExpandStayDates_UsesExclusiveCheckout()
+    {
+        var dates = RedisInventoryHelper.ExpandStayDates(
+            new DateOnly(2026, 3, 24),
+            new DateOnly(2026, 3, 27)
+        );
+
+        Assert.Equal(3, dates.Count);
+        Assert.Equal(new DateOnly(2026, 3, 24), dates[0]);
+        Assert.Equal(new DateOnly(2026, 3, 26), dates[2]);
+    }
+
+    [Fact]
+    public void RedisInventoryHelper_BuildAvailabilityKey_UsesCompactDateToken()
+    {
+        var key = RedisInventoryHelper.BuildAvailabilityKey(
+            "room-1",
+            new DateOnly(2026, 3, 24)
+        );
+
+        Assert.Equal("inventory:availability:room-1:20260324", key);
     }
 
     private sealed record CachePayload(string Name, int Version);

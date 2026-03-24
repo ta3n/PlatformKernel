@@ -59,6 +59,11 @@ public class RedisConnectionPool
     private readonly ConfigurationOptions _configOptions;
 
     /// <summary>
+    /// Represents the default Redis database configured for the application.
+    /// </summary>
+    private readonly int _defaultDatabase;
+
+    /// <summary>
     /// Represents the index used to determine the next connection to be retrieved from the connection pool in a thread-safe manner.
     /// </summary>
     /// <remarks>
@@ -88,6 +93,7 @@ public class RedisConnectionPool
         _poolSize = options.PoolSize > 0 ? options.PoolSize : 10;
         _redisPool = new Lazy<ConnectionMultiplexer>[_poolSize];
         _configOptions = options.ToExtensionConfigureOptions();
+        _defaultDatabase = CacheHelper.ResolveDatabaseIndex(options.DefaultDatabase);
 
         if (IsUseSingleConnection)
         {
@@ -154,6 +160,24 @@ public class RedisConnectionPool
         Reconnect(index);
 
         return _redisPool[index].Value;
+    }
+
+    /// <summary>
+    /// Retrieves a Redis database using either the requested database index or the configured default database.
+    /// </summary>
+    /// <param name="database">An optional Redis database index.</param>
+    /// <returns>The resolved Redis database.</returns>
+    public IDatabase GetDatabase(
+        int? database = null
+    )
+    {
+        return GetConnection()
+            .GetDatabase(
+                CacheHelper.ResolveDatabaseIndex(
+                    database,
+                    _defaultDatabase
+                )
+            );
     }
 
     /// <summary>

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SharedKernel.Cache.Inventory;
 using SharedKernel.Cache.Options;
 using SharedKernel.Cache.Services;
 using SharedKernel.Cache.Utils;
@@ -44,7 +45,8 @@ public static class Extensions
         );
 
         services.AddSingleton<RedisConnectionPool>();
-        services.AddSingleton<IDistributedCache, RedisDistributedCache>();
+        services.AddSingleton<IRedisCacheService, RedisCacheService>();
+        services.AddSingleton<IRedisInventoryService, RedisInventoryService>();
 
         services.AddSingleton<ICacheService, CacheService>();
 

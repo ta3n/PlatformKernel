@@ -189,4 +189,30 @@ public static class CacheHelper
 
         return ComputeSha256Hash(cacheKeyData, length);
     }
+
+    /// <summary>
+    /// Resolves the Redis database index for a command, falling back to the configured default database.
+    /// </summary>
+    /// <param name="requestedDatabase">The database requested by the caller.</param>
+    /// <param name="defaultDatabase">The configured default database.</param>
+    /// <returns>The database index that should be used for the command.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the resolved database index is negative.</exception>
+    public static int ResolveDatabaseIndex(
+        int? requestedDatabase,
+        int defaultDatabase = 0
+    )
+    {
+        var database = requestedDatabase ?? defaultDatabase;
+
+        if (database < 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(requestedDatabase),
+                database,
+                "Redis database index must be greater than or equal to zero."
+            );
+        }
+
+        return database;
+    }
 }
