@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using SharedKernel.Cache.Options;
 using StackExchange.Redis;
@@ -34,7 +35,7 @@ public static class RedisExtension
             AbortOnConnectFail = false,
             ConnectTimeout = redisOptions.ConnectTimeout,
             SyncTimeout = redisOptions.SyncTimeout,
-            Database = 0,
+            Database = redisOptions.DefaultDatabase,
             Ssl = redisOptions.Ssl,
             ServerEnumerationStrategy = new ServerEnumerationStrategy
             {
@@ -111,6 +112,7 @@ public static class RedisExtension
     public static async IAsyncEnumerable<RedisKey> ScanKeysAsync(
         IConnectionMultiplexer muxer,
         string pattern,
+        int database = 0,
         int pageSize = 200,
         int maxKeys = 5_000,
         int maxIters = 100,
@@ -118,36 +120,70 @@ public static class RedisExtension
     )
     {
         var yielded = 0;
-        var iters = 0;
 
-        foreach (var endpoint in muxer.GetEndPoints())
+        foreach (var endpoint in muxer.GetEndPoints(configuredOnly: true))
         {
             var server = muxer.GetServer(endpoint);
-            if (!server.IsConnected)
+            if (!server.IsConnected || server.ServerType == ServerType.Sentinel)
             {
                 continue;
             }
 
-            await foreach (var key in server.KeysAsync(
-                    pattern: pattern,
-                    pageSize: pageSize
-                )
-                .WithCancellation(cancellationToken))
-            {
-                yield return key;
-                yielded++;
+            var iterations = 0;
+            var cursor = 0L;
 
-                if (yielded >= maxKeys)
+            do
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var scanReply = await server.ExecuteAsync(
+                    "SCAN",
+                    cursor.ToString(CultureInfo.InvariantCulture),
+                    "MATCH",
+                    pattern,
+                    "COUNT",
+                    pageSize.ToString(CultureInfo.InvariantCulture)
+                );
+
+                var scanResult = (RedisResult[]?)scanReply;
+                if (scanResult is null || scanResult.Length != 2)
                 {
                     yield break;
                 }
-            }
 
-            iters++;
-            if (iters >= maxIters)
-            {
-                yield break;
-            }
+                var nextCursor = scanResult[0].ToString();
+                if (string.IsNullOrWhiteSpace(nextCursor))
+                {
+                    yield break;
+                }
+
+                cursor = long.Parse(nextCursor, CultureInfo.InvariantCulture);
+
+                var keys = (RedisResult[]?)scanResult[1];
+                if (keys is null)
+                {
+                    break;
+                }
+
+                foreach (var redisKey in keys)
+                {
+                    var key = redisKey.ToString();
+                    if (string.IsNullOrWhiteSpace(key))
+                    {
+                        continue;
+                    }
+
+                    yield return (RedisKey)key;
+                    yielded++;
+
+                    if (yielded >= maxKeys)
+                    {
+                        yield break;
+                    }
+                }
+
+                iterations++;
+            } while (cursor != 0 && iterations < maxIters);
         }
     }
 
@@ -179,18 +215,20 @@ public static class RedisExtension
         IConnectionMultiplexer muxer,
         string pattern,
         RedisValue field,
+        int database = 0,
         int pageSize = 200,
         int maxKeys = 3_000,
         CancellationToken cancellationToken = default
     )
     {
-        var db = muxer.GetDatabase();
+        var db = muxer.GetDatabase(database);
         var result = new Dictionary<string, RedisValue>();
         var count = 0;
 
         await foreach (var key in ScanKeysAsync(
                 muxer,
                 pattern,
+                database,
                 pageSize,
                 maxKeys,
                 cancellationToken: cancellationToken
@@ -236,19 +274,21 @@ public static class RedisExtension
     public static async Task<long> ClearByPatternAsync(
         IConnectionMultiplexer muxer,
         string pattern,
+        int database = 0,
         int pageSize = 500,
         int deleteBatchSize = 200,
         int maxKeys = 10_000,
         CancellationToken cancellationToken = default
     )
     {
-        var db = muxer.GetDatabase();
+        var db = muxer.GetDatabase(database);
         var deleted = 0L;
         var batch = new List<RedisKey>(deleteBatchSize);
 
         await foreach (var key in ScanKeysAsync(
                 muxer,
                 pattern,
+                database,
                 pageSize,
                 maxKeys,
                 cancellationToken: cancellationToken
@@ -281,8 +321,9 @@ public static class RedisExtension
             try
             {
                 // UNLINK (non-blocking)
-                return await database.ExecuteAsync("UNLINK", keys.Select(k => k).ToArray())
-                    .ContinueWith(t => (long)t.Result, cancellationToken);
+                var args = keys.ConvertAll(static key => (object)key).ToArray();
+                var redisResult = await database.ExecuteAsync("UNLINK", args);
+                return (long)redisResult;
             }
             catch
             {

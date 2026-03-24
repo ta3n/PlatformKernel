@@ -26,7 +26,14 @@ public class CacheService(
 
     public IDatabase GetDatabase()
     {
-        return redisConnectionPool.GetConnection().GetDatabase();
+        return redisConnectionPool.GetDatabase();
+    }
+
+    public IDatabase GetDatabase(
+        int database
+    )
+    {
+        return redisConnectionPool.GetDatabase(database);
     }
 
     public void SetOptionSetting(
@@ -61,6 +68,7 @@ public class CacheService(
 
         var server = redisConnectionPool.GetConnection().GetServers().LastOrDefault();
         var keys = server?.Keys(
+            database: _redisOptions.DefaultDatabase,
             pattern: new RedisValue(
                 $"{_redisOptions.InstanceName}{pattern}"
             )

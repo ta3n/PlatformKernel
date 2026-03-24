@@ -28,6 +28,15 @@ public interface ICacheService
     IDatabase GetDatabase();
 
     /// <summary>
+    /// Retrieves an interface to interact with a specific Redis database.
+    /// </summary>
+    /// <param name="database">The Redis database index.</param>
+    /// <returns>An instance of <see cref="IDatabase"/> for the requested database.</returns>
+    IDatabase GetDatabase(
+        int database
+    );
+
+    /// <summary>
     /// Configures the cache settings for the service using the provided <see cref="CacheOptions"/>.
     /// </summary>
     /// <param name="cacheOptions">

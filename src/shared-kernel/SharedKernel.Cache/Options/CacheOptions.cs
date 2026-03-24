@@ -34,6 +34,11 @@ public class CacheOptions
     public string? InstanceName { get; set; }
 
     /// <summary>
+    /// Gets or sets the default Redis database index used when no explicit database is supplied.
+    /// </summary>
+    public int DefaultDatabase { get; set; } = 0;
+
+    /// <summary>
     /// Gets or sets the sliding expiration time, in seconds, for cached items.
     /// Sliding expiration resets the expiration timer each time the cached item is accessed.
     /// </summary>
