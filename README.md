@@ -156,9 +156,11 @@ application. **Plugin mechanism for adding shared parts**.
 - **SharedKernel.Entity**: Contains entity definitions and interfaces related to the entities. Such as ILoginHistory,
   IHasCreator, ...
 
-- **SharedKernel.Hangfire**: Provides background job processing using Hangfire with PostgreSQL storage. Includes recurring
-  job scheduling with Cron expressions, scheduled jobs execution at specific times or with delays, custom retry
-  mechanisms, dashboard with basic authentication, and job management utilities with configurable time zones.
+- **SharedKernel.Hangfire**: Provides background job processing using Hangfire with PostgreSQL or Redis storage. Includes
+  recurring job scheduling with Cron expressions, scheduled jobs execution at specific times or with delays, custom retry
+  mechanisms, dashboard with basic authentication, configurable retention for succeeded jobs, bootstrap locking for
+  scale-out deployments, optional per-instance Hangfire server enablement, and job management utilities with configurable
+  time zones.
 
 - **SharedKernel.MassTransit**: Provides message queue integration using MassTransit with RabbitMQ support. Includes
   message broker configuration, publish-subscribe patterns, batch publishing with publisher confirmation, queue
