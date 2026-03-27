@@ -14,16 +14,45 @@ Mục tiêu:
 ## Chạy bằng Docker Compose
 
 ```bash
-docker compose -f src/timescaledb-demo/docker/docker-compose.yml up -d
+docker compose \
+  --env-file src/timescaledb-demo/docker/ccu-10k.env.example \
+  -f src/timescaledb-demo/docker/docker-compose.yml \
+  up -d
 ```
 
-Database local mặc định:
+Endpoint local mặc định:
 
-- host: `localhost`
-- port: `55432`
+- qua PgBouncer: `localhost:56432`
+- direct vào TimescaleDB: `localhost:55432`
 - database: `timescale_demo`
 - user: `postgres`
 - password: `postgres`
+
+Sample app mặc định kết nối qua PgBouncer trên port `56432`. Port `55432` giữ lại để debug/troubleshoot trực tiếp vào TimescaleDB khi cần.
+
+Profile trong sample này đã được nâng theo hướng `10k+ CCU` với giả định:
+
+- ứng dụng dùng `PgBouncer` ở `transaction pooling`
+- phần lớn CCU là user đang giữ kết nối ứng dụng, không phải `10,000` query SQL chạy đồng thời
+- transaction ngắn, không phụ thuộc session state của PostgreSQL
+
+Các giá trị tune nằm trong [ccu-10k.env.example](/Users/tanguyen/Workspaces/Psnl/Github/PlatformKernel/src/timescaledb-demo/docker/ccu-10k.env.example). Trước khi dùng production thật, cần chỉnh lại theo CPU, RAM, disk IOPS và kết quả load test thực tế.
+
+## Chạy bằng .NET Aspire
+
+```bash
+dotnet run --project src/timescaledb-demo/PlatformKernel.TimescaleDbDemo.AppHost
+```
+
+AppHost sẽ dựng:
+
+- `timescaledb`: server TimescaleDB direct
+- `pgbouncer`: pooler đứng trước TimescaleDB
+- `timescaledb-demo`: resource chạy sample console app, được inject `TIMESCALE_CONNECTION_STRING` trỏ tới PgBouncer
+
+`timescaledb-demo` được đánh dấu `explicit start`, nên AppHost chỉ dựng hạ tầng trước. Khi cần chạy sample end-to-end, start resource đó từ Aspire dashboard.
+
+AppHost đọc cùng nhóm env var với Docker Compose như `POSTGRES_*`, `TIMESCALE_TUNE_*`, `TIMESCALE_SHM_SIZE`, `PGBOUNCER_*`, nên có thể dùng chung một profile tune khi chạy local hoặc CI.
 
 ## Chạy sample
 
@@ -44,7 +73,7 @@ Các lệnh hỗ trợ:
 Nếu muốn đổi connection string:
 
 ```bash
-TIMESCALE_CONNECTION_STRING="Host=localhost;Port=55432;Database=timescale_demo;Username=postgres;Password=postgres" \
+TIMESCALE_CONNECTION_STRING="Host=localhost;Port=56432;Database=timescale_demo;Username=postgres;Password=postgres" \
 dotnet run --project src/timescaledb-demo/PlatformKernel.TimescaleDbDemo -- demo
 ```
 

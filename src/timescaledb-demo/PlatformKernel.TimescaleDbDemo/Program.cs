@@ -93,7 +93,7 @@ internal static class Program
         var builder = new NpgsqlConnectionStringBuilder
         {
             Host = "localhost",
-            Port = 55432,
+            Port = 56432,
             Database = "timescale_demo",
             Username = "postgres",
             Password = password

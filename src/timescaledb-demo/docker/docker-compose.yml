@@ -1,20 +1,70 @@
 services:
   timescaledb:
-    image: timescale/timescaledb-ha:pg17
+    image: ${TIMESCALE_IMAGE:-timescale/timescaledb:latest-pg17}
     container_name: platformkernel-timescaledb-demo
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: timescale_demo
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-timescale_demo}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      TIMESCALEDB_TELEMETRY: ${TIMESCALEDB_TELEMETRY:-off}
+      TS_TUNE_MEMORY: ${TIMESCALE_TUNE_MEMORY:-16GB}
+      TS_TUNE_NUM_CPUS: ${TIMESCALE_TUNE_NUM_CPUS:-4}
+      TS_TUNE_MAX_BG_WORKERS: ${TIMESCALE_TUNE_MAX_BG_WORKERS:-16}
+      TS_TUNE_MAX_CONNS: ${TIMESCALE_TUNE_MAX_CONNS:-300}
     ports:
       - "55432:5432"
+    shm_size: ${TIMESCALE_SHM_SIZE:-4gb}
+    ulimits:
+      nofile:
+        soft: ${TIMESCALE_NOFILE_SOFT:-65535}
+        hard: ${TIMESCALE_NOFILE_HARD:-65535}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d timescale_demo"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-timescale_demo}"]
       interval: 5s
       timeout: 5s
       retries: 20
     volumes:
       - timescaledb_demo_data:/home/postgres/pgdata/data
+
+  pgbouncer:
+    image: edoburu/pgbouncer:v1.25.1-p0
+    container_name: platformkernel-timescaledb-demo-pgbouncer
+    restart: unless-stopped
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@timescaledb:5432/${POSTGRES_DB:-timescale_demo}
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: ${PGBOUNCER_MAX_CLIENT_CONN:-20000}
+      DEFAULT_POOL_SIZE: ${PGBOUNCER_DEFAULT_POOL_SIZE:-200}
+      MIN_POOL_SIZE: ${PGBOUNCER_MIN_POOL_SIZE:-50}
+      RESERVE_POOL_SIZE: ${PGBOUNCER_RESERVE_POOL_SIZE:-50}
+      RESERVE_POOL_TIMEOUT: ${PGBOUNCER_RESERVE_POOL_TIMEOUT:-2}
+      MAX_DB_CONNECTIONS: ${PGBOUNCER_MAX_DB_CONNECTIONS:-250}
+      MAX_DB_CLIENT_CONNECTIONS: ${PGBOUNCER_MAX_DB_CLIENT_CONNECTIONS:-20000}
+      QUERY_WAIT_TIMEOUT: ${PGBOUNCER_QUERY_WAIT_TIMEOUT:-30}
+      SERVER_IDLE_TIMEOUT: ${PGBOUNCER_SERVER_IDLE_TIMEOUT:-30}
+      SERVER_LIFETIME: ${PGBOUNCER_SERVER_LIFETIME:-1800}
+      LISTEN_BACKLOG: ${PGBOUNCER_LISTEN_BACKLOG:-8192}
+      SERVER_RESET_QUERY: DISCARD ALL
+      IGNORE_STARTUP_PARAMETERS: extra_float_digits
+      ADMIN_USERS: ${POSTGRES_USER:-postgres}
+      STATS_USERS: ${POSTGRES_USER:-postgres}
+    ports:
+      - "56432:5432"
+    ulimits:
+      nofile:
+        soft: ${PGBOUNCER_NOFILE_SOFT:-262144}
+        hard: ${PGBOUNCER_NOFILE_HARD:-262144}
+    sysctls:
+      net.core.somaxconn: ${PGBOUNCER_SOMAXCONN:-8192}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 5432 -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-timescale_demo}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
 volumes:
   timescaledb_demo_data:
