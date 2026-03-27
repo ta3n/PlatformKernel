@@ -1,8 +1,9 @@
+using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rebus.Bus;
 using Rebus.Config;
-using Rebus.ServiceProvider;
 using Rebus.Transport.InMem;
 using SharedKernel.Rebus.Constants;
 using SharedKernel.Rebus.Options;

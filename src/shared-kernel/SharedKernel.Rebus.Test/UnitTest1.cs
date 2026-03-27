@@ -1,8 +1,9 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using SharedKernel.Rebus;
 using SharedKernel.Rebus.Constants;
 using SharedKernel.Rebus.Options;
 using Xunit;

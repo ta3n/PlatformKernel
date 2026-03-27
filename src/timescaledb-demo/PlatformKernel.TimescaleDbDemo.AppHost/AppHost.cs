@@ -1,5 +1,3 @@
-using Aspire.Hosting.ApplicationModel;
-
 var builder = DistributedApplication.CreateBuilder(args);
 
 var databaseName = Environment.GetEnvironmentVariable("POSTGRES_DB") ?? "timescale_demo";
