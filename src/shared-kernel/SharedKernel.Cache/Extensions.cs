@@ -48,6 +48,7 @@ public static class Extensions
         services.AddSingleton<IRedisInventoryService, RedisInventoryService>();
 
         services.AddSingleton<ICacheService, CacheService>();
+        services.AddSingleton<ISingleFlightCacheService, SingleFlightCacheService>();
 
         services.AddStackExchangeRedisCache(
             options =>

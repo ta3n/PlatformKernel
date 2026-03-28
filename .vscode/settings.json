@@ -19,8 +19,13 @@
   },
   "explorerExclude.backup": {},
   "cSpell.words": [
+    "NOFILE",
+    "PGBOUNCER",
     "Serilog",
     "sonarqube",
+    "sysctls",
+    "timescaledb",
+    "ulimits",
     "v'VVV"
   ]
 }

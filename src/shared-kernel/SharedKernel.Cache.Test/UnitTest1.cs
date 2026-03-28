@@ -94,6 +94,7 @@ public class UnitTest1
         Assert.Contains(services, descriptor => descriptor.ServiceType == typeof(ICacheService));
         Assert.Contains(services, descriptor => descriptor.ServiceType == typeof(IRedisCacheService));
         Assert.Contains(services, descriptor => descriptor.ServiceType == typeof(IRedisInventoryService));
+        Assert.Contains(services, descriptor => descriptor.ServiceType == typeof(ISingleFlightCacheService));
         Assert.Contains(services, descriptor => descriptor.ServiceType.FullName == "Microsoft.Extensions.Caching.Distributed.IDistributedCache");
     }
 

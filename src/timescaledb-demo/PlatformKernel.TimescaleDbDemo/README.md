@@ -30,6 +30,25 @@ Endpoint local mặc định:
 
 Sample app mặc định kết nối qua PgBouncer trên port `56432`. Port `55432` giữ lại để debug/troubleshoot trực tiếp vào TimescaleDB khi cần.
 
+PgBouncer trong sample được cấu hình `AUTH_TYPE=scram-sha-256` để tương thích với PostgreSQL 17/TimescaleDB image, vốn lưu password dạng `SCRAM-SHA-256`. Nếu đang chạy stack cũ và thấy lỗi `server login failed: wrong password type`, recreate lại riêng container `pgbouncer` sau khi cập nhật config:
+
+```bash
+docker compose \
+  --env-file src/timescaledb-demo/docker/ccu-10k.env.example \
+  -f src/timescaledb-demo/docker/docker-compose.yml \
+  up -d --force-recreate pgbouncer
+```
+
+Thiết lập DBeaver nên dùng:
+
+- host: `localhost`
+- port: `56432`
+- database: `timescale_demo`
+- user: `postgres`
+- password: `postgres`
+
+PgBouncer cũng publish thêm alias database `postgres` để các client thích default DB này vẫn vào được, nhưng data demo nằm trong `timescale_demo`.
+
 Profile trong sample này đã được nâng theo hướng `10k+ CCU` với giả định:
 
 - ứng dụng dùng `PgBouncer` ở `transaction pooling`

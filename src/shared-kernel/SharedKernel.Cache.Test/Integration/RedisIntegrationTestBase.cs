@@ -20,6 +20,8 @@ public abstract class RedisIntegrationTestBase(
 
     protected IRedisInventoryService RedisInventoryService => _serviceProvider.GetRequiredService<IRedisInventoryService>();
 
+    protected ISingleFlightCacheService SingleFlightCacheService => _serviceProvider.GetRequiredService<ISingleFlightCacheService>();
+
     public virtual async Task InitializeAsync()
     {
         await Fixture.ResetAsync();
