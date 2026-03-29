@@ -4,14 +4,16 @@ using SharedKernel.BulkInsert.Abstractions;
 using SharedKernel.BulkInsert.Internal;
 using SharedKernel.BulkInsert.Services;
 
-namespace SharedKernel.BulkInsert;
+namespace SharedKernel.BulkInsert.Extensions;
 
-public static class Extensions
+public static class PostgreSqlBulkInsertServiceCollectionExtensions
 {
     public static IServiceCollection AddPostgreSqlBulkInsert(
         this IServiceCollection services
     )
     {
+        ArgumentNullException.ThrowIfNull(services);
+
         services.TryAddSingleton<IPostgreSqlBulkInsertMetadataResolver, EfCorePostgreSqlBulkInsertMetadataResolver>();
         services.TryAddSingleton<IPostgreSqlBulkInsertService, PostgreSqlBulkInsertService>();
 
