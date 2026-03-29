@@ -67,9 +67,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Rebus", "src\s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.BulkInsert", "src\shared-kernel\SharedKernel.BulkInsert\SharedKernel.BulkInsert.csproj", "{9AADFA92-0EB9-4446-9E03-138048AF2A50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.BulkInsertOther", "src\shared-kernel\SharedKernel.BulkInsertOther\SharedKernel.BulkInsertOther.csproj", "{623B18C9-19C3-43E0-BBC7-6D6C5368C105}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.BulkInsertPipeline", "src\shared-kernel\SharedKernel.BulkInsertPipeline\SharedKernel.BulkInsertPipeline.csproj", "{623B18C9-19C3-43E0-BBC7-6D6C5368C105}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.BulkInsertOther.Test", "src\shared-kernel\SharedKernel.BulkInsertOther.Test\SharedKernel.BulkInsertOther.Test.csproj", "{E21622BA-4563-471E-A8A2-E78108A40AC1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.BulkInsertPipeline.Test", "src\shared-kernel\SharedKernel.BulkInsertPipeline.Test\SharedKernel.BulkInsertPipeline.Test.csproj", "{E21622BA-4563-471E-A8A2-E78108A40AC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
