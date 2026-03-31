@@ -161,8 +161,10 @@ public static class Extensions
         var scopedProvider = scope.ServiceProvider;
         var jobStorage = scopedProvider.GetRequiredService<JobStorage>();
         var hangfireServerOptions = scopedProvider
-            .GetService<IOptions<HangfireServerOptions>>()?
-            .Value ?? new HangfireServerOptions();
+                .GetService<IOptions<HangfireServerOptions>>()
+                ?
+                .Value
+            ?? new HangfireServerOptions();
 
         using var connection = jobStorage.GetConnection();
         using var distributedLock = connection.AcquireDistributedLock(
@@ -221,8 +223,10 @@ public static class Extensions
         var scopedProvider = scope.ServiceProvider;
         var jobStorage = scopedProvider.GetRequiredService<JobStorage>();
         var hangfireServerOptions = scopedProvider
-            .GetService<IOptions<HangfireServerOptions>>()?
-            .Value ?? new HangfireServerOptions();
+                .GetService<IOptions<HangfireServerOptions>>()
+                ?
+                .Value
+            ?? new HangfireServerOptions();
 
         using var connection = jobStorage.GetConnection();
         using var distributedLock = connection.AcquireDistributedLock(

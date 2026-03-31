@@ -17,6 +17,7 @@ public sealed class BulkInsertPipelineLabDatabase(
         ?? throw new InvalidOperationException(
             $"Connection string '{ConnectionStringName}' was not found."
         );
+
     private readonly string _databaseName = GetRequiredDatabaseName(configuration.GetConnectionString(ConnectionStringName));
     private readonly IDbContextFactory<BulkInsertPipelineLabDbContext> _dbContextFactory = dbContextFactory;
 
@@ -32,9 +33,9 @@ public sealed class BulkInsertPipelineLabDatabase(
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
         await using (var schemaCommand = new NpgsqlCommand(
-            $"CREATE SCHEMA IF NOT EXISTS {QuoteIdentifier(Schema)};",
-            connection
-        ))
+                $"CREATE SCHEMA IF NOT EXISTS {QuoteIdentifier(Schema)};",
+                connection
+            ))
         {
             await schemaCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
@@ -122,7 +123,10 @@ public sealed class BulkInsertPipelineLabDatabase(
 
     private static string QuoteIdentifier(
         string identifier
-    ) => $"\"{identifier.Replace("\"", "\"\"", StringComparison.Ordinal)}\"";
+    )
+    {
+        return $"\"{identifier.Replace("\"", "\"\"", StringComparison.Ordinal)}\"";
+    }
 
     private static string QualifiedTableName => $"{QuoteIdentifier(Schema)}.{QuoteIdentifier(Table)}";
 

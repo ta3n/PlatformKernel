@@ -1,4 +1,4 @@
-using global::Mediator;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 
 namespace SharedKernel.CQRS.Mediator.BaseQuery;

@@ -11,5 +11,8 @@ public sealed class ElasticSearchClientFactory(
 ) : IElasticSearchClientFactory
 {
     /// <inheritdoc />
-    public ElasticsearchClient CreateClient() => client;
+    public ElasticsearchClient CreateClient()
+    {
+        return client;
+    }
 }

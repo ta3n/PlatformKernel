@@ -1,4 +1,4 @@
-using global::Mediator;
+using Mediator;
 
 namespace SharedKernel.CQRS.Mediator.BaseCommand.Implementations;
 

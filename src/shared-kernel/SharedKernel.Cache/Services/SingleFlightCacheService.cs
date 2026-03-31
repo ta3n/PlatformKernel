@@ -301,10 +301,7 @@ public sealed class SingleFlightCacheService(
             await cacheService.SetAsync(
                 key,
                 value,
-                new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = freshTtl
-                },
+                new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = freshTtl },
                 cancellationToken
             );
         }
@@ -325,10 +322,7 @@ public sealed class SingleFlightCacheService(
         await cacheService.SetAsync(
             staleKey,
             value,
-            new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = staleTtl
-            },
+            new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = staleTtl },
             cancellationToken
         );
     }

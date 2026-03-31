@@ -23,7 +23,7 @@ public class TimeExtensionsRegister : IDbFunctionRegister
     {
         RegisterAddHourOffsetFunction(modelBuilder);
     }
-  
+
     private static void RegisterAddHourOffsetFunction(
         ModelBuilder modelBuilder
     )

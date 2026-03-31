@@ -403,13 +403,13 @@ public sealed class RedisCacheService(
         var muxer = (IConnectionMultiplexer)redisConnectionPool.GetConnection();
 
         await foreach (var redisKey in RedisExtension.ScanKeysAsync(
-                           muxer,
-                           prefixedPattern,
-                           database,
-                           pageSize,
-                           maxKeys,
-                           cancellationToken: cancellationToken
-                       ))
+                muxer,
+                prefixedPattern,
+                database,
+                pageSize,
+                maxKeys,
+                cancellationToken: cancellationToken
+            ))
         {
             var value = redisKey.ToString();
             keys.Add(
@@ -448,14 +448,14 @@ public sealed class RedisCacheService(
         var muxer = (IConnectionMultiplexer)redisConnectionPool.GetConnection();
 
         return await RedisExtension.ClearByPatternAsync(
-                muxer,
-                prefixedPattern,
-                database,
-                pageSize,
-                deleteBatchSize,
-                maxKeys,
-                cancellationToken
-            );
+            muxer,
+            prefixedPattern,
+            database,
+            pageSize,
+            deleteBatchSize,
+            maxKeys,
+            cancellationToken
+        );
     }
 
     public async Task<bool> AcquireLockAsync(
@@ -530,14 +530,15 @@ public sealed class RedisCacheService(
         }
 
         var redisKeys = keys?
-            .Where(static key => !string.IsNullOrWhiteSpace(key))
-            .Select(
-                key => (RedisKey)BuildKey(
-                    key,
-                    options?.IgnoreInstanceName ?? false
+                .Where(static key => !string.IsNullOrWhiteSpace(key))
+                .Select(
+                    key => (RedisKey)BuildKey(
+                        key,
+                        options?.IgnoreInstanceName ?? false
+                    )
                 )
-            )
-            .ToArray() ?? [];
+                .ToArray()
+            ?? [];
 
         var script = LuaScriptLoader.Load(scriptName);
         var result = await GetDatabase(options?.Database)
@@ -566,9 +567,9 @@ public sealed class RedisCacheService(
         }
 
         return value.StartsWith(
-                _cacheOptions.InstanceName,
-                StringComparison.Ordinal
-            )
+            _cacheOptions.InstanceName,
+            StringComparison.Ordinal
+        )
             ? value[_cacheOptions.InstanceName.Length..]
             : value;
     }

@@ -44,10 +44,7 @@ public sealed class RedisInventoryService(
 
         await redisCacheService.StringSetBulkAsync(
             pairs,
-            new RedisCacheCommandOptions
-            {
-                Database = database
-            },
+            new RedisCacheCommandOptions { Database = database },
             cancellationToken
         );
     }
@@ -78,10 +75,7 @@ public sealed class RedisInventoryService(
 
         var values = await redisCacheService.StringGetManyAsync(
             keyByDate.Values,
-            new RedisCacheCommandOptions
-            {
-                Database = database
-            },
+            new RedisCacheCommandOptions { Database = database },
             cancellationToken
         );
 
@@ -149,13 +143,11 @@ public sealed class RedisInventoryService(
             "ReserveInventoryDateRange",
             keys,
             [.. values],
-            new RedisCacheCommandOptions
-            {
-                Database = request.Database
-            }
+            new RedisCacheCommandOptions { Database = request.Database }
         );
 
-        return result ?? InvalidRequestResult with
+        return result
+        ?? InvalidRequestResult with
         {
             ReservationId = request.ReservationId,
             InventoryId = request.InventoryId
@@ -183,16 +175,10 @@ public sealed class RedisInventoryService(
                 ResolveRetentionTtlSeconds(request.ReservationDataTtl),
                 DateTimeOffset.UtcNow.ToUnixTimeSeconds()
             ],
-            new RedisCacheCommandOptions
-            {
-                Database = request.Database
-            }
+            new RedisCacheCommandOptions { Database = request.Database }
         );
 
-        return result ?? InvalidRequestResult with
-        {
-            ReservationId = request.ReservationId
-        };
+        return result ?? InvalidRequestResult with { ReservationId = request.ReservationId };
     }
 
     public async Task<RedisInventoryOperationResult> ConfirmAsync(
@@ -215,16 +201,10 @@ public sealed class RedisInventoryService(
                 ResolveRetentionTtlSeconds(request.ReservationDataTtl),
                 DateTimeOffset.UtcNow.ToUnixTimeSeconds()
             ],
-            new RedisCacheCommandOptions
-            {
-                Database = request.Database
-            }
+            new RedisCacheCommandOptions { Database = request.Database }
         );
 
-        return result ?? InvalidRequestResult with
-        {
-            ReservationId = request.ReservationId
-        };
+        return result ?? InvalidRequestResult with { ReservationId = request.ReservationId };
     }
 
     public async Task<RedisInventoryReservationSnapshot?> GetReservationAsync(
@@ -240,10 +220,7 @@ public sealed class RedisInventoryService(
 
         var values = await redisCacheService.HashGetAllAsync(
             RedisInventoryHelper.BuildReservationKey(reservationId),
-            new RedisCacheCommandOptions
-            {
-                Database = database
-            },
+            new RedisCacheCommandOptions { Database = database },
             cancellationToken
         );
 
@@ -336,10 +313,10 @@ public sealed class RedisInventoryService(
     )
     {
         return !string.IsNullOrWhiteSpace(request.ReservationId)
-               && !string.IsNullOrWhiteSpace(request.InventoryId)
-               && request.Quantity > 0
-               && request.Dates.Count > 0
-               && request.HoldTtl > TimeSpan.Zero;
+            && !string.IsNullOrWhiteSpace(request.InventoryId)
+            && request.Quantity > 0
+            && request.Dates.Count > 0
+            && request.HoldTtl > TimeSpan.Zero;
     }
 
     private static long ResolveDataTtlSeconds(

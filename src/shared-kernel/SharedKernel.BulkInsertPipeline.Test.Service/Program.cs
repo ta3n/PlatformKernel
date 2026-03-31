@@ -27,7 +27,8 @@ var connectionString = builder.Configuration.GetConnectionString(BulkInsertPipel
         $"Connection string '{BulkInsertPipelineLabDatabase.ConnectionStringName}' was not found."
     );
 var labOptions = builder.Configuration.GetSection(BulkInsertPipelineLabOptions.SectionName)
-    .Get<BulkInsertPipelineLabOptions>() ?? new BulkInsertPipelineLabOptions();
+        .Get<BulkInsertPipelineLabOptions>()
+    ?? new BulkInsertPipelineLabOptions();
 
 builder.Services.AddSingleton(labOptions);
 builder.Services.AddDbContextFactory<BulkInsertPipelineLabDbContext>(

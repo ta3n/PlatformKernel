@@ -44,13 +44,14 @@ public static class Extensions
         services.AddRebus(
             rebus =>
             {
-                var configured = ConfigureTransport(rebus, options).Options(
-                    optionsConfigurer =>
-                    {
-                        optionsConfigurer.SetNumberOfWorkers(options.NumberOfWorkers);
-                        optionsConfigurer.SetMaxParallelism(options.MaxParallelism);
-                    }
-                );
+                var configured = ConfigureTransport(rebus, options)
+                    .Options(
+                        optionsConfigurer =>
+                        {
+                            optionsConfigurer.SetNumberOfWorkers(options.NumberOfWorkers);
+                            optionsConfigurer.SetMaxParallelism(options.MaxParallelism);
+                        }
+                    );
 
                 return configure?.Invoke(configured) ?? configured;
             },

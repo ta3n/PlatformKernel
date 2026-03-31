@@ -1,0 +1,128 @@
+# SharedKernel.BulkInsert.Test.Service REST Client
+#
+# Start service first:
+# dotnet run --project src/shared-kernel/SharedKernel.BulkInsert.Test.Service/SharedKernel.BulkInsert.Test.Service.csproj --urls http://localhost:5081
+#
+# PostgreSQL must be reachable using the connection string in appsettings.json.
+
+@baseUrl = http://localhost:5000
+@json = application/json
+
+### Service info
+GET {{baseUrl}}/
+Accept: {{json}}
+
+### Prepare database/schema/table
+POST {{baseUrl}}/lab/bulk-insert/setup
+Accept: {{json}}
+
+### Count rows before inserts
+GET {{baseUrl}}/lab/bulk-insert/orders/count
+Accept: {{json}}
+
+### Direct bulk insert with RepoDb
+POST {{baseUrl}}/lab/bulk-insert/orders/direct
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "count": 5000,
+  "prefix": "direct-repodb",
+  "source": "rest-client",
+  "provider": "RepoDb",
+  "batchSize": 2,
+  "timeoutSeconds": 60
+}
+
+### Direct bulk insert with Dapper
+POST {{baseUrl}}/lab/bulk-insert/orders/direct
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "count": 5000,
+  "prefix": "direct-dapper",
+  "source": "rest-client",
+  "provider": "Dapper",
+  "batchSize": 2,
+  "timeoutSeconds": 60
+}
+
+### Direct bulk insert with EF Core
+POST {{baseUrl}}/lab/bulk-insert/orders/direct
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "count": 5000,
+  "prefix": "direct-efcore",
+  "source": "rest-client",
+  "provider": "EfCore",
+  "batchSize": 2,
+  "timeoutSeconds": 60
+}
+
+### Fluent bulk insert with default provider configuration
+POST {{baseUrl}}/lab/bulk-insert/orders/fluent
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "count": 50000,
+  "prefix": "fluent-default",
+  "source": "rest-client"
+}
+
+### Fluent bulk insert overriding provider to RepoDb
+POST {{baseUrl}}/lab/bulk-insert/orders/fluent
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "count": 5000,
+  "prefix": "fluent-repodb",
+  "source": "rest-client",
+  "provider": "RepoDb",
+  "batchSize": 3,
+  "timeoutSeconds": 60
+}
+
+### Fluent bulk insert overriding provider to Dapper
+POST {{baseUrl}}/lab/bulk-insert/orders/fluent
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "count": 5000,
+  "prefix": "fluent-dapper",
+  "source": "rest-client",
+  "provider": "Dapper",
+  "batchSize": 3,
+  "timeoutSeconds": 60
+}
+
+### Fluent bulk insert overriding provider to EF Core
+POST {{baseUrl}}/lab/bulk-insert/orders/fluent
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "count": 5000,
+  "prefix": "fluent-efcore",
+  "source": "rest-client",
+  "provider": "EfCore",
+  "batchSize": 3,
+  "timeoutSeconds": 60
+}
+
+### Inspect most recent orders
+GET {{baseUrl}}/lab/bulk-insert/orders/recent?take=20
+Accept: {{json}}
+
+### Clear table and reset identity
+DELETE {{baseUrl}}/lab/bulk-insert/orders
+Accept: {{json}}
+
+### Count rows after cleanup
+GET {{baseUrl}}/lab/bulk-insert/orders/count
+Accept: {{json}}

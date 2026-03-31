@@ -1,4 +1,3 @@
-
 using SharedKernel.Pagination;
 
 namespace SharedKernel.CQRS.Mediator.BaseQuery.Implementations;

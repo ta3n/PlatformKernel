@@ -14,7 +14,10 @@ public sealed class ElasticSearchIndexNameResolver(
     /// <inheritdoc />
     public string Resolve<TDocument>(
         string? explicitIndex = null
-    ) => Resolve(typeof(TDocument), explicitIndex);
+    )
+    {
+        return Resolve(typeof(TDocument), explicitIndex);
+    }
 
     /// <inheritdoc />
     public string Resolve(
@@ -47,9 +50,9 @@ public sealed class ElasticSearchIndexNameResolver(
         }
 
         throw new InvalidOperationException(
-            $"No ElasticSearch index was resolved for document type '{documentType.FullName}'. " +
-            "Provide an explicit index, configure ElasticSearch:DefaultIndex, set ElasticSearch:Indexes, " +
-            "or decorate the document with [ElasticSearchIndex]."
+            $"No ElasticSearch index was resolved for document type '{documentType.FullName}'. "
+            + "Provide an explicit index, configure ElasticSearch:DefaultIndex, set ElasticSearch:Indexes, "
+            + "or decorate the document with [ElasticSearchIndex]."
         );
     }
 
@@ -65,12 +68,7 @@ public sealed class ElasticSearchIndexNameResolver(
             return false;
         }
 
-        var keys = new[]
-        {
-            documentType.AssemblyQualifiedName,
-            documentType.FullName,
-            documentType.Name
-        };
+        var keys = new[] { documentType.AssemblyQualifiedName, documentType.FullName, documentType.Name };
 
         foreach (var key in keys)
         {

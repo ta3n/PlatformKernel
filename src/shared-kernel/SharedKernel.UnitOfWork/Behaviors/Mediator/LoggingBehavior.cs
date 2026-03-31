@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using global::Mediator;
+using Mediator;
 using Microsoft.Extensions.Logging;
 
 namespace SharedKernel.UnitOfWork.Behaviors.Mediator;

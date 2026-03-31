@@ -113,7 +113,8 @@ public static class EntityFrameworkExtensions
     /// <summary>
     /// Registers a saga state machine definition backed by a PostgreSQL Entity Framework saga repository using an existing <typeparamref name="TDbContext"/>.
     /// </summary>
-    public static ISagaRegistrationConfigurator<TSaga> AddSagaStateMachineWithEntityFrameworkRepository<TStateMachine, TSaga, TDefinition, TDbContext>(
+    public static ISagaRegistrationConfigurator<TSaga> AddSagaStateMachineWithEntityFrameworkRepository<TStateMachine, TSaga, TDefinition,
+        TDbContext>(
         this IBusRegistrationConfigurator configurator,
         ConcurrencyMode concurrencyMode = ConcurrencyMode.Pessimistic,
         Action<ISagaConfigurator<TSaga>>? configureSaga = null,

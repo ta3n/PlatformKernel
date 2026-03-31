@@ -14,7 +14,7 @@ public sealed class EntityColumnMapperTests
         options.MapColumn(static point => point.DeviceId, "DeviceId", NpgsqlDbType.Text);
         options.MapColumn(static point => point.OccurredAt, "OccurredAt", NpgsqlDbType.TimestampTz);
         options.MapColumn(static point => point.Value, "Value", NpgsqlDbType.Double);
-        options.MapColumn(static point => point.Quality, "Quality", NpgsqlDbType.Integer, isNullable: true);
+        options.MapColumn(static point => point.Quality, "Quality", NpgsqlDbType.Integer, true);
 
         var descriptor = new BulkInsertEntityDescriptor<MetricPoint>(options);
         var values = new object?[descriptor.Mapper.Columns.Count];

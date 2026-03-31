@@ -65,11 +65,12 @@ public static class Extensions
 
         if (elasticSearchOptions.HealthCheck.Enabled)
         {
-            services.AddHealthChecks().AddCheck<ElasticSearchHealthCheck>(
-                elasticSearchOptions.HealthCheck.Name,
-                elasticSearchOptions.HealthCheck.FailureStatus,
-                elasticSearchOptions.HealthCheck.Tags
-            );
+            services.AddHealthChecks()
+                .AddCheck<ElasticSearchHealthCheck>(
+                    elasticSearchOptions.HealthCheck.Name,
+                    elasticSearchOptions.HealthCheck.FailureStatus,
+                    elasticSearchOptions.HealthCheck.Tags
+                );
         }
 
         return services;

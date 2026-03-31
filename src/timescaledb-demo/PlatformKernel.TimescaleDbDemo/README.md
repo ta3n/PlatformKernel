@@ -30,7 +30,9 @@ Endpoint local mặc định:
 
 Sample app mặc định kết nối qua PgBouncer trên port `56432`. Port `55432` giữ lại để debug/troubleshoot trực tiếp vào TimescaleDB khi cần.
 
-PgBouncer trong sample được cấu hình `AUTH_TYPE=scram-sha-256` để tương thích với PostgreSQL 17/TimescaleDB image, vốn lưu password dạng `SCRAM-SHA-256`. Nếu đang chạy stack cũ và thấy lỗi `server login failed: wrong password type`, recreate lại riêng container `pgbouncer` sau khi cập nhật config:
+PgBouncer trong sample được cấu hình `AUTH_TYPE=scram-sha-256` để tương thích với PostgreSQL 17/TimescaleDB image, vốn lưu password dạng
+`SCRAM-SHA-256`. Nếu đang chạy stack cũ và thấy lỗi `server login failed: wrong password type`, recreate lại riêng container `pgbouncer` sau
+khi cập nhật config:
 
 ```bash
 docker compose \
@@ -47,7 +49,8 @@ Thiết lập DBeaver nên dùng:
 - user: `postgres`
 - password: `postgres`
 
-PgBouncer cũng publish thêm alias database `postgres` để các client thích default DB này vẫn vào được, nhưng data demo nằm trong `timescale_demo`.
+PgBouncer cũng publish thêm alias database `postgres` để các client thích default DB này vẫn vào được, nhưng data demo nằm trong
+`timescale_demo`.
 
 Profile trong sample này đã được nâng theo hướng `10k+ CCU` với giả định:
 
@@ -55,7 +58,9 @@ Profile trong sample này đã được nâng theo hướng `10k+ CCU` với gi�
 - phần lớn CCU là user đang giữ kết nối ứng dụng, không phải `10,000` query SQL chạy đồng thời
 - transaction ngắn, không phụ thuộc session state của PostgreSQL
 
-Các giá trị tune nằm trong [ccu-10k.env.example](/Users/tanguyen/Workspaces/Psnl/Github/PlatformKernel/src/timescaledb-demo/docker/ccu-10k.env.example). Trước khi dùng production thật, cần chỉnh lại theo CPU, RAM, disk IOPS và kết quả load test thực tế.
+Các giá trị tune nằm
+trong [ccu-10k.env.example](/Users/tanguyen/Workspaces/Psnl/Github/PlatformKernel/src/timescaledb-demo/docker/ccu-10k.env.example). Trước
+khi dùng production thật, cần chỉnh lại theo CPU, RAM, disk IOPS và kết quả load test thực tế.
 
 ## Chạy bằng .NET Aspire
 
@@ -69,9 +74,11 @@ AppHost sẽ dựng:
 - `pgbouncer`: pooler đứng trước TimescaleDB
 - `timescaledb-demo`: resource chạy sample console app, được inject `TIMESCALE_CONNECTION_STRING` trỏ tới PgBouncer
 
-`timescaledb-demo` được đánh dấu `explicit start`, nên AppHost chỉ dựng hạ tầng trước. Khi cần chạy sample end-to-end, start resource đó từ Aspire dashboard.
+`timescaledb-demo` được đánh dấu `explicit start`, nên AppHost chỉ dựng hạ tầng trước. Khi cần chạy sample end-to-end, start resource đó từ
+Aspire dashboard.
 
-AppHost đọc cùng nhóm env var với Docker Compose như `POSTGRES_*`, `TIMESCALE_TUNE_*`, `TIMESCALE_SHM_SIZE`, `PGBOUNCER_*`, nên có thể dùng chung một profile tune khi chạy local hoặc CI.
+AppHost đọc cùng nhóm env var với Docker Compose như `POSTGRES_*`, `TIMESCALE_TUNE_*`, `TIMESCALE_SHM_SIZE`, `PGBOUNCER_*`, nên có thể dùng
+chung một profile tune khi chạy local hoặc CI.
 
 ## Chạy sample
 

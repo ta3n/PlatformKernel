@@ -11,7 +11,9 @@ using SharedKernel.BulkInsertPipeline.Test.TestEntities;
 namespace SharedKernel.BulkInsertPipeline.Test.Integration;
 
 [Collection(BulkInsertPostgresCollection.Name)]
-public sealed class BulkInsertIntegrationTests(BulkInsertPostgresFixture fixture)
+public sealed class BulkInsertIntegrationTests(
+    BulkInsertPostgresFixture fixture
+)
 {
     [Fact]
     public async Task Npgsql_binary_copy_inserts_into_hypertable()
@@ -25,7 +27,7 @@ public sealed class BulkInsertIntegrationTests(BulkInsertPostgresFixture fixture
                 .MapColumn(static point => point.DeviceId, "device_id", NpgsqlDbType.Text)
                 .MapColumn(static point => point.OccurredAt, "occurred_at", NpgsqlDbType.TimestampTz)
                 .MapColumn(static point => point.Value, "value", NpgsqlDbType.Double)
-                .MapColumn(static point => point.Quality, "quality", NpgsqlDbType.Integer, isNullable: true)
+                .MapColumn(static point => point.Quality, "quality", NpgsqlDbType.Integer, true)
         );
 
         var service = provider.GetRequiredService<IBulkInsertService<MetricPoint>>();
@@ -51,7 +53,7 @@ public sealed class BulkInsertIntegrationTests(BulkInsertPostgresFixture fixture
                 .MapColumn(static point => point.DeviceId, "DeviceId", NpgsqlDbType.Text)
                 .MapColumn(static point => point.OccurredAt, "OccurredAt", NpgsqlDbType.TimestampTz)
                 .MapColumn(static point => point.Value, "Value", NpgsqlDbType.Double)
-                .MapColumn(static point => point.Quality, "Quality", NpgsqlDbType.Integer, isNullable: true)
+                .MapColumn(static point => point.Quality, "Quality", NpgsqlDbType.Integer, true)
         );
 
         var service = provider.GetRequiredService<IBulkInsertService<MetricPoint>>();
@@ -73,7 +75,7 @@ public sealed class BulkInsertIntegrationTests(BulkInsertPostgresFixture fixture
                 .MapColumn(static point => point.DeviceId, "DeviceId", NpgsqlDbType.Text)
                 .MapColumn(static point => point.OccurredAt, "OccurredAt", NpgsqlDbType.TimestampTz)
                 .MapColumn(static point => point.Value, "Value", NpgsqlDbType.Double)
-                .MapColumn(static point => point.Quality, "Quality", NpgsqlDbType.Integer, isNullable: true)
+                .MapColumn(static point => point.Quality, "Quality", NpgsqlDbType.Integer, true)
         );
 
         var service = provider.GetRequiredService<IBulkInsertService<MetricPoint>>();
@@ -99,10 +101,10 @@ public sealed class BulkInsertIntegrationTests(BulkInsertPostgresFixture fixture
                     .MapColumn(static point => point.DeviceId, "DeviceId", NpgsqlDbType.Text)
                     .MapColumn(static point => point.OccurredAt, "OccurredAt", NpgsqlDbType.TimestampTz)
                     .MapColumn(static point => point.Value, "Value", NpgsqlDbType.Double)
-                    .MapColumn(static point => point.Quality, "Quality", NpgsqlDbType.Integer, isNullable: true)
+                    .MapColumn(static point => point.Quality, "Quality", NpgsqlDbType.Integer, true)
             );
 
-        await using var provider = services.BuildServiceProvider(validateScopes: true);
+        await using var provider = services.BuildServiceProvider(true);
         var service = provider.GetRequiredService<IBulkInsertService<MetricPoint>>();
 
         await service.InsertAsync(CreateBatch(9));
@@ -135,7 +137,7 @@ public sealed class BulkInsertIntegrationTests(BulkInsertPostgresFixture fixture
                     .MapColumn(static point => point.DeviceId, "device_id", NpgsqlDbType.Text)
                     .MapColumn(static point => point.OccurredAt, "occurred_at", NpgsqlDbType.TimestampTz)
                     .MapColumn(static point => point.Value, "value", NpgsqlDbType.Double)
-                    .MapColumn(static point => point.Quality, "quality", NpgsqlDbType.Integer, isNullable: true)
+                    .MapColumn(static point => point.Quality, "quality", NpgsqlDbType.Integer, true)
             );
 
         using var host = builder.Build();
@@ -163,10 +165,12 @@ public sealed class BulkInsertIntegrationTests(BulkInsertPostgresFixture fixture
         services.AddBulkInsert(configureOptions)
             .AddEntity(configureEntity);
 
-        return services.BuildServiceProvider(validateScopes: true);
+        return services.BuildServiceProvider(true);
     }
 
-    private static ReadOnlyMemory<MetricPoint> CreateBatch(int count)
+    private static ReadOnlyMemory<MetricPoint> CreateBatch(
+        int count
+    )
     {
         var batch = new MetricPoint[count];
         var baseline = DateTimeOffset.Parse("2026-03-29T00:00:00+00:00", CultureInfo.InvariantCulture);

@@ -61,7 +61,7 @@ internal static class MetricReadingRegistration
             .MapColumn(static reading => reading.DeviceId, "device_id", NpgsqlDbType.Text)
             .MapColumn(static reading => reading.OccurredAt, "occurred_at", NpgsqlDbType.TimestampTz)
             .MapColumn(static reading => reading.Value, "value", NpgsqlDbType.Double)
-            .MapColumn(static reading => reading.Quality, "quality", NpgsqlDbType.Integer, isNullable: true)
+            .MapColumn(static reading => reading.Quality, "quality", NpgsqlDbType.Integer, true)
             .MapColumn(static reading => reading.Source, "source", NpgsqlDbType.Text);
     }
 }

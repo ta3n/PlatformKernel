@@ -92,7 +92,7 @@ public sealed class BulkInsertEntityDescriptor<T>
             Enumerable.Range(0, rowCount)
                 .Select(
                     row =>
-                        $"({string.Join(", ", Enumerable.Range(0, Mapper.Columns.Count).Select(column => $"{{{row * Mapper.Columns.Count + column}}}"))})"
+                        $"({string.Join(", ", Enumerable.Range(0, Mapper.Columns.Count).Select(column => $"{{{(row * Mapper.Columns.Count) + column}}}"))})"
                 )
         );
 

@@ -36,10 +36,7 @@ public sealed class BulkInsertPostgresFixture : IAsyncLifetime
             await createDb.ExecuteNonQueryAsync();
         }
 
-        var builder = new NpgsqlConnectionStringBuilder(_container.GetConnectionString())
-        {
-            Database = databaseName
-        };
+        var builder = new NpgsqlConnectionStringBuilder(_container.GetConnectionString()) { Database = databaseName };
 
         var connectionString = builder.ConnectionString;
 
@@ -76,7 +73,10 @@ public sealed class BulkInsertPostgresFixture : IAsyncLifetime
         return connectionString;
     }
 
-    public static async Task<int> CountRowsAsync(string connectionString, string tableName)
+    public static async Task<int> CountRowsAsync(
+        string connectionString,
+        string tableName
+    )
     {
         await using var connection = new NpgsqlConnection(connectionString);
         await connection.OpenAsync();

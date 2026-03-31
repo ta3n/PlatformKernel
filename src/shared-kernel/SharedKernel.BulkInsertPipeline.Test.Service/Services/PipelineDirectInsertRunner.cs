@@ -17,6 +17,7 @@ public sealed class PipelineDirectInsertRunner(
         ?? throw new InvalidOperationException(
             $"Connection string '{BulkInsertPipelineLabDatabase.ConnectionStringName}' was not found."
         );
+
     private readonly BulkInsertPipelineLabOptions _labOptions = labOptions;
 
     public async Task<int> InsertAsync(
@@ -35,15 +36,15 @@ public sealed class PipelineDirectInsertRunner(
                     options,
                     provider,
                     _labOptions.FallbackProvider,
-                    workerCount: 1,
-                    channelCapacity: Math.Max(batch.Length, 16)
+                    1,
+                    Math.Max(batch.Length, 16)
                 )
             )
             .AddEntity<MetricReading>(
                 entity => MetricReadingRegistration.ConfigureEntity(entity, _connectionString)
             );
 
-        await using var serviceProvider = services.BuildServiceProvider(validateScopes: true);
+        await using var serviceProvider = services.BuildServiceProvider(true);
         var bulkInsertService = serviceProvider.GetRequiredService<IBulkInsertService<MetricReading>>();
 
         await bulkInsertService.InsertAsync(batch, cancellationToken).ConfigureAwait(false);

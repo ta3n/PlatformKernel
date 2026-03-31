@@ -4,7 +4,8 @@ Plugin ElasticSearch cho `shared-kernel`, tập trung vào 3 lớp:
 
 - `ElasticSearchOptions`: bind cấu hình từ `appsettings`.
 - `ElasticsearchClient`: official client đã được cấu hình sẵn qua DI.
-- `IElasticSearchService`: wrapper cho các thao tác thông dụng như `Ping`, `EnsureIndex`, `Index`, `Get`, `Search`, `Upsert`, `Delete`, `BulkIndex`, `Refresh`.
+- `IElasticSearchService`: wrapper cho các thao tác thông dụng như `Ping`, `EnsureIndex`, `Index`, `Get`, `Search`, `Upsert`, `Delete`,
+  `BulkIndex`, `Refresh`.
 
 ## Configuration
 

@@ -22,23 +22,53 @@ public sealed class BulkInsertOptions
 
     public BulkInsertObservabilityOptions Observability { get; } = new();
 
-    public void UseNpgsqlCopy() => PrimaryProvider = BulkInsertProviderType.NpgsqlBinaryCopy;
+    public void UseNpgsqlCopy()
+    {
+        PrimaryProvider = BulkInsertProviderType.NpgsqlBinaryCopy;
+    }
 
-    public void UseDapper() => PrimaryProvider = BulkInsertProviderType.Dapper;
+    public void UseDapper()
+    {
+        PrimaryProvider = BulkInsertProviderType.Dapper;
+    }
 
-    public void UseRepoDb() => PrimaryProvider = BulkInsertProviderType.RepoDb;
+    public void UseRepoDb()
+    {
+        PrimaryProvider = BulkInsertProviderType.RepoDb;
+    }
 
-    public void UseEfCore() => PrimaryProvider = BulkInsertProviderType.EfCore;
+    public void UseEfCore()
+    {
+        PrimaryProvider = BulkInsertProviderType.EfCore;
+    }
 
-    public void EnableAdaptiveBatching() => AdaptiveBatching.Enabled = true;
+    public void EnableAdaptiveBatching()
+    {
+        AdaptiveBatching.Enabled = true;
+    }
 
-    public void DisableAdaptiveBatching() => AdaptiveBatching.Enabled = false;
+    public void DisableAdaptiveBatching()
+    {
+        AdaptiveBatching.Enabled = false;
+    }
 
-    public void EnableMetrics() => Observability.EnableMetrics = true;
+    public void EnableMetrics()
+    {
+        Observability.EnableMetrics = true;
+    }
 
-    public void DisableMetrics() => Observability.EnableMetrics = false;
+    public void DisableMetrics()
+    {
+        Observability.EnableMetrics = false;
+    }
 
-    public void EnableTracing() => Observability.EnableTracing = true;
+    public void EnableTracing()
+    {
+        Observability.EnableTracing = true;
+    }
 
-    public void DisableTracing() => Observability.EnableTracing = false;
+    public void DisableTracing()
+    {
+        Observability.EnableTracing = false;
+    }
 }

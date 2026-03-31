@@ -14,7 +14,9 @@ internal sealed class FluentBulkInsertService<TEntity>(
         IFluentBulkInsertService<TEntity>
     where TEntity : class
 {
-    private readonly IPostgreSqlBulkInsertService _bulkInsertService = bulkInsertService ?? throw new ArgumentNullException(nameof(bulkInsertService));
+    private readonly IPostgreSqlBulkInsertService _bulkInsertService =
+        bulkInsertService ?? throw new ArgumentNullException(nameof(bulkInsertService));
+
     private readonly FluentBulkInsertEntityOptions<TEntity> _options = options ?? throw new ArgumentNullException(nameof(options));
     private readonly IServiceProvider _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 

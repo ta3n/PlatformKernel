@@ -70,10 +70,7 @@ public static class BulkInsertLabEndpoints
         var totalRows = await database.GetCountAsync(cancellationToken).ConfigureAwait(false);
 
         return TypedResults.Ok(
-            new
-            {
-                totalRows
-            }
+            new { totalRows }
         );
     }
 
@@ -114,10 +111,7 @@ public static class BulkInsertLabEndpoints
         await database.ClearAsync(cancellationToken).ConfigureAwait(false);
 
         return TypedResults.Ok(
-            new
-            {
-                message = "Orders table has been cleared."
-            }
+            new { message = "Orders table has been cleared." }
         );
     }
 
@@ -209,20 +203,14 @@ public static class BulkInsertLabEndpoints
         if (request.Count <= 0)
         {
             return TypedResults.ValidationProblem(
-                new Dictionary<string, string[]>
-                {
-                    [nameof(request.Count)] = ["Count must be greater than zero."]
-                }
+                new Dictionary<string, string[]> { [nameof(request.Count)] = ["Count must be greater than zero."] }
             );
         }
 
         if (request.BatchSize is <= 0)
         {
             return TypedResults.ValidationProblem(
-                new Dictionary<string, string[]>
-                {
-                    [nameof(request.BatchSize)] = ["BatchSize must be greater than zero when specified."]
-                }
+                new Dictionary<string, string[]> { [nameof(request.BatchSize)] = ["BatchSize must be greater than zero when specified."] }
             );
         }
 
@@ -241,11 +229,14 @@ public static class BulkInsertLabEndpoints
 
     private static PostgreSqlBulkInsertOptions CreateOptions(
         BulkInsertOrdersRequest request
-    ) => new()
+    )
     {
-        BatchSize = request.BatchSize,
-        TimeoutSeconds = request.TimeoutSeconds
-    };
+        return new PostgreSqlBulkInsertOptions
+        {
+            BatchSize = request.BatchSize,
+            TimeoutSeconds = request.TimeoutSeconds
+        };
+    }
 
     private static LabOrder[] CreateOrders(
         BulkInsertOrdersRequest request

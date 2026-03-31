@@ -1,4 +1,4 @@
-using global::MediatR;
+using MediatR;
 
 namespace SharedKernel.CQRS.MediatR.BaseCommand.Implementations;
 

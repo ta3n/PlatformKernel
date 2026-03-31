@@ -105,7 +105,7 @@ public sealed class BulkInsertPipelineTests
         entityOptions.MapColumn(static point => point.DeviceId, "DeviceId", NpgsqlTypes.NpgsqlDbType.Text);
         entityOptions.MapColumn(static point => point.OccurredAt, "OccurredAt", NpgsqlTypes.NpgsqlDbType.TimestampTz);
         entityOptions.MapColumn(static point => point.Value, "Value", NpgsqlTypes.NpgsqlDbType.Double);
-        entityOptions.MapColumn(static point => point.Quality, "Quality", NpgsqlTypes.NpgsqlDbType.Integer, isNullable: true);
+        entityOptions.MapColumn(static point => point.Quality, "Quality", NpgsqlTypes.NpgsqlDbType.Integer, true);
 
         return new BulkInsertEntityDescriptor<MetricPoint>(entityOptions);
     }
@@ -114,7 +114,10 @@ public sealed class BulkInsertPipelineTests
     {
         public ConcurrentQueue<T> Inserted { get; } = new();
 
-        public Task InsertAsync(ReadOnlyMemory<T> batch, CancellationToken ct = default)
+        public Task InsertAsync(
+            ReadOnlyMemory<T> batch,
+            CancellationToken ct = default
+        )
         {
             foreach (var item in batch.Span)
             {
@@ -131,13 +134,19 @@ public sealed class BulkInsertPipelineTests
 
         public TaskCompletionSource FirstInsertStarted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        public async Task InsertAsync(ReadOnlyMemory<T> batch, CancellationToken ct = default)
+        public async Task InsertAsync(
+            ReadOnlyMemory<T> batch,
+            CancellationToken ct = default
+        )
         {
             FirstInsertStarted.TrySetResult();
             await _release.Task.WaitAsync(ct);
         }
 
-        public void Release() => _release.TrySetResult();
+        public void Release()
+        {
+            _release.TrySetResult();
+        }
     }
 
     private sealed class RecordingFailureSink<T> : IBulkInsertFailureSink<T>

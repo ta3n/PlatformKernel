@@ -34,10 +34,7 @@ public sealed class TimescaleContainerFixture : IAsyncLifetime
         await using var command = new NpgsqlCommand($"CREATE DATABASE {databaseName};", adminConnection);
         await command.ExecuteNonQueryAsync();
 
-        var builder = new NpgsqlConnectionStringBuilder(_container.GetConnectionString())
-        {
-            Database = databaseName
-        };
+        var builder = new NpgsqlConnectionStringBuilder(_container.GetConnectionString()) { Database = databaseName };
 
         return builder.ConnectionString;
     }

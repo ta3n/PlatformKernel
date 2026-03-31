@@ -53,11 +53,13 @@ public sealed class TimescaleJobInfo
 public sealed record TieringAttemptResult(
     bool FunctionAvailable,
     bool PolicyApplied,
-    string Message);
+    string Message
+);
 
 public sealed record LegacyMigrationResult(
     bool IsHypertable,
-    int RowCount);
+    int RowCount
+);
 
 public sealed record TimescaleSummary(
     string TimescaleVersion,
@@ -71,9 +73,11 @@ public sealed record TimescaleSummary(
     IReadOnlyList<string> Hypertables,
     IReadOnlyList<BucketedMetric> BucketedMetrics,
     IReadOnlyList<HourlyMetricAggregate> HourlyAggregates,
-    IReadOnlyList<TimescaleJobInfo> Jobs);
+    IReadOnlyList<TimescaleJobInfo> Jobs
+);
 
 public sealed record DemoExecutionResult(
     TimescaleSummary Summary,
     LegacyMigrationResult LegacyMigration,
-    TieringAttemptResult Tiering);
+    TieringAttemptResult Tiering
+);

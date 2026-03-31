@@ -6,7 +6,8 @@ Plugin bulk insert cho PostgreSQL trong `shared-kernel`, gom 3 cách ghi dữ li
 - `PostgreSqlBulkInsertProvider.Dapper`: dùng batched multi-values `INSERT`.
 - `PostgreSqlBulkInsertProvider.RepoDb`: dùng `BinaryBulkInsertAsync`.
 
-Tất cả provider đều đọc metadata bảng/cột từ EF Core model hiện có, nên vẫn tôn trọng các cấu hình như `ToTable`, `HasColumnName`, schema và naming convention.
+Tất cả provider đều đọc metadata bảng/cột từ EF Core model hiện có, nên vẫn tôn trọng các cấu hình như `ToTable`, `HasColumnName`, schema và
+naming convention.
 
 ## Registration
 

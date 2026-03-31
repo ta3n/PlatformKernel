@@ -67,10 +67,7 @@ internal sealed class RepoDbPostgreSqlBulkInsertStrategy : IPostgreSqlBulkInsert
             var dataColumn = new DataColumn(
                 column.ColumnName,
                 ResolveDataColumnType(column)
-            )
-            {
-                AllowDBNull = true
-            };
+            ) { AllowDBNull = true };
             dataTable.Columns.Add(dataColumn);
         }
 

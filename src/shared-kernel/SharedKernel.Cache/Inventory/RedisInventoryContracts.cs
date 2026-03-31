@@ -153,8 +153,8 @@ public sealed record RedisInventoryReservationSnapshot
     )
     {
         return values.TryGetValue(key, out var rawValue)
-               && long.TryParse(rawValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out var timestamp)
-            ? DateTimeOffset.FromUnixTimeSeconds(timestamp)
-            : null;
+            && long.TryParse(rawValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out var timestamp)
+                ? DateTimeOffset.FromUnixTimeSeconds(timestamp)
+                : null;
     }
 }

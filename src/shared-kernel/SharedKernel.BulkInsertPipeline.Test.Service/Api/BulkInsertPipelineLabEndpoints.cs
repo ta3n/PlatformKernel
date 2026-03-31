@@ -72,10 +72,7 @@ public static class BulkInsertPipelineLabEndpoints
         var totalRows = await database.GetCountAsync(cancellationToken).ConfigureAwait(false);
 
         return TypedResults.Ok(
-            new
-            {
-                totalRows
-            }
+            new { totalRows }
         );
     }
 
@@ -117,10 +114,7 @@ public static class BulkInsertPipelineLabEndpoints
         await database.ClearAsync(cancellationToken).ConfigureAwait(false);
 
         return TypedResults.Ok(
-            new
-            {
-                message = "Metric events table has been cleared."
-            }
+            new { message = "Metric events table has been cleared." }
         );
     }
 
@@ -216,10 +210,7 @@ public static class BulkInsertPipelineLabEndpoints
         if (count <= 0)
         {
             return TypedResults.ValidationProblem(
-                new Dictionary<string, string[]>
-                {
-                    [fieldName] = ["Count must be greater than zero."]
-                }
+                new Dictionary<string, string[]> { [fieldName] = ["Count must be greater than zero."] }
             );
         }
 

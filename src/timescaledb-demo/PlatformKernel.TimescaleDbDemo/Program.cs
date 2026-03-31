@@ -17,14 +17,27 @@ internal static class Program
         {
             case "bootstrap":
                 await runner.BootstrapAsync();
-                await WriteJsonAsync(new { Command = command, Status = "ok", ConnectionString = connectionString });
+                await WriteJsonAsync(
+                    new
+                    {
+                        Command = command,
+                        Status = "ok",
+                        ConnectionString = connectionString
+                    }
+                );
                 return 0;
 
             case "seed":
                 await runner.BootstrapAsync();
                 var seeded = await runner.SeedSampleDataAsync();
                 await runner.RefreshContinuousAggregateAsync();
-                await WriteJsonAsync(new { Command = command, SeededRows = seeded.Count });
+                await WriteJsonAsync(
+                    new
+                    {
+                        Command = command,
+                        SeededRows = seeded.Count
+                    }
+                );
                 return 0;
 
             case "legacy":
@@ -47,12 +60,15 @@ internal static class Program
                 var demoResult = new DemoExecutionResult(
                     await runner.GetSummaryAsync(),
                     await runner.RunLegacyMigrationDemoAsync(),
-                    await runner.ProbeTieringAsync());
+                    await runner.ProbeTieringAsync()
+                );
                 await WriteJsonAsync(demoResult);
                 return 0;
 
             default:
-                await Console.Error.WriteLineAsync($"Unknown command '{command}'. Supported commands: bootstrap, seed, legacy, summary, tiering, demo.");
+                await Console.Error.WriteLineAsync(
+                    $"Unknown command '{command}'. Supported commands: bootstrap, seed, legacy, summary, tiering, demo."
+                );
                 return 1;
         }
     }
@@ -78,17 +94,15 @@ internal static class Program
         T payload
     )
     {
-        await Console.Out.WriteLineAsync(JsonSerializer.Serialize(payload, new JsonSerializerOptions
-        {
-            WriteIndented = true
-        }));
+        await Console.Out.WriteLineAsync(JsonSerializer.Serialize(payload, new JsonSerializerOptions { WriteIndented = true }));
     }
 
     private static string BuildDefaultConnectionString()
     {
         var password = Environment.GetEnvironmentVariable("TIMESCALE_DB_PASSWORD")
             ?? throw new InvalidOperationException(
-                "Set TIMESCALE_CONNECTION_STRING or TIMESCALE_DB_PASSWORD before running the sample.");
+                "Set TIMESCALE_CONNECTION_STRING or TIMESCALE_DB_PASSWORD before running the sample."
+            );
 
         var builder = new NpgsqlConnectionStringBuilder
         {

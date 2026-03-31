@@ -106,8 +106,8 @@ internal sealed class EfCorePostgreSqlBulkInsertMetadataResolver
         var valueGenerationStrategy = property.GetValueGenerationStrategy(storeObjectIdentifier);
         if (
             valueGenerationStrategy is NpgsqlValueGenerationStrategy.IdentityAlwaysColumn
-                or NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
-                or NpgsqlValueGenerationStrategy.SerialColumn
+            or NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
+            or NpgsqlValueGenerationStrategy.SerialColumn
         )
         {
             return false;

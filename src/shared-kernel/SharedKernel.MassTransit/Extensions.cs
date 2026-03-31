@@ -56,8 +56,8 @@ public static class Extensions
     )
     {
         var options = configuration
-            .GetSection(MessageQueueSettingsSectionName)
-            .Get<MessageQueueOptions>()
+                .GetSection(MessageQueueSettingsSectionName)
+                .Get<MessageQueueOptions>()
             ?? throw new InvalidOperationException(
                 $"Configuration section '{MessageQueueSettingsSectionName}' is missing or invalid."
             );

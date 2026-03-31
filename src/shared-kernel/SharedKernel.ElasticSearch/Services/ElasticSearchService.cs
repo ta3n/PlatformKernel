@@ -19,7 +19,10 @@ public sealed class ElasticSearchService(
     /// <inheritdoc />
     public string ResolveIndex<TDocument>(
         string? index = null
-    ) => indexNameResolver.Resolve<TDocument>(index);
+    )
+    {
+        return indexNameResolver.Resolve<TDocument>(index);
+    }
 
     /// <inheritdoc />
     public async Task<bool> PingAsync(

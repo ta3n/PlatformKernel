@@ -15,7 +15,13 @@ public sealed class MetricsDbContext(
         var entity = modelBuilder.Entity<MetricPoint>();
 
         entity.ToTable("metrics");
-        entity.HasKey(metric => new { metric.Time, metric.DeviceId });
+        entity.HasKey(
+            metric => new
+            {
+                metric.Time,
+                metric.DeviceId
+            }
+        );
 
         entity.Property(metric => metric.Time)
             .HasColumnName("time");

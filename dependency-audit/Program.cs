@@ -174,12 +174,18 @@ static List<VulnerabilityRow> AggregateVulnerabilities(
         {
             if (fw.TopLevelPackages != null)
             {
-                foreach (var p in fw.TopLevelPackages) AddPkg(p);
+                foreach (var p in fw.TopLevelPackages)
+                {
+                    AddPkg(p);
+                }
             }
 
             if (fw.TransitivePackages != null)
             {
-                foreach (var p in fw.TransitivePackages) AddPkg(p);
+                foreach (var p in fw.TransitivePackages)
+                {
+                    AddPkg(p);
+                }
             }
 
             continue;
@@ -467,18 +473,18 @@ static int SeverityRank(
     };
 }
 
-record VulnerableRoot(
+internal record VulnerableRoot(
     [property: JsonPropertyName("projects")]
     List<VulnProject>? Projects
 );
 
-record VulnProject(
+internal record VulnProject(
     [property: JsonPropertyName("path")] string? Path,
     [property: JsonPropertyName("frameworks")]
     List<VulnFramework>? Frameworks
 );
 
-record VulnFramework(
+internal record VulnFramework(
     [property: JsonPropertyName("framework")]
     string? Framework,
     [property: JsonPropertyName("topLevelPackages")]
@@ -487,7 +493,7 @@ record VulnFramework(
     List<PackageVuln>? TransitivePackages
 );
 
-record PackageVuln(
+internal record PackageVuln(
     [property: JsonPropertyName("id")] string? Id,
     [property: JsonPropertyName("resolvedVersion")]
     string? ResolvedVersion,
@@ -495,14 +501,14 @@ record PackageVuln(
     List<Advisory>? Vulnerabilities
 );
 
-record Advisory(
+internal record Advisory(
     [property: JsonPropertyName("severity")]
     string? Severity,
     [property: JsonPropertyName("advisoryurl")]
     string? AdvisoryUrl
 );
 
-class VulnerabilityRow
+internal class VulnerabilityRow
 {
     public string Package { get; set; } = string.Empty;
     public string ResolvedVersion { get; set; } = string.Empty;
@@ -511,18 +517,18 @@ class VulnerabilityRow
     public string AdvisoryUrl { get; set; } = string.Empty;
 }
 
-record OutdatedRoot(
+internal record OutdatedRoot(
     [property: JsonPropertyName("projects")]
     List<OutProject>? Projects
 );
 
-record OutProject(
+internal record OutProject(
     [property: JsonPropertyName("path")] string? Path,
     [property: JsonPropertyName("frameworks")]
     List<OutFramework>? Frameworks
 );
 
-record OutFramework(
+internal record OutFramework(
     [property: JsonPropertyName("framework")]
     string? Framework,
     [property: JsonPropertyName("topLevelPackages")]
@@ -531,7 +537,7 @@ record OutFramework(
     List<PackageOutdated>? TransitivePackages
 );
 
-record PackageOutdated(
+internal record PackageOutdated(
     [property: JsonPropertyName("id")] string? Id,
     [property: JsonPropertyName("requestedVersion")]
     string? RequestedVersion,
@@ -541,7 +547,7 @@ record PackageOutdated(
     string? LatestVersion
 );
 
-class UpdateRow
+internal class UpdateRow
 {
     public string Package { get; set; } = string.Empty;
     public string Resolved { get; set; } = string.Empty;

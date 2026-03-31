@@ -1,4 +1,4 @@
-using global::MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace SharedKernel.CQRS.MediatR.BaseQuery;

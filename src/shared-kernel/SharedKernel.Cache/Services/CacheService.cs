@@ -68,8 +68,8 @@ public class CacheService(
 
         var server = redisConnectionPool.GetConnection().GetServers().LastOrDefault();
         var keys = server?.Keys(
-            database: _redisOptions.DefaultDatabase,
-            pattern: new RedisValue(
+            _redisOptions.DefaultDatabase,
+            new RedisValue(
                 $"{_redisOptions.InstanceName}{pattern}"
             )
         );
@@ -607,10 +607,14 @@ public class CacheService(
     )
     {
         if (!_redisOptions.Enabled)
+        {
             return default;
+        }
 
         if (keys == null || keys.Length == 0)
+        {
             return default;
+        }
 
         var redisKeys = keys
             .Select(k => (RedisKey)$"{_redisOptions.InstanceName}{k}")
@@ -626,12 +630,16 @@ public class CacheService(
             );
 
         if (result.IsNull)
+        {
             return default;
+        }
 
         var resultString = result.ToString();
 
         if (string.IsNullOrEmpty(resultString))
+        {
             return default;
+        }
 
         return CacheHelper.Deserialize<T>(resultString);
     }

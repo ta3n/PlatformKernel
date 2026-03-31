@@ -24,11 +24,11 @@ var pgbouncerNofileLimit = Environment.GetEnvironmentVariable("PGBOUNCER_NOFILE_
 var pgbouncerSomaxconn = Environment.GetEnvironmentVariable("PGBOUNCER_SOMAXCONN") ?? "8192";
 var pgbouncerAuthType = Environment.GetEnvironmentVariable("PGBOUNCER_AUTH_TYPE") ?? "scram-sha-256";
 
-var databaseUser = builder.AddParameter("timescaledb-user", defaultDatabaseUser, publishValueAsDefault: true);
-var databasePassword = builder.AddParameter("timescaledb-password", defaultDatabasePassword, publishValueAsDefault: true);
+var databaseUser = builder.AddParameter("timescaledb-user", defaultDatabaseUser, true);
+var databasePassword = builder.AddParameter("timescaledb-password", defaultDatabasePassword, true);
 
 var timescaledb = builder
-    .AddPostgres("timescaledb", databaseUser, databasePassword, port: 55432)
+    .AddPostgres("timescaledb", databaseUser, databasePassword, 55432)
     .WithImage("timescale/timescaledb", "latest-pg17")
     .WithDataVolume("timescaledb-demo-data")
     .WithEnvironment("TIMESCALEDB_TELEMETRY", "off")
@@ -38,15 +38,18 @@ var timescaledb = builder
     .WithEnvironment("TS_TUNE_MAX_CONNS", timescaleTuneMaxConnections)
     .WithContainerRuntimeArgs(
         $"--shm-size={timescaleSharedMemorySize}",
-        $"--ulimit=nofile={timescaleNofileLimit}:{timescaleNofileLimit}");
+        $"--ulimit=nofile={timescaleNofileLimit}:{timescaleNofileLimit}"
+    );
 
 var timescaledbDatabase = timescaledb.AddDatabase("timescaledb-direct", databaseName);
 var timescaledbEndpoint = timescaledb.GetEndpoint("tcp");
 var pgbouncerDatabaseUrls = databaseName.Equals("postgres", StringComparison.OrdinalIgnoreCase)
     ? ReferenceExpression.Create(
-        $"postgres://{databaseUser}:{databasePassword}@{timescaledbEndpoint.Host}:{timescaledbEndpoint.Property(EndpointProperty.Port)}/{databaseName}")
+        $"postgres://{databaseUser}:{databasePassword}@{timescaledbEndpoint.Host}:{timescaledbEndpoint.Property(EndpointProperty.Port)}/{databaseName}"
+    )
     : ReferenceExpression.Create(
-        $"postgres://{databaseUser}:{databasePassword}@{timescaledbEndpoint.Host}:{timescaledbEndpoint.Property(EndpointProperty.Port)}/{databaseName},postgres://{databaseUser}:{databasePassword}@{timescaledbEndpoint.Host}:{timescaledbEndpoint.Property(EndpointProperty.Port)}/postgres");
+        $"postgres://{databaseUser}:{databasePassword}@{timescaledbEndpoint.Host}:{timescaledbEndpoint.Property(EndpointProperty.Port)}/{databaseName},postgres://{databaseUser}:{databasePassword}@{timescaledbEndpoint.Host}:{timescaledbEndpoint.Property(EndpointProperty.Port)}/postgres"
+    );
 
 var pgbouncer = builder
     .AddContainer("pgbouncer", "edoburu/pgbouncer", "v1.25.1-p0")
@@ -71,7 +74,8 @@ var pgbouncer = builder
     .WithEndpoint(targetPort: 5432, port: 56432)
     .WithContainerRuntimeArgs(
         $"--ulimit=nofile={pgbouncerNofileLimit}:{pgbouncerNofileLimit}",
-        $"--sysctl=net.core.somaxconn={pgbouncerSomaxconn}")
+        $"--sysctl=net.core.somaxconn={pgbouncerSomaxconn}"
+    )
     .WaitFor(timescaledbDatabase);
 
 var pgbouncerEndpoint = pgbouncer.GetEndpoint("tcp");
@@ -79,12 +83,15 @@ var pgbouncerEndpoint = pgbouncer.GetEndpoint("tcp");
 var pooledConnectionString = builder.AddConnectionString(
     "timescaledb-pool",
     ReferenceExpression.Create(
-        $"Host={pgbouncerEndpoint.Host};Port={pgbouncerEndpoint.Property(EndpointProperty.Port)};Database={databaseName};Username={databaseUser};Password={databasePassword};Pooling=true;Minimum Pool Size=20;Maximum Pool Size=200;Timeout=15;Command Timeout=30"));
+        $"Host={pgbouncerEndpoint.Host};Port={pgbouncerEndpoint.Property(EndpointProperty.Port)};Database={databaseName};Username={databaseUser};Password={databasePassword};Pooling=true;Minimum Pool Size=20;Maximum Pool Size=200;Timeout=15;Command Timeout=30"
+    )
+);
 
 builder
     .AddProject(
         "timescaledb-demo",
-        "../PlatformKernel.TimescaleDbDemo/PlatformKernel.TimescaleDbDemo.csproj")
+        "../PlatformKernel.TimescaleDbDemo/PlatformKernel.TimescaleDbDemo.csproj"
+    )
     .WithEnvironment("TIMESCALE_CONNECTION_STRING", pooledConnectionString)
     .WithExplicitStart()
     .WaitFor(pgbouncer);

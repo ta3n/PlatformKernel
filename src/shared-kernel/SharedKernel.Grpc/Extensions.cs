@@ -194,7 +194,7 @@ public static class Extensions
         _ = delegateResult;
         _ = timeSpan;
         _ = context;
-        
+
         Log.Logger.Information("GrpcCircuitBreakerAsync: OnBreak");
     }
 }

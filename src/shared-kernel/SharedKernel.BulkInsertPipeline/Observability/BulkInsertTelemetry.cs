@@ -24,9 +24,9 @@ internal sealed class BulkInsertTelemetry : IDisposable
         _insertedRecords = _meter.CreateCounter<long>("bulk_insert.records_inserted");
         _failedRecords = _meter.CreateCounter<long>("bulk_insert.records_failed");
         _rejectedRecords = _meter.CreateCounter<long>("bulk_insert.records_rejected");
-        _batchSize = _meter.CreateHistogram<long>("bulk_insert.batch_size", unit: "records");
-        _insertDurationMs = _meter.CreateHistogram<double>("bulk_insert.insert_duration", unit: "ms");
-        _throughputRecordsPerSecond = _meter.CreateHistogram<double>("bulk_insert.throughput", unit: "records/s");
+        _batchSize = _meter.CreateHistogram<long>("bulk_insert.batch_size", "records");
+        _insertDurationMs = _meter.CreateHistogram<double>("bulk_insert.insert_duration", "ms");
+        _throughputRecordsPerSecond = _meter.CreateHistogram<double>("bulk_insert.throughput", "records/s");
     }
 
     public Activity? StartInsertActivity(

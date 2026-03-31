@@ -291,7 +291,10 @@ internal sealed class StructColumnAccessor<T, TValue>(
 
     public object GetValue(
         T entity
-    ) => getter(entity);
+    )
+    {
+        return getter(entity);
+    }
 }
 
 internal sealed class NullableStructColumnAccessor<T, TValue>(
@@ -335,7 +338,10 @@ internal sealed class NullableStructColumnAccessor<T, TValue>(
 
     public object? GetValue(
         T entity
-    ) => getter(entity);
+    )
+    {
+        return getter(entity);
+    }
 }
 
 internal sealed class ReferenceColumnAccessor<T, TValue>(
@@ -379,5 +385,8 @@ internal sealed class ReferenceColumnAccessor<T, TValue>(
 
     public object? GetValue(
         T entity
-    ) => getter(entity);
+    )
+    {
+        return getter(entity);
+    }
 }

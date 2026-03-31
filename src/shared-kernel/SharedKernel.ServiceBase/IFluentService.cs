@@ -1,5 +1,4 @@
-﻿
-using SharedKernel.Entity;
+﻿using SharedKernel.Entity;
 using SharedKernel.Pagination;
 
 namespace SharedKernel.ServiceBase;

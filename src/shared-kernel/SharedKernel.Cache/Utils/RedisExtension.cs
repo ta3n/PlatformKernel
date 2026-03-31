@@ -121,7 +121,7 @@ public static class RedisExtension
     {
         var yielded = 0;
 
-        foreach (var endpoint in muxer.GetEndPoints(configuredOnly: true))
+        foreach (var endpoint in muxer.GetEndPoints(true))
         {
             var server = muxer.GetServer(endpoint);
             if (!server.IsConnected || server.ServerType == ServerType.Sentinel)
