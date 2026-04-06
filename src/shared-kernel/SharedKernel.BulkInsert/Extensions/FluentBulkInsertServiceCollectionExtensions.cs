@@ -11,6 +11,7 @@ public static class FluentBulkInsertServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddPostgreSqlBulkInsert();
+
         return new FluentBulkInsertBuilder(services);
     }
 }

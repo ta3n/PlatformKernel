@@ -68,7 +68,7 @@ Content-Type: {{json}}
 Accept: {{json}}
 
 {
-  "count": 50000,
+  "count": 5000,
   "prefix": "fluent-default",
   "source": "rest-client"
 }
@@ -107,7 +107,7 @@ Content-Type: {{json}}
 Accept: {{json}}
 
 {
-  "count": 5000,
+  "count": 500,
   "prefix": "fluent-efcore",
   "source": "rest-client",
   "provider": "EfCore",
