@@ -1,0 +1,21 @@
+@host = http://localhost:5107
+
+GET {{host}}/
+
+###
+
+POST {{host}}/api/firebase-notifications/send
+Content-Type: application/json
+
+{
+  "title": "PlatformKernel",
+  "message": "Firebase notification sent from SharedKernel.FirebaseNotification.",
+  "deviceTokens": [
+    "YOUR_FCM_DEVICE_TOKEN"
+  ],
+  "dryRun": true,
+  "data": {
+    "screen": "notifications",
+    "campaign": "spring-launch"
+  }
+}
