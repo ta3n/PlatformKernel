@@ -1,8 +1,8 @@
 # Code Review: SharedKernel.FirebaseNotification
 
-**Ngày review**: April 12, 2026  
-**Plugin version**: FirebaseAdmin 3.5.0  
-**Target framework**: .NET 8.0  
+**Ngày review**: April 12, 2026
+**Plugin version**: FirebaseAdmin 3.5.0
+**Target framework**: .NET 8.0
 **Trạng thái**: ✅ **PASS** - Code hoạt động tốt, không có lỗi
 
 ---
@@ -234,26 +234,26 @@ public async Task<FirebaseNotificationDispatchResult> SendAsync(
     // 1. Validate input
     ArgumentNullException.ThrowIfNull(payload);
     ArgumentException.ThrowIfNullOrWhiteSpace(payload.Title);
-    
+
     // 2. Normalize tokens (trim, deduplicate, filter empty)
     var normalizedTokens = NormalizeTokens(payload.DeviceTokens);
-    
+
     // 3. Check constraints
     if (normalizedTokens.Count > MaxTokensPerRequest)
     {
         throw new ArgumentException("Too many tokens");
     }
-    
+
     // 4. Build FCM multicast message
     var multicastMessage = new MulticastMessage { ... };
-    
+
     // 5. Send với Firebase SDK
     var batchResponse = await messaging.SendEachForMulticastAsync(
         multicastMessage,
         dryRun,
         cancellationToken
     );
-    
+
     // 6. Map response thành domain model
     return new FirebaseNotificationDispatchResult(...);
 }
@@ -318,7 +318,7 @@ public static IServiceCollection AddFirebaseNotification(
 
 ### 1. Add Unit Tests
 
-**Hiện tại**: Chỉ có test service cho manual testing  
+**Hiện tại**: Chỉ có test service cho manual testing
 **Đề xuất**: Thêm xUnit tests với Testcontainers
 
 ```csharp
@@ -338,7 +338,7 @@ public sealed class FirebaseNotificationServiceTests
         // Assert
         Assert.Equal(2, result.UniqueTokenCount);
     }
-    
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -355,7 +355,7 @@ public sealed class FirebaseNotificationServiceTests
 
 ### 2. Add Retry Policy
 
-**Hiện tại**: Không có retry mechanism  
+**Hiện tại**: Không có retry mechanism
 **Đề xuất**: Sử dụng Polly cho transient failures
 
 ```csharp
@@ -391,14 +391,14 @@ internal sealed class FirebaseNotificationService
     private static readonly Meter Meter = new("SharedKernel.FirebaseNotification");
     private static readonly Counter<int> NotificationsSent = Meter.CreateCounter<int>("notifications_sent");
     private static readonly Counter<int> NotificationsFailed = Meter.CreateCounter<int>("notifications_failed");
-    
+
     public async Task<FirebaseNotificationDispatchResult> SendAsync(...)
     {
         var result = await messaging.SendEachForMulticastAsync(...);
-        
+
         NotificationsSent.Add(result.SuccessCount);
         NotificationsFailed.Add(result.FailureCount);
-        
+
         return ...;
     }
 }
@@ -406,7 +406,7 @@ internal sealed class FirebaseNotificationService
 
 ### 4. Add Topic/Condition Support
 
-**Hiện tại**: Chỉ hỗ trợ device tokens  
+**Hiện tại**: Chỉ hỗ trợ device tokens
 **Đề xuất**: Hỗ trợ FCM topics và conditions
 
 ```csharp
@@ -447,11 +447,11 @@ var payload = new FirebaseNotificationPayload(
 - ⚠️ Không có retry mechanism
 - ⚠️ Chưa có telemetry/metrics
 
-**Recommendation**: 
+**Recommendation**:
 - **APPROVED** để sử dụng production ✅
 - Các improvements trên là **optional**, không blocking
 
 ---
 
-**Reviewer**: GitHub Copilot  
+**Reviewer**: GitHub Copilot
 **Date**: April 12, 2026

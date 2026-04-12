@@ -108,7 +108,7 @@ foreach (var tokenResult in result.TokenResults)
     else
     {
         Console.WriteLine($"❌ Failed {tokenResult.DeviceToken}: {tokenResult.ErrorCode}");
-        
+
         // Handle invalid tokens
         if (tokenResult.ErrorCode is "InvalidRegistration" or "NotRegistered")
         {

@@ -109,17 +109,17 @@ Content-Type: application/json
 ```swift
 import FirebaseMessaging
 
-func application(_ application: UIApplication, 
+func application(_ application: UIApplication,
                  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     FirebaseApp.configure()
-    
+
     Messaging.messaging().token { token, error in
         if let token = token {
             print("📱 FCM Token: \(token)")
             // Copy token này
         }
     }
-    
+
     return true
 }
 ```
@@ -240,7 +240,7 @@ cat secrets/firebase-service-account.json | jq .project_id
 
 **Nguyên nhân**: Device token không hợp lệ
 
-**Fix**: 
+**Fix**:
 - Verify mobile app đã call `FirebaseApp.configure()`
 - Check token format (dài ~150-200 chars)
 
@@ -264,6 +264,6 @@ cat secrets/firebase-service-account.json | jq .project_id
 
 ---
 
-**⏱️ Total time**: ~15 phút  
+**⏱️ Total time**: ~15 phút
 **Status**: ✅ Ready for development
 
