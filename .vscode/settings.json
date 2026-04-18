@@ -28,5 +28,6 @@
     "timescaledb",
     "ulimits",
     "v'VVV"
-  ]
+  ],
+  "chatgpt.openOnStartup": true
 }

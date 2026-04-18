@@ -68,7 +68,7 @@ Content-Type: {{json}}
 Accept: {{json}}
 
 {
-  "count": 5000,
+  "count": 150000,
   "prefix": "fluent-default",
   "source": "rest-client"
 }

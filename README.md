@@ -1,388 +1,285 @@
 # Platform Kernel
 
+Platform Kernel is a robust foundation for building .NET microservices, providing a set of shared libraries, design patterns, and templates. It emphasizes consistency, observability, and scalability across services through a well-defined Shared Kernel and standardized architectural patterns (CQRS, DDD).
+
 ## Table of Contents
 
-- [Platform Kernel](#platform-kernel)
-  - [Table of Contents](#table-of-contents)
-  - [Environment Setup](#environment-setup)
-    - [Installing .NET 8 SDK](#installing-net-8-sdk)
-      - [Development Tools](#development-tools)
-  - [Project Structure](#project-structure)
-    - [Folder code base](#folder-code-base)
-      - [Solution explorer](#solution-explorer)
-      - [Layer Dependencies of a service](#layer-dependencies-of-a-service)
-      - [Implement the business domain flow of a service](#implement-the-business-domain-flow-of-a-service)
-      - [Implement the normarl flow of a service](#implement-the-normarl-flow-of-a-service)
-  - [Git Convention](#git-convention)
-    - [General Rules](#general-rules)
-    - [Semantic Subjects](#semantic-subjects)
-    - [Tags](#tags)
-    - [Branch Name](#branch-name)
-    - [Pull Request Name](#pull-request-name)
-  - [Code Review Checklist](#code-review-checklist)
-    - [General](#general)
-    - [Commenting](#commenting)
-    - [Source Code](#source-code)
-  - [Coding Guideline](#coding-guideline)
-    - [Get submodules](#get-submodules)
-    - [Code quality](#code-quality)
-  - [Version Control and CI/CD](#version-control-and-cicd)
-  - [References](#references)
+- [Overview](#overview)
+- [Stack and Requirements](#stack-and-requirements)
+- [Project Structure](#project-structure)
+- [Environment Setup](#environment-setup)
+- [Scripts and Task Management](#scripts-and-task-management)
+- [Environment Variables](#environment-variables)
+- [Testing](#testing)
+- [Git Convention](#git-convention)
+- [Code Review Checklist](#code-review-checklist)
+- [License](#license)
+- [References](#references)
 
 ---
 
-## Environment Setup
+## Overview
 
-### Installing .NET 8 SDK
+The Platform Kernel serves as the backbone for multiple microservices, offering:
 
-1. Windows: https://github.com/dotnet/core/blob/main/release-notes/8.0/install-windows.md
-2. macOS: https://github.com/dotnet/core/blob/main/release-notes/8.0/install-macos.md
-3. Linux: https://github.com/dotnet/core/blob/main/release-notes/8.0/install-linux.md
+- **Shared Kernel**: Reusable modules for CQRS, Caching, Messaging (MassTransit/Rebus), Background Jobs (Hangfire), gRPC, ElasticSearch, Firebase Notifications, and more.
+- **Blueprints**: Service templates for Clean Architecture and CQRS-based services (JHipster + .NET).
+- **Observability**: Standardized logging (Serilog, Sentry, Seq) and distributed tracing.
+- **Infrastructure**: Pre-configured Docker environments for PostgreSQL (+ TimescaleDB), Redis, RabbitMQ, MinIO, and Seq.
+- **Quality Gates**: SonarQube integration with enforced code coverage (≥ 55%) and strict compiler analysis.
 
-#### Development Tools
+---
 
-- [Visual Studio 2022 or later](https://visualstudio.microsoft.com/): This is a popular integrated development
-  environment (IDE) for .NET. Download and install it from Microsoft's official website. Extensions should install:
-  - [SonarLint for Visual Studio 2022](https://marketplace.visualstudio.com/items?itemName=SonarSource.SonarLintforVisualStudio2022)
-  - [Visual Studio Spell Checker (VS2022 and Later)](https://marketplace.visualstudio.com/items?itemName=EWoodruff.VisualStudioSpellCheckerVS2022andLater)
-- [Visual Studio Code](https://code.visualstudio.com/): A lighter-weight but powerful editor with extensions for .NET
-  development. Install it from the official website or through extensions in VS Code. Extensions should install:
-  - [C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp)
-  - [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit)
-  - [Test Explorer UI](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-test-explorer)
-    and [Test Adapter Converter](https://marketplace.visualstudio.com/items?itemName=ms-vscode.test-adapter-converter)
-  - [EditorConfig for VS Code](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)
-  - [SonarLint](https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode)
-  - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
-  - [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
+## Stack and Requirements
+
+### Tech Stack
+
+| Category | Technology |
+|---|---|
+| Language | C# 12 |
+| Runtime | .NET 8.0 (locked — do NOT upgrade) |
+| Web | ASP.NET Core |
+| ORM | Entity Framework Core |
+| Database | PostgreSQL, TimescaleDB |
+| Object Storage | MinIO (S3-compatible) |
+| Cache | Redis |
+| Messaging | MassTransit 8.2.3 (locked), Rebus, RabbitMQ |
+| Background Jobs | Hangfire |
+| Search | Elasticsearch |
+| Notifications | Firebase Cloud Messaging |
+| RPC | gRPC |
+| Workflow | Elsa Workflow |
+| Observability | Serilog, Seq, Sentry, SonarQube |
+| Package Manager | NuGet (via `dotnet restore`) |
+
+### Requirements
+
+1. **.NET 8 SDK** — [Install .NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+2. **Docker & Docker Compose** — required to run all infrastructure services
+3. **Task CLI** _(optional)_ — `brew install go-task/tap/go-task` or see [taskfile.dev](https://taskfile.dev)
+4. **Make** _(optional)_ — standard `make` utility
+5. **SonarQube tools** _(optional, for code analysis)_:
+   ```bash
+   dotnet tool install --global dotnet-sonarscanner
+   dotnet tool install --global coverlet.console
+   dotnet tool install --global dotnet-coverage
+   ```
 
 ---
 
 ## Project Structure
 
-### Folder code base
-
-```txt
-- .vscode
-- docker
-- src
-- .dockerignore
-- .editorconfig
-- .gitignore
-- docker-compose.yml
-- nuget.config
-- sonar-analysis.sh
-- SonarAnalysis.ps1
-- SonarQube.Analysis.xml
-- PlatformKernel.sln
+```
+PlatformKernel/
+├── docker/                        # Docker config files (db, sonar)
+├── docs/                          # Architecture docs, ADRs, diagrams
+├── src/
+│   ├── shared-kernel/             # Reusable SharedKernel libraries
+│   │   ├── SharedKernel.AppShared         # Common app bootstrap helpers
+│   │   ├── SharedKernel.BulkInsert        # High-performance bulk insert (RepoDb)
+│   │   ├── SharedKernel.BulkInsertPipeline# Pipeline-based bulk insert
+│   │   ├── SharedKernel.Cache             # Distributed caching (Redis)
+│   │   ├── SharedKernel.CQRS              # MediatR + Mediator CQRS abstractions
+│   │   ├── SharedKernel.ElasticSearch     # Elasticsearch integration
+│   │   ├── SharedKernel.Entity            # Base entities, auditing, soft-delete
+│   │   ├── SharedKernel.Exception         # Unified exception handling
+│   │   ├── SharedKernel.FirebaseNotification # Firebase Cloud Messaging
+│   │   ├── SharedKernel.Grpc              # gRPC service base
+│   │   ├── SharedKernel.Hangfire          # Background job management
+│   │   ├── SharedKernel.IntegrationEvent  # Integration event contracts
+│   │   ├── SharedKernel.MassTransit       # MassTransit messaging + outbox
+│   │   ├── SharedKernel.Pagination        # Spring-style pagination
+│   │   ├── SharedKernel.Rebus             # Rebus messaging + outbox
+│   │   ├── SharedKernel.RepositoryBase    # Generic + Fluent repository patterns
+│   │   ├── SharedKernel.Sentry            # Sentry error tracking
+│   │   ├── SharedKernel.Serilog           # Serilog structured logging
+│   │   ├── SharedKernel.ServiceBase       # Web API service bootstrap base
+│   │   ├── SharedKernel.ServiceDefaults   # .NET Aspire service defaults
+│   │   ├── SharedKernel.Specification     # Specification query pattern
+│   │   ├── SharedKernel.UnitOfWork        # EF Core Unit of Work
+│   │   └── SharedKernel.WorkflowEngineElsa# Elsa workflow orchestration
+│   ├── blueprint-service/         # Service templates
+│   │   ├── clean-architecture/    # Clean Architecture scaffold
+│   │   ├── dotnet-backend-template/
+│   │   ├── jhipster-blueprint-cqrs/
+│   │   └── jhipster-blueprint-normal/
+│   └── timescaledb-demo/          # Reference implementation for TimescaleDB
+├── technical-design/              # Design docs per feature/domain
+├── dependency-audit/              # CVE vulnerability audit tool
+├── Directory.Build.props          # Global MSBuild properties
+├── global.json                    # .NET SDK version pin
+├── nuget.config                   # NuGet feed configuration
+├── Taskfile.yml                   # Task CLI task definitions
+├── Makefile                       # Make task definitions
+├── docker-compose.yml             # Infrastructure services
+└── PlatformKernel.sln             # Root solution file
 ```
 
-1. **.vscode**: Directory used by Visual Studio Code (VS Code), a popular code editor developed by Microsoft. This
-   folder typically contains configuration files and settings specific to the project or workspace it resides in. Here
-   are some common files and their purposes within the .vscode folder: settings.json, launch.json, tasks.json, v.v...
+---
 
-2. **docker**: Contains the configuration files and resources required to build and deploy Docker containers to the
-   project via docker-compose.
+## Environment Setup
 
-3. **src**: Contains the main source code of the application. This is where developers place source code files,
-   configurations, and other components necessary to build and run the application.
+### 1. Start Infrastructure (Docker)
 
-4. **.editorconfig**: Used to maintain consistent source code formatting rules within a project. It helps developers
-   working on the same project adhere to the same source code formatting rules when using IDEs like Visual Studio 2022
-   or Visual Studio Code. (https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/code-style-rule-options).
+All services require PostgreSQL, Redis, RabbitMQ, Seq, and MinIO to be running:
 
-5. **.dockerignore**: Used to specify files and directories that should be ignored by Docker when building an image.
-   This is similar to a .gitignore file used by Git to ignore files and directories in version control.
-
-6. **.gitignore**: Specifies which files and directories should be ignored by Git. This means that any files or
-   directories listed in the .gitignore file will not be tracked by Git, and changes to these files will not be included
-   in commits.
-
-7. **docker-compose.yml**: A configuration file used by Docker Compose to define and manage multi-container Docker
-   applications. It allows you to specify the services, networks, and volumes that your application requires.
-
-8. **nuget.config**: Used to configure NuGet, the package manager for .NET. This file typically contains settings that
-   control how NuGet behaves when restoring and managing packages from https://api.nuget.org/v3/index.json
-
-9. **sonar-analysis.sh**: A shell script used to perform static code analysis using SonarQube, a popular tool for
-   continuous inspection of code quality.
-
-10. **SonarAnalysis.ps1**: A PowerShell script designed to perform a SonarQube analysis on the project.
-
-11. **SonarQube.Analysis.xml**: A configuration file used for integrating the SonarQube static code analysis tool with
-    the project.
-
-12. **PlatformKernel.sln**: A solution file used by Microsoft Visual Studio and other compatible Integrated
-    Development Environments (IDEs) to manage a collection of projects.
-
-#### Solution explorer
-
-```txt
-- shared-kernel
-  + SharedKernel.AppShared
-  + SharedKernel.Cache
-  + SharedKernel.CQRS
-  + SharedKernel.Entity
-  + SharedKernel.Grpc
-  + SharedKernel.Hangfire
-  + SharedKernel.IntegrationEvent
-  + SharedKernel.MassTransit
-  + SharedKernel.Pagination
-  + SharedKernel.RepositoryBase
-  + SharedKernel.Sentry
-  + SharedKernel.Serilog
-  + SharedKernel.ServiceBase
-  + SharedKernel.ServiceDefaults
-  + SharedKernel.Specification
-  + SharedKernel.Exception
-  + SharedKernel.UnitOfWork
-  + and so more ...
+```bash
+docker compose up -d
 ```
 
-Contains common or shared code that is used across multiple modules or services
-within the application. This can include utility classes, helper functions, base classes, and
-other reusable components that are not specific to a single module but are needed by various parts of the
-application. **Plugin mechanism for adding shared parts**.
+| Service | URL | Default Credentials |
+|---|---|---|
+| pgAdmin | http://localhost:5050 | `admin@localhost.com` / `admin.localhost` |
+| Redis Commander | http://localhost:8081 | — |
+| Seq (Logs) | http://localhost:5341 | — |
+| MinIO Console | http://localhost:9011 | `minioadmin` / `minioadmin123` |
+| RabbitMQ Management | http://localhost:15672 | <!-- TODO: confirm default credentials --> |
 
-- **SharedKernel.AppShared**: Contains shared application logic and utilities that are used across different parts
-  of the application. This can include common services, utilities, base classes, and other shared
-  components that are not specific to a single module but are used throughout the application.
+### 2. Restore and Build
 
-- **SharedKernel.Cache**: Provides distributed caching functionality using Redis. Includes cache service with operations
-  for get/set/remove data, connection pooling, bulk operations, pattern-based key management, distributed locking
-  mechanism, and Lua script execution for optimized Redis operations. Supports both in-memory and Redis caching with
-  configurable TTL, sliding expiration, and connection retry policies.
+```bash
+dotnet restore
+dotnet build --no-restore -warnaserror
+```
 
-- **SharedKernel.Entity**: Contains entity definitions and interfaces related to the entities. Such as ILoginHistory,
-  IHasCreator, ...
+Or use the task runners:
 
-- **SharedKernel.Hangfire**: Provides background job processing using Hangfire with PostgreSQL or Redis storage. Includes
-  recurring job scheduling with Cron expressions, scheduled jobs execution at specific times or with delays, custom retry
-  mechanisms, dashboard with basic authentication, configurable retention for succeeded jobs, bootstrap locking for
-  scale-out deployments, optional per-instance Hangfire server enablement, and job management utilities with configurable
-  time zones.
+```bash
+task build    # clean → restore → build → vulnerability check
+make build    # restore → build → vulnerability check
+```
 
-- **SharedKernel.MassTransit**: Provides message queue integration using MassTransit with RabbitMQ support. Includes
-  message broker configuration, publish-subscribe patterns, batch publishing with publisher confirmation, queue
-  settings with durable and lazy mode, and customizable bus registration with factory configurators.
+### 3. Development Tools (VS Code / Rider)
 
-- **SharedKernel.Pagination**: Contains code related to pagination functionality within the application. Such as Order, Sort, PageableBinderConfig, ...
+Recommended VS Code extensions:
+- **C# Dev Kit**
+- **SonarLint**
+- **EditorConfig**
+- **REST Client**
+- **Code Spell Checker**
 
-- **SharedKernel.Sentry**: A library for integrating Sentry into ASP.NET Core applications within the system.
-  It provides extension methods to easily configure and use Sentry (log, trace, error monitoring) via appsettings, supports
-  Entity Framework and OpenTelemetry, allows custom log filtering and event handling, and helps standardize centralized
-  error monitoring across all microservices.
+---
 
-- **SharedKernel.Serilog**: A logging library for .NET applications in the system, providing centralized and extensible
-  logging using Serilog. It supports various sinks such as Console, Seq, AWS CloudWatch, OpenTelemetry, and Sentry, as well
-  as enrichers for environment and exception details. The library enables structured logging, asynchronous log processing,
-  and seamless integration with ASP.NET Core and Entity Framework, helping standardize and enhance observability across
-  all microservices.
+## Scripts and Task Management
 
-- **SharedKernel.ServiceDefaults**: A shared library providing default configurations and integrations for .NET microservices in
-  the system. It includes built-in support for OpenTelemetry tracing, resilient HTTP client policies, and service
-  discovery, helping standardize observability, reliability, and distributed tracing across all services.
+| Command | Description |
+|---|---|
+| `task build` / `make build` | Restore, build (warnings as errors), check vulnerabilities |
+| `task clean` / `make clean` | Remove `bin`, `obj`, `node_modules`, `TestResults`, `.sonarqube` |
+| `task dotnet-counters` | Monitor live .NET performance counters for a running service |
+| `./sonar-analysis.sh` | Run SonarQube static analysis (Linux/macOS) |
+| `./SonarAnalysis.ps1` | Run SonarQube static analysis (Windows) |
+| `./delete_stale_branches.sh` | Delete merged/stale local git branches |
+| `./dependency-audit/dependency-audit.sh` | Audit NuGet packages for known CVEs |
 
-- **SharedKernel.Specification**: Contains code related to the Specification pattern. The Specification pattern is a
-  software design pattern that allows for the creation of business rules that can be combined and reused. It is often
-  used to encapsulate the logic for querying and filtering data in a way that is both flexible and maintainable. Such
-  as SpecificationBase, GridSpecificationBase, IGridSpecification, ...
+---
 
-  - **Specification Interface**: Defines the contract for specifications, typically including methods like
-    IsSatisfiedBy which checks if a given object meets the criteria of the specification.
-  - **Composite Specifications**: These are specifications that combine other specifications using logical operations
-    like AND, OR, and NOT.
-  - **Concrete Specifications**: These are specific implementations of the specification interface that encapsulate
-    particular business rules.
-  - **Specification Builder**: A utility to help construct complex specifications from simpler ones.
-  - **Extensions and Helpers**: Additional methods and utilities to work with specifications, such as converting them
-    to expressions that can be used with LINQ queries.
+## Environment Variables
 
-- **SharedKernel.Exception**: Contains classes and files related to exception handling within the
-  application. This could include custom exception classes, exception handling utilities, and possibly configurations
-  for how exceptions are managed and logged within the application. Custom Exception Classes: These are classes that
-  extend the base exception class to provide more specific error information.
+The `Makefile` and `Taskfile.yml` load variables from a `.env` file in the project root (create it locally — it is **not** committed).
 
-- **SharedKernel.IntegrationEvent**: A shared library for defining and handling integration events in the system.
-  It provides base event contracts and utilities for event-driven communication between microservices, leveraging
-  MassTransit for message transport and supporting reliable, decoupled integration patterns.
+Key variables referenced in `docker-compose.yml`:
 
-- **SharedKernel.UnitOfWork**: Contains the implementation of the Unit of Work pattern for the
-  application. The Unit of Work pattern is a design pattern used to manage changes to a set of objects by coordinating
-  the writing out of changes and the resolution of concurrency problems. Such as AppDbContextBase và
-  CustomDbConnectionInterceptor.
+| Variable | Default Value | Description |
+|---|---|---|
+| `POSTGRES_USER` | `postgres` | PostgreSQL root user |
+| `POSTGRES_PASSWORD` | `01j6efde8q4q48crxe93crwxkc` | PostgreSQL root password |
+| `MINIO_ROOT_USER` | `minioadmin` | MinIO root username |
+| `MINIO_ROOT_PASSWORD` | `minioadmin123` | MinIO root password |
+| `SEQ_API_KEY` | `01jErQ4kB7D11e78TyX92WqBN8` | API key for Seq log ingestion |
 
-#### Layer Dependencies of a service
+> **TODO**: Document additional `.env` variables required for application-level config (connection strings, Sentry DSN, Firebase credentials, etc.).
 
-<img src="./docs/images/LayerDependencies.drawio.svg" alt="">
+---
 
-#### Implement the business domain flow of a service
+## Testing
 
-CQRS is a good choice for a PMS system, especially if the system has high requirements for performance, scalability and
-flexibility.
-For complex operations in the business domain, the execution flow of the system will need to use CQRS.
+### Run All Tests
 
-<img src="./docs/images/BusinessFlow.drawio.svg" alt="">
+```bash
+dotnet test
+```
 
-#### Implement the normarl flow of a service
+### Run with Coverage (OpenCover format for SonarQube)
 
-Implemented with simple operations such as CRUD for catalog data types, to reduce system complexity.
+```bash
+dotnet test --collect:"XPlat Code Coverage;Format=opencover" --no-build
+```
 
-<img src="./docs/images/NormalFlow.drawio.svg" alt="">
+Test projects follow the `{Module}.Test` naming convention and are co-located with their respective modules under `src/shared-kernel/` and `src/timescaledb-demo/`.
+
+### Code Quality Analysis
+
+Requires Docker services running and SonarQube tools installed:
+
+```bash
+./sonar-analysis.sh          # Linux/macOS
+./SonarAnalysis.ps1          # Windows
+```
+
+> ⚠️ SonarQube enforces a **minimum 55% code coverage** gate. Tests must pass this threshold before merging.
 
 ---
 
 ## Git Convention
 
-<img src="./docs/images/git-convention.png" alt="">
+<img src="./docs/images/git-convention.png" alt="Git Convention">
 
 ### General Rules
 
-| No | Checked Items                                                                                 | Assessment | Notes | Priority | Severity |
-|----|-----------------------------------------------------------------------------------------------|------------|-------|----------|----------|
-| 1  | The subject of the commit message is limited to 50 characters                                 | Mandatory  |       | 1        |          |
-| 2  | Capitalize the first letter of the subject                                                    |            |       | 2        |          |
-| 3  | Do not end the subject with a period                                                          |            |       | 2        |          |
-| 4  | Use an imperative style in the subject (Add password validation vs Added password validation) |            |       | 2        |          |
-| 5  | Add a commit body when additional background for the commit is necessary                      |            |       | 2        |          |
-| 6  | Body is separated from subject by one blank line                                              | Mandatory  |       | 1        |          |
+1. Subject line limited to **50 characters**.
+2. Capitalize the first letter of the subject.
+3. No period at the end of the subject.
+4. Use **imperative mood** (`Add` not `Added`, `Fix` not `Fixed`).
+5. Separate body from subject with a blank line.
 
-### Semantic Subjects
+### Semantic Commit Types
 
-| No | Checked Items                                                                                                                                                                                                                                                                                    | Assessment | Notes | Priority | Severity |
-|----|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|-------|----------|----------|
-| 1  | Commit messages' subjects are preceded by a tag to make it easier to read through them and filter them out: <br> `<type>: <commit subject>` <br> For example: <br> `feat: #tasknumber short_Description` <br> `fix: #bugNumber short_Description` <br> `hotfix: #hotfixNumber short_Description` | Mandatory  |       | 1        |          |
-
-### Tags
-
-| No | Checked Items                                                                                                | Assessment | Notes | Priority | Severity |
-|----|--------------------------------------------------------------------------------------------------------------|------------|-------|----------|----------|
-| 1  | `feat`: New feature or functionality for the user, not a new feature for the build script                    | Mandatory  |       | 1        |          |
-| 2  | `fix`: Bug fix for the user, not a fix to a build script                                                     | Mandatory  |       | 1        |          |
-| 3  | `docs`: Changes to the documentation                                                                         |            |       | 2        |          |
-| 4  | `style`: Formatting, missing semi-colons, etc; no production code change                                     |            |       | 2        |          |
-| 5  | `refactor`: Code refactoring (variable renaming or code restructuring) that doesn't affect the functionality |            |       | 2        |          |
-| 6  | `test`: Adding, fixing, or refactoring tests; no production code change                                      |            |       | 3        |          |
-| 7  | `chore`: Updating build scripts or upgrading dependencies; no production code change                         |            |       | 3        |          |
-| 8  | `misc`: Use for anything that doesn't clearly fall into any of the previous categories                       |            |       | 3        |          |
-
-### Branch Name
-
-| No | Checked Items                                                                                                                                                                                                            | Assessment | Notes | Priority | Severity |
-|----|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|-------|----------|----------|
-| 1  | Branch name with new features <br> `features/<ticket_number>_<summary_feature>` <br> `bugs/<ticket_number>_<summary_feature>` <br> `hotfixs/<ticket_number>_<summary_feature>` <br> Example: `features/001_login_logout` | Mandatory  |       | 2        |          |
-
-### Pull Request Name
-
-| No | Checked Items                                                                                                                                                    | Assessment | Notes | Priority | Severity |
-|----|------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|-------|----------|----------|
-| 1  | Pull Request title <br> `[<type>] <PR title>` <br> For example: <br> `[Feat] short_Description` <br> `[Fix] short_Description` <br> `[Hotfix] short_Description` | Mandatory  |       | 1        |          |
+| Type | Purpose |
+|---|---|
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `docs` | Documentation only changes |
+| `style` | Formatting, whitespace (no logic change) |
+| `refactor` | Code restructuring without behaviour change |
+| `test` | Adding or updating tests |
+| `chore` | Build scripts, CI, dependency updates |
 
 ---
 
 ## Code Review Checklist
 
-### General
-
-| No | Checked Items                                                     | Assessment | Notes | Priority  | Severity |
-|----|-------------------------------------------------------------------|------------|-------|-----------|----------|
-| 1  | Does the code comply with the language and framework conventions? |            |       | Mandatory | 1        |
-
-### Commenting
-
-| No | Checked Items                                              | Assessment | Notes | Priority  | Severity |
-|----|------------------------------------------------------------|------------|-------|-----------|----------|
-| 1  | Has the comment been updated with the latest code?         |            |       | Mandatory | 1        |
-| 2  | Is the comment clear and correct with the code?            |            |       |           |          |
-| 3  | Did the comment describe why and how the code works?       |            |       |           |          |
-| 4  | Exceptions, errors around have been commented yet?         |            |       |           |          |
-| 5  | Has each operation and feature cluster been commented yet? |            |       |           |          |
-| 6  | Have related events and features been commented yet?       |            |       |           |          |
-| 7  | Is there a comment on each class title?                    |            |       |           |          |
-
-### Source Code
-
-| No | Checked Items                                                                                                                      | Assessment | Notes | Priority  | Severity |
-|----|------------------------------------------------------------------------------------------------------------------------------------|------------|-------|-----------|----------|
-| 1  | Does the name of the method/function make sense and describe what it will do?                                                      |            |       | Mandatory | 2        |
-| 2  | Are the params used already described?                                                                                             |            |       | Mandatory | 1        |
-| 3  | Are normal and exception streams clearly separated?                                                                                |            |       | Mandatory | 1        |
-| 4  | When a logic thread is too long, has the action been split into smaller methods?                                                   |            |       |           | 2        |
-| 5  | When the logic flow is too long, is it possible to reduce the conditional syntaxes like if-else, while, etc?                       |            |       |           | 2        |
-| 6  | Have you minimized nested loops?                                                                                                   |            |       |           | 3        |
-| 7  | Is the given variable name meaningful and easy to understand?                                                                      |            |       | Mandatory | 3        |
-| 8  | Is the code easy to understand and straight to the point?                                                                          |            |       |           | 3        |
-| 9  | With the complex code, are there explanations and comments to avoid confusion when maintaining?                                    |            |       | Mandatory | 2        |
-| 10 | Have you used Tab with Space logically according to the structure?                                                                 |            |       |           | 2        |
-| 11 | Is there only 1 command per line? Do not put multiple commands in 1 line, because it will be difficult to read and maintain later. |            |       |           | 1        |
-| 14 | Is the variable name different from the class name?                                                                                |            |       | Mandatory | 3        |
-| 15 | Is the function/method name set according to the general rules? For example, camelCase, is a verb.                                 |            |       |           | 2        |
-| 16 | Is the global function's name different from the local function?                                                                   |            |       | Mandatory | 3        |
-| 19 | Are names for folders and libraries defined in the document?                                                                       |            |       | Mandatory | 2        |
-| 20 | Did the name and type of the folder match the required framework? For example, folder ./src to contain source code.                |            |       | Mandatory | 2        |
-| 21 | Are 3rd party libraries used? If yes, then:                                                                                        |            |       |           |          |
-| 22 | Has the customer approved this listing?                                                                                            |            |       |           |          |
-| 23 | Is the license for the libraries to use appropriate and approved?                                                                  |            |       |           |          |
-| 24 | Is there a line of code that is not being used?                                                                                    |            |       |           | 3        |
+- **Conventions**: Code follows C# 12 / .NET 8 style and project `.editorconfig` rules.
+- **Typing**: Explicit types used; `var` only when type is obvious. `is null` over `== null`.
+- **Nullability**: Nullable reference types respected; nulls handled explicitly.
+- **Async**: All I/O uses `async`/`await` with `CancellationToken`.
+- **Access Modifiers**: Types are `internal sealed` unless a broader scope is justified.
+- **Architecture**:
+  - Commands/Queries implement correct CQRS interfaces.
+  - Integration events use the Transactional Outbox pattern (MassTransit or Rebus).
+  - Repository logic extracted via Specifications where applicable.
+- **Comments**: Up-to-date, explains *why* and *how*, not *what*.
+- **DRY**: No unnecessary duplication.
+- **Tests**: New logic accompanied by unit or integration tests; coverage maintained ≥ 55%.
+- **No warnings**: `TreatWarningsAsErrors=true` — all compiler warnings must be resolved or explicitly suppressed.
 
 ---
 
-## Coding Guideline
+## License
 
-### Get submodules
-
-- init
-
-  ```bash
-  git submodule update --init --recursive
-  ```
-
-- update
-
-  ```bash
-  git submodule update --remote --recursive
-  ```
-
-- add submodule
-
-  ```bash
-  git submodule add [Repo path]
-  ```
-
-### Code quality
-
-**By Script :**
-
-1. Run Sonar in container : `docker compose -f ./docker/sonar.yml up -d`
-
-2. Wait container was up Run `SonarAnalysis.ps1` or `sonar-analysis.sh` and go to http://localhost:9001
-
-**Manually :**
-
-1. Run Sonar in container : `docker compose -f ./docker/sonar.yml up -d`
-
-2. Install sonar scanner for .net : `dotnet tool install --global dotnet-sonarscanner`
-
-3. Run sonar begin
-
-```bash
-dotnet sonarscanner begin /d:sonar.login=admin /d:sonar.password=admin /k:"platform-kernel" /d:sonar.host.url="http://localhost:9001" /s:"`pwd`/SonarQube.Analysis.xml" ``
-```
-
-1. Build your application : `dotnet build`
-
-2. Publish sonar results : `dotnet sonarscanner end /d:sonar.login=admin /d:sonar.password=admin`
-
-3. Go to http://localhost:9001
-
----
-
-## Version Control and CI/CD
-
-Will update soon
+> **TODO**: Specify the license for this repository (e.g., MIT, Apache 2.0).
 
 ---
 
 ## References
 
-Will update soon
+- [Microsoft .NET 8 Documentation](https://learn.microsoft.com/en-us/dotnet/)
+- [Clean Architecture — Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [CQRS Pattern — Martin Fowler](https://martinfowler.com/bliki/CQRS.html)
+- [MassTransit Docs](https://masstransit.io/documentation/introduction)
+- [Rebus Docs](https://github.com/rebus-org/Rebus/wiki)
+- [Elsa Workflows](https://elsa-workflows.github.io/elsa-core/)
+- [Taskfile](https://taskfile.dev)
+- [ADR-001: Keep MassTransit 8.x](docs/adr-001-keep-masstransit-8x.md)
+- [Messaging Alternatives Comparison](docs/messaging-alternatives-comparison.md)
+- [TimescaleDB Guide](docs/timescaledb-guide.md)
