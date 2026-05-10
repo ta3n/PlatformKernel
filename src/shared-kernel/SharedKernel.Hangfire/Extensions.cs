@@ -373,18 +373,21 @@ public static class Extensions
 
         var options = new RedisStorageOptions();
 
-        if (redisStorageOptions.Database.HasValue)
+        if (!redisStorageOptions.Database.HasValue)
+        {
+            if (configuration.GetValue<int?>("Redis:DefaultDatabase") is { } defaultDatabase)
+            {
+                options.Db = ValidateNonNegative(
+                    defaultDatabase,
+                    "Redis:DefaultDatabase"
+                );
+            }
+        }
+        else
         {
             options.Db = ValidateNonNegative(
                 redisStorageOptions.Database.Value,
                 "HangfireStorage:Redis:Database"
-            );
-        }
-        else if (configuration.GetValue<int?>("Redis:DefaultDatabase") is int defaultDatabase)
-        {
-            options.Db = ValidateNonNegative(
-                defaultDatabase,
-                "Redis:DefaultDatabase"
             );
         }
 
