@@ -10,6 +10,8 @@ service JobScheduler {
   rpc TriggerJobNow (TriggerJobNowRequest) returns (JobSchedulerReply);
   rpc PauseJob (JobKeyRequest) returns (JobSchedulerReply);
   rpc ResumeJob (JobKeyRequest) returns (JobSchedulerReply);
+  rpc ScheduleJobAt (ScheduleJobAtRequest) returns (JobSchedulerReply);
+  rpc ScheduleJobDelay (ScheduleJobDelayRequest) returns (JobSchedulerReply);
 }
 
 message RegisterRecurringJobRequest {
@@ -34,6 +36,32 @@ message TriggerJobNowRequest {
   string job_key = 1;
   string requested_by = 2;
   string correlation_id = 3;
+}
+
+message ScheduleJobAtRequest {
+  string job_key = 1;
+  string target_service = 2;
+  string grpc_method = 3;
+  string payload_json = 4;
+  string sub_system_id = 5;
+  string company_id = 6;
+  string project_id = 7;
+  string requested_by = 8;
+  string time_zone_id = 9;
+  string scheduled_at = 10;
+}
+
+message ScheduleJobDelayRequest {
+  string job_key = 1;
+  string target_service = 2;
+  string grpc_method = 3;
+  string payload_json = 4;
+  string sub_system_id = 5;
+  string company_id = 6;
+  string project_id = 7;
+  string requested_by = 8;
+  string time_zone_id = 9;
+  int64 delay_seconds = 10;
 }
 
 message JobSchedulerReply {

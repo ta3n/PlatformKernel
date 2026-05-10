@@ -136,10 +136,17 @@ public sealed class JobSchedulerService(
         var validatedJobKey = SchedulerJobDefinitionValidator.EnsureJobKey(jobKey);
         ArgumentException.ThrowIfNullOrWhiteSpace(requestedBy);
 
-        await GetExistingDefinitionAsync(
+        var definition = await GetExistingDefinitionAsync(
             validatedJobKey,
             cancellationToken
         );
+
+        if (definition.Status != SchedulerJobStatus.Active)
+        {
+            throw new InvalidSchedulerJobDefinitionException(
+                $"Scheduler job '{validatedJobKey}' is {definition.Status} and cannot be paused."
+            );
+        }
 
         _schedulerEngine.PauseRecurringJob(validatedJobKey);
 
@@ -199,6 +206,86 @@ public sealed class JobSchedulerService(
         return SchedulerOperationResult.Success(
             validatedJobKey,
             message: "Job resumed."
+        );
+    }
+
+    /// <inheritdoc />
+    public async Task<SchedulerOperationResult> ScheduleJobAtAsync(
+        SchedulerJobDefinition definition,
+        DateTimeOffset scheduledAt,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(definition);
+        SchedulerJobDefinitionValidator.EnsureValidTarget(definition);
+
+        var activeDefinition = definition with
+        {
+            Status = SchedulerJobStatus.Active
+        };
+
+        await _metadataStore.UpsertAsync(
+            activeDefinition,
+            cancellationToken
+        );
+
+        var hangfireJobId = _schedulerEngine.ScheduleJobAt(
+            activeDefinition,
+            scheduledAt
+        );
+
+        _logger.LogInformation(
+            "Scheduled one-off job {JobKey} at {ScheduledAt} for {TargetService}.{GrpcMethod}",
+            activeDefinition.JobKey,
+            scheduledAt,
+            activeDefinition.TargetService,
+            activeDefinition.GrpcMethod
+        );
+
+        return SchedulerOperationResult.Success(
+            activeDefinition.JobKey,
+            hangfireJobId,
+            "Job scheduled at specific time."
+        );
+    }
+
+    /// <inheritdoc />
+    public async Task<SchedulerOperationResult> ScheduleJobDelayAsync(
+        SchedulerJobDefinition definition,
+        TimeSpan delay,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(definition);
+        SchedulerJobDefinitionValidator.EnsureValidTarget(definition);
+
+        var activeDefinition = definition with
+        {
+            Status = SchedulerJobStatus.Active
+        };
+
+        await _metadataStore.UpsertAsync(
+            activeDefinition,
+            cancellationToken
+        );
+
+        var hangfireJobId = _schedulerEngine.ScheduleJobDelay(
+            activeDefinition,
+            delay
+        );
+
+        _logger.LogInformation(
+            "Scheduled one-off job {JobKey} with delay {Delay} for {TargetService}.{GrpcMethod}",
+            activeDefinition.JobKey,
+            delay,
+            activeDefinition.TargetService,
+            activeDefinition.GrpcMethod
+        );
+
+        return SchedulerOperationResult.Success(
+            activeDefinition.JobKey,
+            hangfireJobId,
+            "Job scheduled with delay."
         );
     }
 

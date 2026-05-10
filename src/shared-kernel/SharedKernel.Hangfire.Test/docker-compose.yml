@@ -1,0 +1,65 @@
+name: shared-kernel-hangfire-test
+
+services:
+  hangfire-test-postgres:
+    image: postgres:16-alpine
+    container_name: hangfire-test-postgres
+    environment:
+      POSTGRES_DB: shared_kernel_hangfire_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "54349:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d shared_kernel_hangfire_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - hangfire-test-network
+
+  hangfire-test-redis:
+    image: redis:7.4-alpine
+    container_name: hangfire-test-redis
+    ports:
+      - "6389:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - hangfire-test-network
+
+  hangfire-tests:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    container_name: hangfire-tests
+    working_dir: /workspace
+    environment:
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "1"
+      HANGFIRE_TEST_REDIS_CONNECTION: hangfire-test-redis:6379,abortConnect=false
+      HANGFIRE_TEST_POSTGRES_CONNECTION: Host=hangfire-test-postgres;Port=5432;Database=shared_kernel_hangfire_test;Username=postgres;Password=postgres
+    volumes:
+      - ../../..:/workspace
+      - hangfire-test-nuget:/root/.nuget/packages
+    depends_on:
+      hangfire-test-postgres:
+        condition: service_healthy
+      hangfire-test-redis:
+        condition: service_healthy
+    command:
+      - /bin/bash
+      - -lc
+      - |
+        dotnet restore src/shared-kernel/SharedKernel.Hangfire.Test/SharedKernel.Hangfire.Test.csproj
+        dotnet test src/shared-kernel/SharedKernel.Hangfire.Test/SharedKernel.Hangfire.Test.csproj --no-restore --logger "console;verbosity=normal"
+    networks:
+      - hangfire-test-network
+
+volumes:
+  hangfire-test-nuget:
+
+networks:
+  hangfire-test-network:
+    name: shared-kernel-hangfire-test-network

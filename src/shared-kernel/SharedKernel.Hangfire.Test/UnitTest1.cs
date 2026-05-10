@@ -85,18 +85,6 @@ public class UnitTest1
     }
 
     [Fact]
-    public void JobRequestRecords_ExposeInheritedValues()
-    {
-        var recurring = new RegisterRecurringJobRequest("ImageResize", "nightly", "{}", "0 0 * * *");
-        var delayed = new RegisterScheduleJobDelayRequest("ImageResize", "delay", "{}", TimeSpan.FromMinutes(5));
-
-        Assert.Equal("ImageResize", recurring.EventName);
-        Assert.Equal("nightly", recurring.JobName);
-        Assert.Equal("0 0 * * *", recurring.CronExpression);
-        Assert.Equal(TimeSpan.FromMinutes(5), delayed.Delay);
-    }
-
-    [Fact]
     public void SchedulerJobDefinitionValidator_AcceptsGeneralRegistrationModel()
     {
         var definition = CreateSchedulerJobDefinition();
@@ -252,6 +240,93 @@ public class UnitTest1
             descriptor => descriptor.ServiceType == typeof(IJobScheduler)
                           && descriptor.ImplementationType == typeof(JobSchedulerService)
         );
+    }
+
+    [Fact]
+    public async Task JobSchedulerService_ScheduleJobAtAsync_StoresMetadataAndReturnsHangfireJobId()
+    {
+        var store = new InMemoryJobMetadataStore();
+        var engine = new RecordingSchedulerEngine();
+        var service = new JobSchedulerService(
+            store,
+            engine,
+            NullLogger<JobSchedulerService>.Instance
+        );
+        var definition = CreateSchedulerJobDefinition();
+        var scheduledAt = DateTimeOffset.UtcNow.AddHours(1);
+
+        var result = await service.ScheduleJobAtAsync(definition, scheduledAt);
+
+        var storedDefinition = await store.GetByJobKeyAsync(definition.JobKey);
+        Assert.True(result.Succeeded);
+        Assert.Equal(definition.JobKey, result.JobKey);
+        Assert.Equal("hangfire-job-2", result.HangfireJobId);
+        Assert.NotNull(storedDefinition);
+        Assert.Equal(SchedulerJobStatus.Active, storedDefinition.Status);
+    }
+
+    [Fact]
+    public async Task JobSchedulerService_ScheduleJobDelayAsync_StoresMetadataAndReturnsHangfireJobId()
+    {
+        var store = new InMemoryJobMetadataStore();
+        var engine = new RecordingSchedulerEngine();
+        var service = new JobSchedulerService(
+            store,
+            engine,
+            NullLogger<JobSchedulerService>.Instance
+        );
+        var definition = CreateSchedulerJobDefinition();
+
+        var result = await service.ScheduleJobDelayAsync(definition, TimeSpan.FromMinutes(5));
+
+        var storedDefinition = await store.GetByJobKeyAsync(definition.JobKey);
+        Assert.True(result.Succeeded);
+        Assert.Equal(definition.JobKey, result.JobKey);
+        Assert.Equal("hangfire-job-3", result.HangfireJobId);
+        Assert.NotNull(storedDefinition);
+        Assert.Equal(SchedulerJobStatus.Active, storedDefinition.Status);
+    }
+
+    [Fact]
+    public async Task JobSchedulerService_PauseJobAsync_ThrowsWhenJobIsAlreadyPaused()
+    {
+        var store = new InMemoryJobMetadataStore();
+        var engine = new RecordingSchedulerEngine();
+        var service = new JobSchedulerService(
+            store,
+            engine,
+            NullLogger<JobSchedulerService>.Instance
+        );
+        var definition = CreateSchedulerJobDefinition();
+        await service.RegisterRecurringJobAsync(definition);
+        await service.PauseJobAsync(definition.JobKey, "admin");
+
+        var exception = await Assert.ThrowsAsync<InvalidSchedulerJobDefinitionException>(
+            () => service.PauseJobAsync(definition.JobKey, "admin")
+        );
+
+        Assert.Contains("Paused", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task JobSchedulerService_PauseJobAsync_ThrowsWhenJobIsRemoved()
+    {
+        var store = new InMemoryJobMetadataStore();
+        var engine = new RecordingSchedulerEngine();
+        var service = new JobSchedulerService(
+            store,
+            engine,
+            NullLogger<JobSchedulerService>.Instance
+        );
+        var definition = CreateSchedulerJobDefinition();
+        await service.RegisterRecurringJobAsync(definition);
+        await service.RemoveRecurringJobAsync(definition.JobKey);
+
+        var exception = await Assert.ThrowsAsync<InvalidSchedulerJobDefinitionException>(
+            () => service.PauseJobAsync(definition.JobKey, "admin")
+        );
+
+        Assert.Contains("Removed", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]

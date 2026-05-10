@@ -31,3 +31,17 @@ tasks:
     desc: Run dotnet-counters for the service
     cmds:
       - dotnet-counters monitor -p $(dotnet-counters ps | pgrep -af Liberty.Reservation.Employee.WebAPI) --counters System.Runtime,Microsoft.AspNetCore.Hosting,Microsoft.AspNetCore.Server.Kestrel,Microsoft.AspNetCore.Routing,Microsoft.EntityFrameworkCore,Microsoft.EntityFrameworkCore.Database.Command,Microsoft.EntityFrameworkCore.Database.Transaction
+
+  test-hangfire-compose:
+    desc: Run SharedKernel.Hangfire tests inside docker compose
+    cmds:
+      - |
+        status=0
+        docker compose -f src/shared-kernel/SharedKernel.Hangfire.Test/docker-compose.yml up --abort-on-container-exit --exit-code-from hangfire-tests hangfire-tests || status=$?
+        docker compose -f src/shared-kernel/SharedKernel.Hangfire.Test/docker-compose.yml down -v
+        exit $status
+
+  hangfire-compose-down:
+    desc: Stop and remove SharedKernel.Hangfire test compose resources
+    cmds:
+      - docker compose -f src/shared-kernel/SharedKernel.Hangfire.Test/docker-compose.yml down -v

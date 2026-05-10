@@ -4,17 +4,42 @@ namespace SharedKernel.Hangfire.Test.Integration;
 
 public sealed class HangfireRedisContainerFixture : IAsyncLifetime
 {
-    private readonly RedisContainer _redisContainer = new RedisBuilder()
-        .WithImage("redis:7.2-alpine")
-        .Build();
+    public const string ExternalConnectionStringEnvironmentVariable =
+        "HANGFIRE_TEST_REDIS_CONNECTION";
+
+    private readonly RedisContainer? _redisContainer;
+    private readonly bool _useExternalRedis;
 
     private StackExchange.Redis.ConnectionMultiplexer _adminConnection = null!;
 
-    public string ConnectionString => _redisContainer.GetConnectionString();
+    public HangfireRedisContainerFixture()
+    {
+        var externalConnectionString = Environment.GetEnvironmentVariable(
+            ExternalConnectionStringEnvironmentVariable
+        );
+
+        if (!string.IsNullOrWhiteSpace(externalConnectionString))
+        {
+            _useExternalRedis = true;
+            ConnectionString = externalConnectionString;
+            return;
+        }
+
+        _redisContainer = new RedisBuilder()
+            .WithImage("redis:7.2-alpine")
+            .Build();
+        ConnectionString = string.Empty;
+    }
+
+    public string ConnectionString { get; private set; }
 
     public async Task InitializeAsync()
     {
-        await _redisContainer.StartAsync();
+        if (!_useExternalRedis)
+        {
+            await _redisContainer!.StartAsync();
+            ConnectionString = _redisContainer.GetConnectionString();
+        }
 
         var configurationOptions = StackExchange.Redis.ConfigurationOptions.Parse(ConnectionString);
         configurationOptions.AllowAdmin = true;
@@ -31,7 +56,10 @@ public sealed class HangfireRedisContainerFixture : IAsyncLifetime
             await _adminConnection.DisposeAsync();
         }
 
-        await _redisContainer.DisposeAsync();
+        if (_redisContainer is not null)
+        {
+            await _redisContainer.DisposeAsync();
+        }
     }
 
     public async Task ResetAsync()

@@ -69,4 +69,30 @@ public interface IJobScheduler
         string requestedBy,
         CancellationToken cancellationToken = default
     );
+
+    /// <summary>
+    /// Schedules a one-off job to execute at a specific timestamp.
+    /// </summary>
+    /// <param name="definition">The job definition.</param>
+    /// <param name="scheduledAt">The timestamp when the job should be executed.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The operation result.</returns>
+    Task<SchedulerOperationResult> ScheduleJobAtAsync(
+        SchedulerJobDefinition definition,
+        DateTimeOffset scheduledAt,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
+    /// Schedules a one-off job to execute after a delay.
+    /// </summary>
+    /// <param name="definition">The job definition.</param>
+    /// <param name="delay">The delay before execution.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The operation result.</returns>
+    Task<SchedulerOperationResult> ScheduleJobDelayAsync(
+        SchedulerJobDefinition definition,
+        TimeSpan delay,
+        CancellationToken cancellationToken = default
+    );
 }

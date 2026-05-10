@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using SharedKernel.Hangfire.Abstractions;
 using SharedKernel.Hangfire.Infrastructure;
@@ -43,8 +44,11 @@ public static class Extensions
         services.Configure<HangfireServerOptions>(hangfireServerSection);
 
         services.AddHangfire(
-            globalConfiguration =>
+            (serviceProvider, globalConfiguration) =>
             {
+                var loggerFactory = serviceProvider.GetService<ILoggerFactory>()
+                    ?? NullLoggerFactory.Instance;
+
                 globalConfiguration
                     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                     .UseSimpleAssemblyNameTypeSerializer()
@@ -59,13 +63,13 @@ public static class Extensions
                     .UseFilter(
                         new AutomaticRetryAttribute
                         {
-                            Attempts = 3, // Number of retry attempts
-                            DelaysInSeconds = [60, 120, 180] // Delay between retries in seconds
+                            Attempts = 3,
+                            DelaysInSeconds = [60, 120, 180]
                         }
                     )
                     .UseFilter(
                         new CustomRetryFilterAttribute(
-                            new LoggerFactory().CreateLogger<CustomRetryFilterAttribute>()
+                            loggerFactory.CreateLogger<CustomRetryFilterAttribute>()
                         )
                     )
                     .UseFilter(
