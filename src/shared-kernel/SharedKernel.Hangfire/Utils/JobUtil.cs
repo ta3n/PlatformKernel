@@ -22,7 +22,22 @@ public static class JobUtil
     /// </returns>
     public static RecurringJobOptions GetDefaultRecurringJobOptions()
     {
-        var timeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tokyo");
+        return GetRecurringJobOptions(DefaultTimeZone);
+    }
+
+    /// <summary>
+    /// Retrieves recurring job options for the specified time zone.
+    /// </summary>
+    /// <param name="timeZoneId">The time zone id. When omitted, the default time zone is used.</param>
+    /// <returns>An instance of <see cref="RecurringJobOptions"/> with a configured time zone.</returns>
+    public static RecurringJobOptions GetRecurringJobOptions(
+        string? timeZoneId
+    )
+    {
+        var resolvedTimeZoneId = string.IsNullOrWhiteSpace(timeZoneId)
+            ? DefaultTimeZone
+            : timeZoneId;
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(resolvedTimeZoneId);
 
         return new RecurringJobOptions { TimeZone = timeZone };
     }

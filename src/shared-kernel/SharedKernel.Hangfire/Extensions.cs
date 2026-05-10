@@ -5,8 +5,11 @@ using HangfireBasicAuthenticationFilter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SharedKernel.Hangfire.Abstractions;
+using SharedKernel.Hangfire.Infrastructure;
 using SharedKernel.Hangfire.Options;
 using SharedKernel.Hangfire.Utils;
 
@@ -51,6 +54,9 @@ public static class Extensions
                         hangfireStorageOptions
                     )
                     .UseFilter(
+                        new SchedulerRetryFilterAttribute()
+                    )
+                    .UseFilter(
                         new AutomaticRetryAttribute
                         {
                             Attempts = 3, // Number of retry attempts
@@ -75,7 +81,43 @@ public static class Extensions
             services.AddHangfireServer();
         }
 
+        services.TryAddSingleton<IHangfireSchedulerEngine, HangfireSchedulerEngine>();
+
         return services;
+    }
+
+    /// <summary>
+    /// Registers scheduler orchestration services used by a dedicated Scheduler Service.
+    /// </summary>
+    /// <remarks>
+    /// Consumers must also register <see cref="IJobMetadataStore"/> and <see cref="IGrpcDispatcher"/>.
+    /// This method is kept separate from <see cref="AddHangfireCustom"/> so services that only host
+    /// Hangfire storage/server infrastructure do not need scheduler-specific dependencies.
+    /// </remarks>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The updated service collection.</returns>
+    public static IServiceCollection AddHangfireSchedulerOrchestration(
+        this IServiceCollection services
+    )
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.TryAddScoped<IJobScheduler, JobSchedulerService>();
+        services.TryAddScoped<IJobExecutor, JobExecutor>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the generic scheduler job executor used by a dedicated Scheduler Service.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The updated service collection.</returns>
+    public static IServiceCollection AddHangfireSchedulerExecutor(
+        this IServiceCollection services
+    )
+    {
+        return services.AddHangfireSchedulerOrchestration();
     }
 
     /// <summary>
@@ -104,6 +146,8 @@ public static class Extensions
             return app;
         }
 
+        ValidateDashboardOptions(hangfireDashboardOptions);
+
         app.UseHangfireDashboard(
             $"/{hangfireDashboardOptions.DashboardUrl}",
             new DashboardOptions
@@ -121,6 +165,25 @@ public static class Extensions
         );
 
         return app;
+    }
+
+    private static void ValidateDashboardOptions(
+        HangfireDashboardOptions options
+    )
+    {
+        if (string.IsNullOrWhiteSpace(options.DashboardUrl))
+        {
+            throw new InvalidOperationException(
+                "HangfireDashboard:DashboardUrl must be configured when Hangfire dashboard is enabled."
+            );
+        }
+
+        if (string.IsNullOrWhiteSpace(options.Username) || string.IsNullOrWhiteSpace(options.Password))
+        {
+            throw new InvalidOperationException(
+                "HangfireDashboard:Username and HangfireDashboard:Password must be configured when Hangfire dashboard is enabled."
+            );
+        }
     }
 
     /// <summary>

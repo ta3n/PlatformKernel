@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option csharp_namespace = "SharedKernel.Hangfire.Protos";
+
+package platform.scheduler.v1;
+
+service JobScheduler {
+  rpc RegisterRecurringJob (RegisterRecurringJobRequest) returns (JobSchedulerReply);
+  rpc RemoveRecurringJob (JobKeyRequest) returns (JobSchedulerReply);
+  rpc TriggerJobNow (TriggerJobNowRequest) returns (JobSchedulerReply);
+  rpc PauseJob (JobKeyRequest) returns (JobSchedulerReply);
+  rpc ResumeJob (JobKeyRequest) returns (JobSchedulerReply);
+}
+
+message RegisterRecurringJobRequest {
+  string job_key = 1;
+  string target_service = 2;
+  string grpc_method = 3;
+  string cron_expression = 4;
+  string payload_json = 5;
+  string sub_system_id = 6;
+  string company_id = 7;
+  string project_id = 8;
+  string requested_by = 9;
+  string time_zone_id = 10;
+}
+
+message JobKeyRequest {
+  string job_key = 1;
+  string requested_by = 2;
+}
+
+message TriggerJobNowRequest {
+  string job_key = 1;
+  string requested_by = 2;
+  string correlation_id = 3;
+}
+
+message JobSchedulerReply {
+  bool succeeded = 1;
+  string job_key = 2;
+  string hangfire_job_id = 3;
+  string message = 4;
+}
