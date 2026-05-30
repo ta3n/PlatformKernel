@@ -378,7 +378,8 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
     /// and requests. It is primarily used in conjunction with caching mechanisms to ensure that duplicate tasks for the same
     /// key or operation are not redundantly executed, thereby increasing efficiency and performance.
     /// </remarks>
-    private static readonly Func<string, (QueryBaseHandler<TQuery, TResponse> handler, TQuery request, string cacheKey, CancellationToken
+    private static readonly Func<string, (QueryBaseHandler<TQuery, TResponse> handler, TQuery request, string cacheKey,
+            CancellationToken
             cancellationToken), Task<(IHeaderDictionary, TResponse)>>
         TaskFactoryDelegate = CreateTaskFactory;
 
@@ -445,7 +446,8 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
     /// </returns>
     private static Task<(IHeaderDictionary, TResponse)> CreateTaskFactory(
         string key,
-        (QueryBaseHandler<TQuery, TResponse> handler, TQuery request, string cacheKey, CancellationToken cancellationToken) args
+        (QueryBaseHandler<TQuery, TResponse> handler, TQuery request, string cacheKey, CancellationToken
+            cancellationToken) args
     )
     {
         return Task.Run(

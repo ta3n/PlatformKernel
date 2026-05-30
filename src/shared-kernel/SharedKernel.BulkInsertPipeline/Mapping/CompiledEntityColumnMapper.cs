@@ -46,7 +46,10 @@ internal sealed class CompiledEntityColumnMapper<T>(
     {
         if (destination.Length < accessors.Count)
         {
-            throw new ArgumentException("Destination span is shorter than the mapped column count.", nameof(destination));
+            throw new ArgumentException(
+                "Destination span is shorter than the mapped column count.",
+                nameof(destination)
+            );
         }
 
         for (var index = 0; index < accessors.Count; index++)
@@ -108,7 +111,8 @@ internal interface IEntityColumnAccessor<in T>
 [SuppressMessage(
     "Major Code Smell",
     "S3011",
-    Justification = "The mapper factory resolves private generic helper methods once at startup to avoid reflection on the write hot path."
+    Justification =
+        "The mapper factory resolves private generic helper methods once at startup to avoid reflection on the write hot path."
 )]
 internal static class EntityColumnAccessorFactory
 {

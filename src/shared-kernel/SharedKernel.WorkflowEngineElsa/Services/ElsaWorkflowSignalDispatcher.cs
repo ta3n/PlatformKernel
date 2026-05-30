@@ -15,10 +15,7 @@ internal sealed class ElsaWorkflowSignalDispatcher(
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(request.ActivityTypeName);
 
-        var metadata = new StimulusMetadata
-        {
-            Input = request.Input
-        };
+        var metadata = new StimulusMetadata { Input = request.Input };
 
         return request.Stimulus is null
             ? stimulusSender.SendAsync(request.ActivityTypeName, metadata, cancellationToken)

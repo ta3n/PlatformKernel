@@ -235,7 +235,8 @@ public static class Extensions
             );
         }
 
-        if (hasBasicAuthentication && (string.IsNullOrWhiteSpace(options.Username) || string.IsNullOrWhiteSpace(options.Password)))
+        if (hasBasicAuthentication
+            && (string.IsNullOrWhiteSpace(options.Username) || string.IsNullOrWhiteSpace(options.Password)))
         {
             throw new InvalidOperationException(
                 "ElasticSearch basic authentication requires both Username and Password."

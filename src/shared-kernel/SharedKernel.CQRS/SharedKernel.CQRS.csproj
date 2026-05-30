@@ -7,14 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="11.1.0" />
-    <PackageReference Include="Mediator.Abstractions" Version="3.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.3.0" />
+    <PackageReference Include="MediatR" Version="11.1.0"/>
+    <PackageReference Include="Mediator.Abstractions" Version="3.0.1"/>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.3.0"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SharedKernel.Cache\SharedKernel.Cache.csproj" />
-    <ProjectReference Include="..\SharedKernel.Pagination\SharedKernel.Pagination.csproj" />
+    <ProjectReference Include="..\SharedKernel.Cache\SharedKernel.Cache.csproj"/>
+    <ProjectReference Include="..\SharedKernel.Pagination\SharedKernel.Pagination.csproj"/>
   </ItemGroup>
 
 </Project>

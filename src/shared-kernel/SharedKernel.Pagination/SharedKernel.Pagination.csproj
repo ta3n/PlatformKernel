@@ -5,11 +5,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.6.2" />
+    <PackageReference Include="AutoMapper" Version="13.0.1"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7"/>
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.6.2"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharedKernel.Entity\SharedKernel.Entity.csproj" />
+    <ProjectReference Include="..\SharedKernel.Entity\SharedKernel.Entity.csproj"/>
   </ItemGroup>
 </Project>

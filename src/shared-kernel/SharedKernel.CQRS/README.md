@@ -12,7 +12,8 @@
 
 ## Registration
 
-For `Mediator`, add `Mediator.SourceGenerator` to the consuming application and call `AddMediator(...)` from the app project that owns your
+For `Mediator`, add `Mediator.SourceGenerator` to the consuming application and call `AddMediator(...)` from the app
+project that owns your
 handlers.
 
 ```csharp
@@ -27,5 +28,6 @@ services.AddMediator(options =>
 });
 ```
 
-For `MediatR`, keep using the existing `AddMediatR(...)` registration in the consuming application and register the matching behaviors from
+For `MediatR`, keep using the existing `AddMediatR(...)` registration in the consuming application and register the
+matching behaviors from
 `SharedKernel.UnitOfWork.Behaviors.MediatR`.

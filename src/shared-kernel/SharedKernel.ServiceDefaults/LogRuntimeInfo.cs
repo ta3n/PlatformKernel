@@ -61,9 +61,15 @@ public static class LogRuntimeInfo
 
         // Runtime environment information
         Console.WriteLine("Environment Variables:");
-        Console.WriteLine($"{Indent}DOTNET_GCHeapCount: {Environment.GetEnvironmentVariable("DOTNET_GCHeapCount") ?? ValueNotSet}");
-        Console.WriteLine($"{Indent}DOTNET_GCCpuGroup: {Environment.GetEnvironmentVariable("DOTNET_GCCpuGroup") ?? ValueNotSet}");
-        Console.WriteLine($"{Indent}DOTNET_ReadyToRun: {Environment.GetEnvironmentVariable("DOTNET_ReadyToRun") ?? ValueNotSet}");
+        Console.WriteLine(
+            $"{Indent}DOTNET_GCHeapCount: {Environment.GetEnvironmentVariable("DOTNET_GCHeapCount") ?? ValueNotSet}"
+        );
+        Console.WriteLine(
+            $"{Indent}DOTNET_GCCpuGroup: {Environment.GetEnvironmentVariable("DOTNET_GCCpuGroup") ?? ValueNotSet}"
+        );
+        Console.WriteLine(
+            $"{Indent}DOTNET_ReadyToRun: {Environment.GetEnvironmentVariable("DOTNET_ReadyToRun") ?? ValueNotSet}"
+        );
         Console.WriteLine(
             $"{Indent}DOTNET_TieredCompilation: {Environment.GetEnvironmentVariable("DOTNET_TieredCompilation") ?? ValueNotSet}"
         );
@@ -93,14 +99,18 @@ public static class LogRuntimeInfo
         try
         {
             Console.WriteLine($"{Indent}LOH Size: {GC.GetGCMemoryInfo().HeapSizeBytes / (1024 * 1024)} MB");
-            Console.WriteLine($"{Indent}Total Available Memory: {GC.GetGCMemoryInfo().TotalAvailableMemoryBytes / (1024 * 1024)} MB");
+            Console.WriteLine(
+                $"{Indent}Total Available Memory: {GC.GetGCMemoryInfo().TotalAvailableMemoryBytes / (1024 * 1024)} MB"
+            );
 
             if (Environment.Version.Major >= 5)
             {
                 Console.WriteLine(
                     $"{Indent}High Memory Load Threshold: {GC.GetGCMemoryInfo().HighMemoryLoadThresholdBytes / (1024 * 1024)} MB"
                 );
-                Console.WriteLine($"{Indent}Total Committed Bytes: {GC.GetGCMemoryInfo().TotalCommittedBytes / (1024 * 1024)} MB");
+                Console.WriteLine(
+                    $"{Indent}Total Committed Bytes: {GC.GetGCMemoryInfo().TotalCommittedBytes / (1024 * 1024)} MB"
+                );
                 Console.WriteLine($"{Indent}Promoted Bytes: {GC.GetGCMemoryInfo().PromotedBytes / (1024 * 1024)} MB");
             }
         }
@@ -243,10 +253,18 @@ public static class LogRuntimeInfo
 
         // Runtime environment information
         sb.AppendLine("Environment Variables:");
-        sb.AppendLine($"{Indent}DOTNET_GCHeapCount: {Environment.GetEnvironmentVariable("DOTNET_GCHeapCount") ?? ValueNotSet}");
-        sb.AppendLine($"{Indent}DOTNET_GCCpuGroup: {Environment.GetEnvironmentVariable("DOTNET_GCCpuGroup") ?? ValueNotSet}");
-        sb.AppendLine($"{Indent}DOTNET_ReadyToRun: {Environment.GetEnvironmentVariable("DOTNET_ReadyToRun") ?? ValueNotSet}");
-        sb.AppendLine($"{Indent}DOTNET_TieredCompilation: {Environment.GetEnvironmentVariable("DOTNET_TieredCompilation") ?? ValueNotSet}");
+        sb.AppendLine(
+            $"{Indent}DOTNET_GCHeapCount: {Environment.GetEnvironmentVariable("DOTNET_GCHeapCount") ?? ValueNotSet}"
+        );
+        sb.AppendLine(
+            $"{Indent}DOTNET_GCCpuGroup: {Environment.GetEnvironmentVariable("DOTNET_GCCpuGroup") ?? ValueNotSet}"
+        );
+        sb.AppendLine(
+            $"{Indent}DOTNET_ReadyToRun: {Environment.GetEnvironmentVariable("DOTNET_ReadyToRun") ?? ValueNotSet}"
+        );
+        sb.AppendLine(
+            $"{Indent}DOTNET_TieredCompilation: {Environment.GetEnvironmentVariable("DOTNET_TieredCompilation") ?? ValueNotSet}"
+        );
         sb.AppendLine(
             $"{Indent}DOTNET_TC_QuickJitForLoops: {Environment.GetEnvironmentVariable("DOTNET_TC_QuickJitForLoops") ?? ValueNotSet}"
         );
@@ -273,14 +291,18 @@ public static class LogRuntimeInfo
         try
         {
             sb.AppendLine($"{Indent}LOH Size: {GC.GetGCMemoryInfo().HeapSizeBytes / (1024 * 1024)} MB");
-            sb.AppendLine($"{Indent}Total Available Memory: {GC.GetGCMemoryInfo().TotalAvailableMemoryBytes / (1024 * 1024)} MB");
+            sb.AppendLine(
+                $"{Indent}Total Available Memory: {GC.GetGCMemoryInfo().TotalAvailableMemoryBytes / (1024 * 1024)} MB"
+            );
 
             if (Environment.Version.Major >= 5)
             {
                 sb.AppendLine(
                     $"{Indent}High Memory Load Threshold: {GC.GetGCMemoryInfo().HighMemoryLoadThresholdBytes / (1024 * 1024)} MB"
                 );
-                sb.AppendLine($"{Indent}Total Committed Bytes: {GC.GetGCMemoryInfo().TotalCommittedBytes / (1024 * 1024)} MB");
+                sb.AppendLine(
+                    $"{Indent}Total Committed Bytes: {GC.GetGCMemoryInfo().TotalCommittedBytes / (1024 * 1024)} MB"
+                );
                 sb.AppendLine($"{Indent}Promoted Bytes: {GC.GetGCMemoryInfo().PromotedBytes / (1024 * 1024)} MB");
             }
         }

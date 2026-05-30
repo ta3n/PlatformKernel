@@ -6,18 +6,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Elsa.EntityFrameworkCore" Version="3.5.3" />
-    <PackageReference Include="Elsa.EntityFrameworkCore.PostgreSql" Version="3.5.3" />
-    <PackageReference Include="Elsa.Http" Version="3.5.3" />
-    <PackageReference Include="Elsa.Scheduling" Version="3.5.3" />
-    <PackageReference Include="Elsa.Workflows.Api" Version="3.5.3" />
-    <PackageReference Include="Elsa.Workflows.Core" Version="3.5.3" />
-    <PackageReference Include="Elsa.Workflows.Management" Version="3.5.3" />
-    <PackageReference Include="Elsa.Workflows.Runtime" Version="3.5.3" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    <PackageReference Include="Elsa.EntityFrameworkCore" Version="3.5.3"/>
+    <PackageReference Include="Elsa.EntityFrameworkCore.PostgreSql" Version="3.5.3"/>
+    <PackageReference Include="Elsa.Http" Version="3.5.3"/>
+    <PackageReference Include="Elsa.Scheduling" Version="3.5.3"/>
+    <PackageReference Include="Elsa.Workflows.Api" Version="3.5.3"/>
+    <PackageReference Include="Elsa.Workflows.Core" Version="3.5.3"/>
+    <PackageReference Include="Elsa.Workflows.Management" Version="3.5.3"/>
+    <PackageReference Include="Elsa.Workflows.Runtime" Version="3.5.3"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SharedKernel.Cache\SharedKernel.Cache.csproj" />
+    <ProjectReference Include="..\SharedKernel.Cache\SharedKernel.Cache.csproj"/>
   </ItemGroup>
 </Project>

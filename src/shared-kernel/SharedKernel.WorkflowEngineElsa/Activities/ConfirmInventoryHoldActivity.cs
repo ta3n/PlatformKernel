@@ -26,7 +26,9 @@ public sealed class ConfirmInventoryHoldActivity(
     [Output(Description = "Redis confirmation result.")]
     public Output<RedisInventoryOperationResult> Result { get; set; } = default!;
 
-    protected override async ValueTask ExecuteAsync(ActivityExecutionContext context)
+    protected override async ValueTask ExecuteAsync(
+        ActivityExecutionContext context
+    )
     {
         var result = await redisInventoryService.ConfirmAsync(
             new RedisInventoryConfirmRequest

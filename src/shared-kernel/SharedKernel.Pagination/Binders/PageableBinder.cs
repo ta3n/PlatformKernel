@@ -75,7 +75,10 @@ public class PageableBinder : IModelBinder
         var pageSizeString = queryString.GetParameter(_binderConfig.SizeParameterName);
         var isEnabledString = queryString.GetParameter(_binderConfig.IsEnabledParameterName);
 
-        var (pageNumber, isParsePageNumber) = ParseIntOrDefault(pageNumberString, _binderConfig.FallbackPageable.PageNumber);
+        var (pageNumber, isParsePageNumber) = ParseIntOrDefault(
+            pageNumberString,
+            _binderConfig.FallbackPageable.PageNumber
+        );
         if (!isParsePageNumber)
         {
             throw new ValidationException("Invalid page number.");

@@ -355,7 +355,8 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
 
     private static readonly ConcurrentDictionary<string, Task<(IHeaderDictionary, TResponse)>> PendingTasks = new();
 
-    private static readonly Func<string, (QueryBaseHandler<TQuery, TResponse> handler, TQuery request, string cacheKey, CancellationToken
+    private static readonly Func<string, (QueryBaseHandler<TQuery, TResponse> handler, TQuery request, string cacheKey,
+            CancellationToken
             cancellationToken), Task<(IHeaderDictionary, TResponse)>>
         TaskFactoryDelegate = CreateTaskFactory;
 
@@ -401,7 +402,8 @@ public abstract class QueryBaseHandler<TQuery, TResponse>
 
     private static Task<(IHeaderDictionary, TResponse)> CreateTaskFactory(
         string key,
-        (QueryBaseHandler<TQuery, TResponse> handler, TQuery request, string cacheKey, CancellationToken cancellationToken) args
+        (QueryBaseHandler<TQuery, TResponse> handler, TQuery request, string cacheKey, CancellationToken
+            cancellationToken) args
     )
     {
         return Task.Run(

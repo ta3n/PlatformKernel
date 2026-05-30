@@ -68,7 +68,10 @@ internal sealed class FirebaseNotificationService(
 
         var tokenResults = batchResponse.Responses
             .Select(
-                (response, index) =>
+                (
+                    response,
+                    index
+                ) =>
                 {
                     var exception = response.Exception;
                     return new FirebaseNotificationTokenResult(

@@ -105,7 +105,8 @@ public class JsonbExtensionsRegister : IDbFunctionRegister
         ModelBuilder modelBuilder
     )
     {
-        var jsonbSearchAllValuesMethodInfo = typeof(JsonbExtensions).GetMethod(nameof(JsonbExtensions.JsonSearchAllValues));
+        var jsonbSearchAllValuesMethodInfo =
+            typeof(JsonbExtensions).GetMethod(nameof(JsonbExtensions.JsonSearchAllValues));
 
         modelBuilder
             .HasDbFunction(jsonbSearchAllValuesMethodInfo!)

@@ -7,13 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.7"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SharedKernel.Entity\SharedKernel.Entity.csproj" />
-    <ProjectReference Include="..\SharedKernel.Specification\SharedKernel.Specification.csproj" />
+    <ProjectReference Include="..\SharedKernel.Entity\SharedKernel.Entity.csproj"/>
+    <ProjectReference Include="..\SharedKernel.Specification\SharedKernel.Specification.csproj"/>
   </ItemGroup>
 
 </Project>

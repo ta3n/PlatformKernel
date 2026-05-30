@@ -33,10 +33,7 @@ public sealed class JobSchedulerService(
         ArgumentNullException.ThrowIfNull(definition);
         SchedulerJobDefinitionValidator.EnsureValidRecurring(definition);
 
-        var activeDefinition = definition with
-        {
-            Status = SchedulerJobStatus.Active
-        };
+        var activeDefinition = definition with { Status = SchedulerJobStatus.Active };
 
         await _metadataStore.UpsertAsync(
             activeDefinition,
@@ -183,10 +180,7 @@ public sealed class JobSchedulerService(
             cancellationToken
         );
 
-        var activeDefinition = definition with
-        {
-            Status = SchedulerJobStatus.Active
-        };
+        var activeDefinition = definition with { Status = SchedulerJobStatus.Active };
 
         SchedulerJobDefinitionValidator.EnsureValidRecurring(activeDefinition);
 
@@ -219,10 +213,7 @@ public sealed class JobSchedulerService(
         ArgumentNullException.ThrowIfNull(definition);
         SchedulerJobDefinitionValidator.EnsureValidTarget(definition);
 
-        var activeDefinition = definition with
-        {
-            Status = SchedulerJobStatus.Active
-        };
+        var activeDefinition = definition with { Status = SchedulerJobStatus.Active };
 
         await _metadataStore.UpsertAsync(
             activeDefinition,
@@ -259,10 +250,7 @@ public sealed class JobSchedulerService(
         ArgumentNullException.ThrowIfNull(definition);
         SchedulerJobDefinitionValidator.EnsureValidTarget(definition);
 
-        var activeDefinition = definition with
-        {
-            Status = SchedulerJobStatus.Active
-        };
+        var activeDefinition = definition with { Status = SchedulerJobStatus.Active };
 
         await _metadataStore.UpsertAsync(
             activeDefinition,
@@ -300,8 +288,8 @@ public sealed class JobSchedulerService(
         );
 
         return definition
-               ?? throw new InvalidSchedulerJobDefinitionException(
-                   $"Scheduler job '{jobKey}' was not found."
-               );
+            ?? throw new InvalidSchedulerJobDefinitionException(
+                $"Scheduler job '{jobKey}' was not found."
+            );
     }
 }

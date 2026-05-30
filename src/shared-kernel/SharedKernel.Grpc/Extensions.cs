@@ -1,11 +1,13 @@
 ﻿using System.Net;
 using Grpc.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Polly;
 using Polly.Timeout;
 using Serilog;
 using SharedKernel.Grpc.Interceptors;
 using SharedKernel.Grpc.Options;
+using SharedKernel.Grpc.Providers;
 
 namespace SharedKernel.Grpc;
 
@@ -17,7 +19,8 @@ public static class Extensions
         GrpcClientPolicyOptions options
     ) where TGrpcClient : ClientBase
     {
-        services.AddSingleton<ClientInterceptor>();
+        services.AddHeaderPropagation();
+        services.TryAddSingleton<ClientInterceptor>();
 
         var builder = services
             .AddGrpcClient<TGrpcClient>(
@@ -40,6 +43,15 @@ public static class Extensions
             builder.AddPolicyHandler(GetPolicies(options));
         }
 
+        return services;
+    }
+
+    public static IServiceCollection AddHeaderPropagation(
+        this IServiceCollection services
+    )
+    {
+        services.AddHttpContextAccessor();
+        services.TryAddSingleton<IHeaderPropagationProvider, HeaderPropagationProvider>();
         return services;
     }
 
@@ -142,7 +154,8 @@ public static class Extensions
         var grpcStatus = GetStatusCode(msg);
         var httpStatusCode = msg.StatusCode;
 
-        return (grpcStatus == null && serverErrors.Contains(httpStatusCode)) // if the server sends an error before gRPC pipeline
+        return (grpcStatus == null
+                && serverErrors.Contains(httpStatusCode)) // if the server sends an error before gRPC pipeline
             || (
                 httpStatusCode == HttpStatusCode.OK
                 && grpcStatus != null

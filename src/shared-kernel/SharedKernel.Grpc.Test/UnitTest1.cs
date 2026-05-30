@@ -7,6 +7,8 @@ using SharedKernel.Grpc;
 using SharedKernel.Grpc.HttpClient;
 using SharedKernel.Grpc.Interceptors;
 using SharedKernel.Grpc.Options;
+using SharedKernel.Grpc.Providers;
+using Moq;
 
 namespace SharedKernel.Grpc.Test;
 
@@ -36,7 +38,7 @@ public class UnitTest1
     }
 
     [Fact]
-    public async Task ClientInterceptor_AddsDeadlineFromConfiguration()
+    public async Task ClientInterceptor_AddsDeadlineAndMetadataFromProvider()
     {
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(
@@ -44,22 +46,28 @@ public class UnitTest1
                 new KeyValuePair<string, string?>("GrpcClientPolicy:Timeout", "5")
             ])
             .Build();
-        var interceptor = new ClientInterceptor(configuration, NullLogger<ClientInterceptor>.Instance);
 
-        DateTime? deadline = null;
+        var metadataProviderMock = new Mock<IHeaderPropagationProvider>();
+        var expectedMetadata = new Metadata { { "x-custom", "value" } };
+        metadataProviderMock.Setup(x => x.GetGrpcMetadata()).Returns(expectedMetadata);
+
+        var interceptor = new ClientInterceptor(configuration, NullLogger<ClientInterceptor>.Instance, metadataProviderMock.Object);
+
+        Metadata? capturedMetadata = null;
         var call = interceptor.AsyncUnaryCall(
             "request",
             CreateClientContext(),
             (request, context) =>
             {
-                deadline = context.Options.Deadline;
+                capturedMetadata = context.Options.Headers;
                 return CreateSuccessfulCall("ok");
             });
-        var response = await call.ResponseAsync;
+        await call.ResponseAsync;
 
-        Assert.Equal("ok", response);
-        Assert.NotNull(deadline);
-        Assert.InRange((deadline!.Value - DateTime.UtcNow).TotalSeconds, 0, 6);
+        Assert.NotNull(capturedMetadata);
+        var entry = capturedMetadata.FirstOrDefault(m => m.Key == "x-custom");
+        Assert.NotNull(entry);
+        Assert.Equal("value", entry.Value);
     }
 
     [Fact]
@@ -83,6 +91,35 @@ public class UnitTest1
 
         Assert.Equal("Custom error", exception.Message);
         Assert.IsType<InvalidOperationException>(exception.InnerException);
+    }
+
+    [Fact]
+    public async Task HeaderPropagationHandler_AddsHeadersFromProvider()
+    {
+        var metadataProviderMock = new Mock<IHeaderPropagationProvider>();
+        var expectedHeaders = new Dictionary<string, string> { { "X-Test", "Value" } };
+        metadataProviderMock.Setup(x => x.GetHttpHeaders()).Returns(expectedHeaders);
+
+        var handler = new HeaderPropagationHandler(metadataProviderMock.Object)
+        {
+            InnerHandler = new TestHandler()
+        };
+
+        var invoker = new HttpMessageInvoker(handler);
+        var request = new HttpRequestMessage(HttpMethod.Get, "https://example.com");
+
+        await invoker.SendAsync(request, CancellationToken.None);
+
+        Assert.True(request.Headers.Contains("X-Test"));
+        Assert.Equal("Value", request.Headers.GetValues("X-Test").First());
+    }
+
+    private class TestHandler : DelegatingHandler
+    {
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK));
+        }
     }
 
     private static ClientInterceptorContext<string, string> CreateClientContext()

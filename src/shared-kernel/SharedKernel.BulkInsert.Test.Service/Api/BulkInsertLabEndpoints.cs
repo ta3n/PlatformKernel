@@ -210,7 +210,10 @@ public static class BulkInsertLabEndpoints
         if (request.BatchSize is <= 0)
         {
             return TypedResults.ValidationProblem(
-                new Dictionary<string, string[]> { [nameof(request.BatchSize)] = ["BatchSize must be greater than zero when specified."] }
+                new Dictionary<string, string[]>
+                {
+                    [nameof(request.BatchSize)] = ["BatchSize must be greater than zero when specified."]
+                }
             );
         }
 

@@ -18,7 +18,9 @@ public sealed class BulkInsertPipelineLabDatabase(
             $"Connection string '{ConnectionStringName}' was not found."
         );
 
-    private readonly string _databaseName = GetRequiredDatabaseName(configuration.GetConnectionString(ConnectionStringName));
+    private readonly string _databaseName =
+        GetRequiredDatabaseName(configuration.GetConnectionString(ConnectionStringName));
+
     private readonly IDbContextFactory<BulkInsertPipelineLabDbContext> _dbContextFactory = dbContextFactory;
 
     public string DatabaseName => _databaseName;

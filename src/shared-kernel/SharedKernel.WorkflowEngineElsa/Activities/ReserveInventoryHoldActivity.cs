@@ -38,7 +38,9 @@ public sealed class ReserveInventoryHoldActivity(
     [Output(Description = "Redis reservation result.")]
     public Output<RedisInventoryOperationResult> Result { get; set; } = default!;
 
-    protected override async ValueTask ExecuteAsync(ActivityExecutionContext context)
+    protected override async ValueTask ExecuteAsync(
+        ActivityExecutionContext context
+    )
     {
         var request = new RedisInventoryReservationRequest
         {

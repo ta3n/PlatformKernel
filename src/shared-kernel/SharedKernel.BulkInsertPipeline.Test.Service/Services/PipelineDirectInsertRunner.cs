@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.BulkInsertPipeline.Abstractions;
 using SharedKernel.BulkInsertPipeline.Extensions;
 using SharedKernel.BulkInsertPipeline.Test.Service.Configuration;
@@ -13,7 +12,8 @@ public sealed class PipelineDirectInsertRunner(
     BulkInsertPipelineLabOptions labOptions
 )
 {
-    private readonly string _connectionString = configuration.GetConnectionString(BulkInsertPipelineLabDatabase.ConnectionStringName)
+    private readonly string _connectionString =
+        configuration.GetConnectionString(BulkInsertPipelineLabDatabase.ConnectionStringName)
         ?? throw new InvalidOperationException(
             $"Connection string '{BulkInsertPipelineLabDatabase.ConnectionStringName}' was not found."
         );

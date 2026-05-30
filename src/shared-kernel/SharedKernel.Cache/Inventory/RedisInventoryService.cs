@@ -147,11 +147,11 @@ public sealed class RedisInventoryService(
         );
 
         return result
-        ?? InvalidRequestResult with
-        {
-            ReservationId = request.ReservationId,
-            InventoryId = request.InventoryId
-        };
+            ?? InvalidRequestResult with
+            {
+                ReservationId = request.ReservationId,
+                InventoryId = request.InventoryId
+            };
     }
 
     public async Task<RedisInventoryOperationResult> ReleaseAsync(

@@ -6,7 +6,8 @@ Plugin bulk insert cho PostgreSQL trong `shared-kernel`, gom 3 cách ghi dữ li
 - `PostgreSqlBulkInsertProvider.Dapper`: dùng batched multi-values `INSERT`.
 - `PostgreSqlBulkInsertProvider.RepoDb`: dùng `BinaryBulkInsertAsync`.
 
-Tất cả provider đều đọc metadata bảng/cột từ EF Core model hiện có, nên vẫn tôn trọng các cấu hình như `ToTable`, `HasColumnName`, schema và
+Tất cả provider đều đọc metadata bảng/cột từ EF Core model hiện có, nên vẫn tôn trọng các cấu hình như `ToTable`,
+`HasColumnName`, schema và
 naming convention.
 
 ## Registration
@@ -47,4 +48,5 @@ public sealed class OrderSeeder(
 
 - Chỉ hỗ trợ PostgreSQL thông qua `Npgsql`.
 - Bảng và cột phải được map trong `DbContext` EF Core.
-- Column sinh tự động bởi database như computed column hoặc value có `BeforeSaveBehavior = Ignore` sẽ bị bỏ qua khi dựng payload insert.
+- Column sinh tự động bởi database như computed column hoặc value có `BeforeSaveBehavior = Ignore` sẽ bị bỏ qua khi dựng
+  payload insert.

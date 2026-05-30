@@ -29,7 +29,9 @@ public sealed class ReleaseInventoryHoldActivity(
     [Output(Description = "Redis release result.")]
     public Output<RedisInventoryOperationResult> Result { get; set; } = default!;
 
-    protected override async ValueTask ExecuteAsync(ActivityExecutionContext context)
+    protected override async ValueTask ExecuteAsync(
+        ActivityExecutionContext context
+    )
     {
         var result = await redisInventoryService.ReleaseAsync(
             new RedisInventoryReleaseRequest

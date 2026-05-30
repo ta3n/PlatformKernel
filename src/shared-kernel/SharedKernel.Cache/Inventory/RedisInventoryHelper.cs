@@ -23,7 +23,10 @@ public static class RedisInventoryHelper
     {
         if (checkOutExclusive <= checkIn)
         {
-            throw new ArgumentException("Check-out date must be greater than check-in date.", nameof(checkOutExclusive));
+            throw new ArgumentException(
+                "Check-out date must be greater than check-in date.",
+                nameof(checkOutExclusive)
+            );
         }
 
         var dates = new List<DateOnly>();

@@ -1,7 +1,5 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
-using NpgsqlTypes;
-using SharedKernel.BulkInsertPipeline.Abstractions;
 using SharedKernel.BulkInsertPipeline.Extensions;
 using SharedKernel.BulkInsertPipeline.Options;
 using SharedKernel.BulkInsertPipeline.Test.Service.Api;

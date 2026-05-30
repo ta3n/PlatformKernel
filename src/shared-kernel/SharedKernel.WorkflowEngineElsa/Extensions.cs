@@ -97,7 +97,10 @@ public static class Extensions
                     ef =>
                     {
                         ef.RunMigrations = options.RunMigrations;
-                        ef.DbContextOptionsBuilder = (_, builder) =>
+                        ef.DbContextOptionsBuilder = (
+                                _,
+                                builder
+                            ) =>
                             builder.UseElsaPostgreSql(
                                 typeof(ManagementMigrations.Initial).Assembly,
                                 connectionString,
@@ -125,7 +128,10 @@ public static class Extensions
                     ef =>
                     {
                         ef.RunMigrations = options.RunMigrations;
-                        ef.DbContextOptionsBuilder = (_, builder) =>
+                        ef.DbContextOptionsBuilder = (
+                                _,
+                                builder
+                            ) =>
                             builder.UseElsaPostgreSql(
                                 typeof(RuntimeMigrations.Initial).Assembly,
                                 connectionString,

@@ -169,7 +169,8 @@ public static class BulkInsertPipelineLabEndpoints
             return TypedResults.ValidationProblem(
                 new Dictionary<string, string[]>
                 {
-                    [nameof(request.WaitForDrainMilliseconds)] = ["WaitForDrainMilliseconds must be greater than zero when specified."]
+                    [nameof(request.WaitForDrainMilliseconds)] =
+                        ["WaitForDrainMilliseconds must be greater than zero when specified."]
                 }
             );
         }

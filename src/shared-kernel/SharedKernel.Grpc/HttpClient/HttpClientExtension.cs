@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Timeout;
@@ -15,6 +16,9 @@ public static class HttpClientExtension
         HttpClientPolicyOptions options
     )
     {
+        services.AddHeaderPropagation();
+        services.TryAddTransient<HeaderPropagationHandler>();
+
         var builder = services.AddHttpClient(
             clientName,
             (
@@ -25,6 +29,8 @@ public static class HttpClientExtension
                 client.BaseAddress = new Uri(clientUrl.AbsoluteUri);
             }
         );
+
+        builder.AddHttpMessageHandler<HeaderPropagationHandler>();
 
         builder.AddHttpClientResiliency(options);
 
@@ -43,13 +49,14 @@ public static class HttpClientExtension
         HttpClientPolicyOptions options
     )
     {
-        var retryPolicy = HttpPolicyExtensions
+        Polly.Retry.AsyncRetryPolicy<HttpResponseMessage> retryPolicy = HttpPolicyExtensions
             .HandleTransientHttpError()
             .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
             .WaitAndRetryAsync(
                 options.Retry,
                 retryAttempt =>
-                    TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) + TimeSpan.FromMilliseconds(Random.Shared.Next(0, 1000)),
+                    TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+                    + TimeSpan.FromMilliseconds(Random.Shared.Next(0, 1000)),
                 (
                     _,
                     retryCnt

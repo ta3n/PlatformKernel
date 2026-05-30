@@ -33,4 +33,6 @@ app.MapControllers();
 app.Run();
 
 // Make the implicit Program class public for WebApplicationFactory
-public partial class Program { }
+public partial class Program
+{
+}

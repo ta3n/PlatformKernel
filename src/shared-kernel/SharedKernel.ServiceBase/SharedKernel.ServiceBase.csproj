@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SharedKernel.Cache\SharedKernel.Cache.csproj" />
-    <ProjectReference Include="..\SharedKernel.Entity\SharedKernel.Entity.csproj" />
-    <ProjectReference Include="..\SharedKernel.Pagination\SharedKernel.Pagination.csproj" />
-    <ProjectReference Include="..\SharedKernel.RepositoryBase\SharedKernel.RepositoryBase.csproj" />
+    <ProjectReference Include="..\SharedKernel.Cache\SharedKernel.Cache.csproj"/>
+    <ProjectReference Include="..\SharedKernel.Entity\SharedKernel.Entity.csproj"/>
+    <ProjectReference Include="..\SharedKernel.Pagination\SharedKernel.Pagination.csproj"/>
+    <ProjectReference Include="..\SharedKernel.RepositoryBase\SharedKernel.RepositoryBase.csproj"/>
   </ItemGroup>
 
 </Project>

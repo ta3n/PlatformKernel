@@ -96,7 +96,9 @@ public class ReservationExtensionsRegister : IDbFunctionRegister
         ModelBuilder modelBuilder
     )
     {
-        var method = typeof(ReservationExtensions).GetMethod(nameof(ReservationExtensions.GetRegisterReservationDiffAmountGmoPayment))!;
+        var method = typeof(ReservationExtensions).GetMethod(
+            nameof(ReservationExtensions.GetRegisterReservationDiffAmountGmoPayment)
+        )!;
 
         modelBuilder
             .HasDbFunction(method)

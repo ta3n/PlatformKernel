@@ -132,7 +132,8 @@ internal sealed class DispatchingBulkInsertService<T> : IBulkInsertService<T>
             await _primaryPipeline.ExecuteAsync(
                     async cancellationToken =>
                     {
-                        await primaryProvider.InsertAsync(batch, executionContext, cancellationToken).ConfigureAwait(false);
+                        await primaryProvider.InsertAsync(batch, executionContext, cancellationToken)
+                            .ConfigureAwait(false);
                     },
                     ct
                 )
@@ -224,7 +225,8 @@ internal sealed class DispatchingBulkInsertService<T> : IBulkInsertService<T>
                     MaxRetryAttempts = _options.Resilience.MaxRetryAttempts,
                     Delay = _options.Resilience.BaseRetryDelay,
                     UseJitter = true,
-                    ShouldHandle = new PredicateBuilder().Handle<Exception>(TransientDatabaseFailureDetector.IsTransient),
+                    ShouldHandle =
+                        new PredicateBuilder().Handle<Exception>(TransientDatabaseFailureDetector.IsTransient),
                     OnRetry = arguments =>
                     {
                         _logger.LogWarning(
@@ -249,7 +251,8 @@ internal sealed class DispatchingBulkInsertService<T> : IBulkInsertService<T>
                     MinimumThroughput = _options.Resilience.CircuitBreakerFailureThreshold,
                     SamplingDuration = TimeSpan.FromSeconds(30),
                     BreakDuration = _options.Resilience.CircuitBreakerBreakDuration,
-                    ShouldHandle = new PredicateBuilder().Handle<Exception>(TransientDatabaseFailureDetector.IsTransient),
+                    ShouldHandle =
+                        new PredicateBuilder().Handle<Exception>(TransientDatabaseFailureDetector.IsTransient),
                     OnOpened = arguments =>
                     {
                         _logger.LogError(

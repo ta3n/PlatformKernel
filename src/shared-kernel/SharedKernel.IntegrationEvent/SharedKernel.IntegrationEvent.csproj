@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SharedKernel.MassTransit\SharedKernel.MassTransit.csproj" />
+    <ProjectReference Include="..\SharedKernel.MassTransit\SharedKernel.MassTransit.csproj"/>
   </ItemGroup>
 
 </Project>

@@ -90,7 +90,9 @@ public sealed class SemaphoreDbConnectionInterceptor(
             acquired = semaphore.Wait(TimeSpan.FromSeconds(30));
             if (!acquired)
             {
-                throw new TimeoutException("Unable to acquire database connection semaphore within the timeout period.");
+                throw new TimeoutException(
+                    "Unable to acquire database connection semaphore within the timeout period."
+                );
             }
 
             return base.ConnectionOpening(

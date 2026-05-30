@@ -132,7 +132,8 @@ public sealed class BulkInsertPipelineTests
     {
         private readonly TaskCompletionSource _release = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        public TaskCompletionSource FirstInsertStarted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource FirstInsertStarted { get; } =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public async Task InsertAsync(
             ReadOnlyMemory<T> batch,

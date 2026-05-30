@@ -74,10 +74,7 @@ public static class FirebaseNotificationEndpoints
         catch (ArgumentException exception)
         {
             return TypedResults.ValidationProblem(
-                new Dictionary<string, string[]>
-                {
-                    ["request"] = [exception.Message]
-                }
+                new Dictionary<string, string[]> { ["request"] = [exception.Message] }
             );
         }
         catch (FirebaseMessagingException exception)
@@ -115,10 +112,11 @@ public static class FirebaseNotificationEndpoints
         }
 
         var tokenCount = request.DeviceTokens?
-            .Where(token => !string.IsNullOrWhiteSpace(token))
-            .Select(token => token.Trim())
-            .Distinct(StringComparer.Ordinal)
-            .Count() ?? 0;
+                .Where(token => !string.IsNullOrWhiteSpace(token))
+                .Select(token => token.Trim())
+                .Distinct(StringComparer.Ordinal)
+                .Count()
+            ?? 0;
 
         if (tokenCount == 0)
         {
@@ -126,7 +124,8 @@ public static class FirebaseNotificationEndpoints
         }
         else if (tokenCount > MaxTokensPerRequest)
         {
-            errors[nameof(request.DeviceTokens)] = [$"Firebase multicast supports up to {MaxTokensPerRequest} device tokens per request."];
+            errors[nameof(request.DeviceTokens)] =
+                [$"Firebase multicast supports up to {MaxTokensPerRequest} device tokens per request."];
         }
 
         return errors.Count == 0 ? null : TypedResults.ValidationProblem(errors);

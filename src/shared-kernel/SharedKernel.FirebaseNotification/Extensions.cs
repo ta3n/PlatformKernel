@@ -29,7 +29,9 @@ public static class Extensions
                 $"{sectionName} supports only one credential source between CredentialPath and CredentialJson."
             )
             .Validate(
-                options => HasCredentialPath(options) || HasCredentialJson(options) || options.UseApplicationDefaultCredentials,
+                options => HasCredentialPath(options)
+                    || HasCredentialJson(options)
+                    || options.UseApplicationDefaultCredentials,
                 $"{sectionName} requires CredentialPath, CredentialJson or UseApplicationDefaultCredentials=true."
             )
             .ValidateOnStart();

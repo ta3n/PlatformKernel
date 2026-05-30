@@ -34,7 +34,8 @@ public static class Extensions
     {
         var hangfireStorageSection = configuration.GetSection("HangfireStorage");
         var hangfireServerSection = configuration.GetSection("HangfireServer");
-        var hangfireStorageOptions = hangfireStorageSection.Get<HangfireStorageOptions>() ?? new HangfireStorageOptions();
+        var hangfireStorageOptions =
+            hangfireStorageSection.Get<HangfireStorageOptions>() ?? new HangfireStorageOptions();
         var hangfireServerOptions = hangfireServerSection.Get<HangfireServerOptions>() ?? new HangfireServerOptions();
         var succeededJobExpirationTimeout = GetSucceededJobExpirationTimeout(
             hangfireStorageOptions.SucceededJobExpirationInDays
@@ -44,7 +45,10 @@ public static class Extensions
         services.Configure<HangfireServerOptions>(hangfireServerSection);
 
         services.AddHangfire(
-            (serviceProvider, globalConfiguration) =>
+            (
+                serviceProvider,
+                globalConfiguration
+            ) =>
             {
                 var loggerFactory = serviceProvider.GetService<ILoggerFactory>()
                     ?? NullLoggerFactory.Instance;

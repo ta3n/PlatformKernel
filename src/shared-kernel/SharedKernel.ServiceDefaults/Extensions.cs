@@ -149,12 +149,18 @@ public static class Extensions
         var healthChecksConfiguration = builder.Configuration.GetSection(HealthChecksPolicy);
 
         // All health checks endpoints must return within the configured timeout value (defaults to 5 seconds)
-        var healthChecksRequestTimeout = healthChecksConfiguration.GetValue<TimeSpan?>("RequestTimeout") ?? TimeSpan.FromSeconds(5);
-        builder.Services.AddRequestTimeouts(timeouts => timeouts.AddPolicy(HealthChecksPolicy, healthChecksRequestTimeout));
+        var healthChecksRequestTimeout =
+            healthChecksConfiguration.GetValue<TimeSpan?>("RequestTimeout") ?? TimeSpan.FromSeconds(5);
+        builder.Services.AddRequestTimeouts(
+            timeouts => timeouts.AddPolicy(HealthChecksPolicy, healthChecksRequestTimeout)
+        );
 
         // Cache health checks responses for the configured duration (defaults to 10 seconds)
-        var healthChecksExpireAfter = healthChecksConfiguration.GetValue<TimeSpan?>("ExpireAfter") ?? TimeSpan.FromSeconds(10);
-        builder.Services.AddOutputCache(caching => caching.AddPolicy(HealthChecksPolicy, policy => policy.Expire(healthChecksExpireAfter)));
+        var healthChecksExpireAfter =
+            healthChecksConfiguration.GetValue<TimeSpan?>("ExpireAfter") ?? TimeSpan.FromSeconds(10);
+        builder.Services.AddOutputCache(
+            caching => caching.AddPolicy(HealthChecksPolicy, policy => policy.Expire(healthChecksExpireAfter))
+        );
 
         builder.Services.AddHealthChecks()
             // Add a default liveness check to ensure app is responsive
@@ -203,7 +209,10 @@ public static class Extensions
                 // Ensure that the HealthChecksUI endpoint is only accessible from configured hosts, e.g. localhost:12345, hub.docker.internal, etc.
                 // as it contains more detailed information about the health of the app including the types of dependencies it has.
 
-                healthChecks.MapHealthChecks(path, new() { ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse })
+                healthChecks.MapHealthChecks(
+                        path,
+                        new() { ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse }
+                    )
                     // This ensures that the HealthChecksUI endpoint is only accessible from the configured health checks URLs.
                     // See this documentation to learn more about restricting access to health checks endpoints via routing:
                     // https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-8.0#use-health-checks-routing

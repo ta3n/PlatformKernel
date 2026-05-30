@@ -35,14 +35,14 @@ builder.Services.AddFirebaseNotification(builder.Configuration);
 
 ### Configuration Options
 
-| Option | Type | Required | Description |
-|--------|------|----------|-------------|
-| `AppName` | `string` | Yes | Tên Firebase app instance |
-| `ProjectId` | `string?` | No | Firebase project ID (auto-detect từ credential) |
-| `CredentialPath` | `string?` | No* | Đường dẫn đến service account JSON file |
-| `CredentialJson` | `string?` | No* | Nội dung service account JSON (inject từ secret) |
-| `UseApplicationDefaultCredentials` | `bool` | No* | Dùng Google Cloud workload identity |
-| `DefaultDryRun` | `bool` | No | `true` = validate only, `false` = gửi thật |
+| Option                             | Type      | Required | Description                                      |
+|------------------------------------|-----------|----------|--------------------------------------------------|
+| `AppName`                          | `string`  | Yes      | Tên Firebase app instance                        |
+| `ProjectId`                        | `string?` | No       | Firebase project ID (auto-detect từ credential)  |
+| `CredentialPath`                   | `string?` | No*      | Đường dẫn đến service account JSON file          |
+| `CredentialJson`                   | `string?` | No*      | Nội dung service account JSON (inject từ secret) |
+| `UseApplicationDefaultCredentials` | `bool`    | No*      | Dùng Google Cloud workload identity              |
+| `DefaultDryRun`                    | `bool`    | No       | `true` = validate only, `false` = gửi thật       |
 
 **\* At least one credential source required**
 
@@ -146,6 +146,7 @@ Content-Type: application/json
 ### DryRun Mode
 
 Set `"DefaultDryRun": true` trong appsettings để:
+
 - ✅ Validate payload với FCM API
 - ✅ Check device tokens format
 - ❌ **Không** gửi notification thực tế đến devices
@@ -166,7 +167,8 @@ Set `"DefaultDryRun": true` trong appsettings để:
 - Mỗi request multicast hỗ trợ tối đa **500** device tokens.
 - Plugin dùng `FirebaseAdmin` SDK và `SendEachForMulticastAsync` để trả về trạng thái theo từng device token.
 - Để gửi thật, backend cần credential hợp lệ và mobile app phải cung cấp FCM registration token hợp lệ.
-- Xem [Integration Guide](../../../docs/firebase-integration-guide.md) để biết cách setup Firebase project và get device tokens.
+- Xem [Integration Guide](../../../docs/firebase-integration-guide.md) để biết cách setup Firebase project và get device
+  tokens.
 
 ## Troubleshooting
 

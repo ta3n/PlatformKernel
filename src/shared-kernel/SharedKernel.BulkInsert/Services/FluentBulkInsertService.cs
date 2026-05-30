@@ -17,8 +17,11 @@ internal sealed class FluentBulkInsertService<TEntity>(
     private readonly IPostgreSqlBulkInsertService _bulkInsertService =
         bulkInsertService ?? throw new ArgumentNullException(nameof(bulkInsertService));
 
-    private readonly FluentBulkInsertEntityOptions<TEntity> _options = options ?? throw new ArgumentNullException(nameof(options));
-    private readonly IServiceProvider _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+    private readonly FluentBulkInsertEntityOptions<TEntity> _options =
+        options ?? throw new ArgumentNullException(nameof(options));
+
+    private readonly IServiceProvider _serviceProvider =
+        serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
     public async Task<int> BulkInsertAsync(
         IEnumerable<TEntity> entities,

@@ -5,9 +5,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Sentry" Version="3.34.0" />
-    <PackageReference Include="Sentry.AspNetCore" Version="3.34.0" />
-    <PackageReference Include="Sentry.EntityFramework" Version="3.34.0" />
-    <PackageReference Include="Sentry.OpenTelemetry" Version="3.34.0" />
+    <PackageReference Include="Sentry" Version="3.34.0"/>
+    <PackageReference Include="Sentry.AspNetCore" Version="3.34.0"/>
+    <PackageReference Include="Sentry.EntityFramework" Version="3.34.0"/>
+    <PackageReference Include="Sentry.OpenTelemetry" Version="3.34.0"/>
   </ItemGroup>
 </Project>

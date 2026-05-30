@@ -3,16 +3,21 @@ using Grpc.Core.Interceptors;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Grpc.Options;
+using SharedKernel.Grpc.Providers;
 
 namespace SharedKernel.Grpc.Interceptors;
 
 public class ClientInterceptor(
     IConfiguration config,
-    ILogger<ClientInterceptor> logger
+    ILogger<ClientInterceptor> logger,
+    IHeaderPropagationProvider headerPropagationProvider
 ) : Interceptor
 {
     private readonly IConfiguration _config = config ?? throw new ArgumentNullException(nameof(config));
     private readonly ILogger<ClientInterceptor> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+    private readonly IHeaderPropagationProvider _headerPropagationProvider =
+        headerPropagationProvider ?? throw new ArgumentNullException(nameof(headerPropagationProvider));
 
     public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(
         TRequest request,
@@ -34,6 +39,13 @@ public class ClientInterceptor(
         );
 
         var headers = context.Options.Headers ?? [];
+        var propagationMetadata = _headerPropagationProvider.GetGrpcMetadata();
+
+        foreach (var entry in propagationMetadata)
+        {
+            headers.Add(entry);
+        }
+
         var options = context.Options.WithHeaders(headers);
 
         // add timeout for gRPC request so that it will not starve the resource of the system

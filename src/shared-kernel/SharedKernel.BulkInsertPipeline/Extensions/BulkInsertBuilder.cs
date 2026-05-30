@@ -24,7 +24,9 @@ public sealed class BulkInsertBuilder(
         Services.AddSingleton<BulkInsertEntityDescriptor<T>>();
         Services.AddSingleton<BulkInsertPipeline<T>>();
         Services.AddSingleton<IBulkInsertPipeline<T>>(sp => sp.GetRequiredService<BulkInsertPipeline<T>>());
-        Services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService>(sp => sp.GetRequiredService<BulkInsertPipeline<T>>());
+        Services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService>(
+            sp => sp.GetRequiredService<BulkInsertPipeline<T>>()
+        );
 
         return this;
     }

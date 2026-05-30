@@ -6,10 +6,11 @@ namespace SharedKernel.BulkInsert.Internal;
 
 internal static class PostgreSqlBulkInsertDbContextExtensions
 {
-    public static async Task<(NpgsqlConnection Connection, NpgsqlTransaction? Transaction, bool OpenedByScope)> GetOpenConnectionAsync(
-        this DbContext dbContext,
-        CancellationToken cancellationToken
-    )
+    public static async Task<(NpgsqlConnection Connection, NpgsqlTransaction? Transaction, bool OpenedByScope)>
+        GetOpenConnectionAsync(
+            this DbContext dbContext,
+            CancellationToken cancellationToken
+        )
     {
         var connection = dbContext.Database.GetDbConnection() as NpgsqlConnection
             ?? throw new NotSupportedException("SharedKernel.BulkInsert only supports PostgreSQL via Npgsql.");

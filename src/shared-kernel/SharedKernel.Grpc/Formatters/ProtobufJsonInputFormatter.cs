@@ -70,7 +70,9 @@ public sealed class ProtobufJsonInputFormatter : TextInputFormatter
         // Use reflection to call JsonParser.Parse<T>(json) since T is determined at runtime
         var parseGeneric = typeof(JsonParser)
             .GetMethods()
-            .First(m => m.Name == nameof(JsonParser.Parse) && m.IsGenericMethodDefinition && m.GetParameters().Length == 1);
+            .First(
+                m => m.Name == nameof(JsonParser.Parse) && m.IsGenericMethodDefinition && m.GetParameters().Length == 1
+            );
         var parse = parseGeneric.MakeGenericMethod(type);
 
         // Parse the JSON into a Protobuf message
