@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.AuditLogging.Attributes;
+using SharedKernel.AuditLogging.Distributed.Contracts;
+using SharedKernel.AuditLogging.Distributed.Models;
+using SharedKernel.AuditLogging.Distributed.Options;
+using SharedKernel.AuditLogging.Distributed.Services;
 using SharedKernel.AuditLogging.Extensions;
 using SharedKernel.AuditLogging.Models;
 using SharedKernel.AuditLogging.Options;
@@ -190,6 +194,82 @@ public sealed class AuditLoggingTests
         Assert.False(string.IsNullOrWhiteSpace(auditLogs[1].Hash));
     }
 
+    [Fact]
+    public async Task DistributedAuditService_ComputesDiffFromSnapshots()
+    {
+        await using var dbContext = CreateDistributedDbContext();
+        var processor = CreateDistributedProcessor();
+        var auditEvent = CreateAuditEvent(
+            version: 1,
+            beforeJson: """{"Status":"Pending","Total":100}""",
+            afterJson: """{"Status":"Confirmed","Total":100}"""
+        );
+
+        var result = await processor.ProcessAsync(dbContext, auditEvent);
+
+        var auditLog = await dbContext.AuditLogs.SingleAsync();
+        Assert.Equal(AuditProcessingStatus.Processed, result.Status);
+        Assert.Equal(1, result.AppendedLogs);
+        Assert.Contains("\"Status\"", auditLog.ChangesJson, StringComparison.Ordinal);
+        Assert.Contains("\"old\":\"Pending\"", auditLog.ChangesJson, StringComparison.Ordinal);
+        Assert.Contains("\"new\":\"Confirmed\"", auditLog.ChangesJson, StringComparison.Ordinal);
+        Assert.DoesNotContain("\"Total\"", auditLog.ChangesJson, StringComparison.Ordinal);
+        Assert.Equal(1, await dbContext.ProcessedEvents.CountAsync());
+        Assert.Equal(1, (await dbContext.StreamStates.SingleAsync()).LastProcessedVersion);
+    }
+
+    [Fact]
+    public async Task DistributedAuditService_HoldsOutOfOrderEventAndDrainsWhenGapArrives()
+    {
+        await using var dbContext = CreateDistributedDbContext();
+        var processor = CreateDistributedProcessor();
+        var versionTwo = CreateAuditEvent(
+            version: 2,
+            beforeJson: """{"Status":"Confirmed"}""",
+            afterJson: """{"Status":"Cancelled"}"""
+        );
+        var versionOne = CreateAuditEvent(
+            version: 1,
+            beforeJson: """{"Status":"Pending"}""",
+            afterJson: """{"Status":"Confirmed"}"""
+        );
+
+        var pendingResult = await processor.ProcessAsync(dbContext, versionTwo);
+
+        Assert.Equal(AuditProcessingStatus.Pending, pendingResult.Status);
+        Assert.Equal(0, await dbContext.AuditLogs.CountAsync());
+        Assert.Equal(1, await dbContext.PendingEvents.CountAsync());
+
+        var processedResult = await processor.ProcessAsync(dbContext, versionOne);
+
+        Assert.Equal(AuditProcessingStatus.Processed, processedResult.Status);
+        Assert.Equal(2, processedResult.AppendedLogs);
+        Assert.Equal(2, await dbContext.AuditLogs.CountAsync());
+        Assert.Equal(0, await dbContext.PendingEvents.CountAsync());
+        Assert.Equal(2, (await dbContext.StreamStates.SingleAsync()).LastProcessedVersion);
+    }
+
+    [Fact]
+    public async Task DistributedAuditService_IgnoresDuplicateEventId()
+    {
+        await using var dbContext = CreateDistributedDbContext();
+        var processor = CreateDistributedProcessor();
+        var eventId = Guid.NewGuid();
+        var auditEvent = CreateAuditEvent(
+            version: 1,
+            beforeJson: """{"Status":"Pending"}""",
+            afterJson: """{"Status":"Confirmed"}""",
+            eventId: eventId
+        );
+
+        await processor.ProcessAsync(dbContext, auditEvent);
+        var result = await processor.ProcessAsync(dbContext, auditEvent);
+
+        Assert.Equal(AuditProcessingStatus.Duplicate, result.Status);
+        Assert.Equal(1, await dbContext.AuditLogs.CountAsync());
+        Assert.Equal(1, await dbContext.ProcessedEvents.CountAsync());
+    }
+
     private static ServiceProvider CreateProvider(
         Action<AuditLoggingOptions>? configure = null
     )
@@ -211,6 +291,45 @@ public sealed class AuditLoggingTests
         );
 
         return services.BuildServiceProvider();
+    }
+
+    private static AuditEntityChangedProcessor CreateDistributedProcessor()
+    {
+        return new AuditEntityChangedProcessor(
+            Microsoft.Extensions.Options.Options.Create(new AuditServiceOptions())
+        );
+    }
+
+    private static DistributedAuditDbContext CreateDistributedDbContext()
+    {
+        var options = new DbContextOptionsBuilder<DistributedAuditDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        return new DistributedAuditDbContext(options);
+    }
+
+    private static AuditEntityChanged CreateAuditEvent(
+        long version,
+        string beforeJson,
+        string afterJson,
+        Guid? eventId = null
+    )
+    {
+        return new AuditEntityChanged
+        {
+            EventId = eventId ?? Guid.NewGuid(),
+            SourceService = "booking-service",
+            EntityName = "Booking",
+            EntityKey = "booking-1",
+            EntityVersion = version,
+            Operation = AuditOperation.Update,
+            OccurredUtc = DateTimeOffset.UtcNow,
+            UserId = "user-1",
+            UserName = "Alice",
+            BeforeJson = beforeJson,
+            AfterJson = afterJson
+        };
     }
 
     private static DefaultHttpContext CreateHttpContext()
@@ -253,6 +372,27 @@ public sealed class AuditLoggingTests
         )
         {
             modelBuilder.ApplyAuditLogging();
+        }
+    }
+
+    private sealed class DistributedAuditDbContext(
+        DbContextOptions<DistributedAuditDbContext> options
+    ) : DbContext(options)
+    {
+        public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+
+        public DbSet<AuditEntityStreamState> StreamStates => Set<AuditEntityStreamState>();
+
+        public DbSet<AuditPendingEvent> PendingEvents => Set<AuditPendingEvent>();
+
+        public DbSet<AuditProcessedEvent> ProcessedEvents => Set<AuditProcessedEvent>();
+
+        protected override void OnModelCreating(
+            ModelBuilder modelBuilder
+        )
+        {
+            SharedKernel.AuditLogging.Extensions.ModelBuilderExtensions.ApplyAuditLogging(modelBuilder);
+            SharedKernel.AuditLogging.Distributed.Extensions.ModelBuilderExtensions.ApplyDistributedAuditService(modelBuilder);
         }
     }
 

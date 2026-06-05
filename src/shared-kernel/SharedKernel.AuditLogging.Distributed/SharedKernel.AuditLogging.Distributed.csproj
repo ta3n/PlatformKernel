@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    <PackageReference Include="MassTransit" Version="8.2.3"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.7"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SharedKernel.AuditLogging\SharedKernel.AuditLogging.csproj"/>
+  </ItemGroup>
+</Project>
