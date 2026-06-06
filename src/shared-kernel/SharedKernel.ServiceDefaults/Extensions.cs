@@ -39,7 +39,7 @@ public static class Extensions
         this IHostApplicationBuilder builder
     )
     {
-        builder.ConfigureOpenTelemetry();
+        _ = builder.ConfigureOpenTelemetry();
 
         builder.AddDefaultHealthChecks();
 
@@ -108,7 +108,7 @@ public static class Extensions
                 }
             );
 
-        builder.AddOpenTelemetryExporters();
+        _  = builder.AddOpenTelemetryExporters();
 
         return builder;
     }

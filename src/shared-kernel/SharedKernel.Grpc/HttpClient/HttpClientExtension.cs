@@ -32,7 +32,7 @@ public static class HttpClientExtension
 
         builder.AddHttpMessageHandler<HeaderPropagationHandler>();
 
-        builder.AddHttpClientResiliency(options);
+        _ = builder.AddHttpClientResiliency(options);
 
         return builder;
     }

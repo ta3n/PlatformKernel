@@ -165,7 +165,7 @@ public static class Extensions
 
         loggerConfig.ReadFrom.Configuration(configuration);
 
-        loggerConfig.Enrich
+        _ = loggerConfig.Enrich
             .FromLogContext()
             .Enrich
             .WithMachineName()
